@@ -22,19 +22,19 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
-          <div className="flex items-center space-x-4">
-            <div className="text-xl font-bold bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
+          <div className="flex items-center space-x-8">
+            <div className="text-2xl font-bold bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
               AthletiX
             </div>
             <div className="hidden sm:flex items-center space-x-8">
               <button
                 onClick={() => scrollToSection("start")}
-                className="text-sm text-slate-600 hover:text-emerald-500 transition-colors"
+                className="text-base text-slate-600 hover:text-emerald-500 transition-colors"
               >
                 Start
               </button>
               <div className="relative group">
-                <button className="flex items-center space-x-1 text-sm text-slate-600 hover:text-emerald-500 transition-colors">
+                <button className="flex items-center space-x-1 text-base text-slate-600 hover:text-emerald-500 transition-colors">
                   <span>Oferta</span>
                   <svg
                     className="w-4 h-4"
@@ -50,23 +50,23 @@ export default function Navbar() {
                     />
                   </svg>
                 </button>
-                <div className="absolute left-0 mt-2 w-40 rounded-lg bg-white/90 backdrop-blur-sm shadow-lg py-2 hidden group-hover:block border border-slate-100">
+                <div className="absolute left-0 mt-2 w-48 rounded-lg bg-white/90 backdrop-blur-sm shadow-lg py-2 hidden group-hover:block border border-slate-100">
                   <div className="absolute -top-2 left-0 right-0 h-2 bg-transparent" />
                   <button
                     onClick={() => scrollToSection("dla-klientow")}
-                    className="w-full px-4 py-2.5 text-left text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all"
+                    className="w-full px-4 py-2.5 text-left text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all"
                   >
                     Dla klientów
                   </button>
                   <button
                     onClick={() => scrollToSection("dla-profesjonalistow")}
-                    className="w-full px-4 py-2.5 text-left text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all"
+                    className="w-full px-4 py-2.5 text-left text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all"
                   >
                     Dla profesjonalistów
                   </button>
                   <button
                     onClick={() => scrollToSection("dla-firm")}
-                    className="w-full px-4 py-2.5 text-left text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all"
+                    className="w-full px-4 py-2.5 text-left text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all"
                   >
                     Dla firm
                   </button>
@@ -74,17 +74,17 @@ export default function Navbar() {
               </div>
               <button
                 onClick={() => scrollToSection("cennik")}
-                className="text-sm text-slate-600 hover:text-emerald-500 transition-colors"
+                className="text-base text-slate-600 hover:text-emerald-500 transition-colors"
               >
                 Cennik
               </button>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-6">
             <button
               type="button"
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="p-1.5 rounded-md text-slate-600 hover:text-emerald-500 hover:bg-slate-50 transition-all"
+              className="p-2 rounded-md text-slate-600 hover:text-emerald-500 hover:bg-slate-50 transition-all"
             >
               {isDarkMode ? (
                 <svg
@@ -117,7 +117,7 @@ export default function Navbar() {
               )}
             </button>
             <div className="relative group hidden sm:block">
-              <button className="flex items-center space-x-1 p-1.5 rounded-md text-slate-600 hover:text-emerald-500 hover:bg-slate-50 transition-all">
+              <button className="flex items-center space-x-1 p-2 rounded-md text-slate-600 hover:text-emerald-500 hover:bg-slate-50 transition-all">
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -131,7 +131,7 @@ export default function Navbar() {
                     d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
                   />
                 </svg>
-                <span className="text-sm font-medium">PL</span>
+                <span className="text-base font-medium">PL</span>
                 <svg
                   className="w-3 h-3 opacity-75"
                   fill="none"
@@ -146,25 +146,25 @@ export default function Navbar() {
                   />
                 </svg>
               </button>
-              <div className="absolute right-0 mt-2 w-28 rounded-lg bg-white/90 backdrop-blur-sm shadow-lg py-1 hidden group-hover:block border border-slate-100">
+              <div className="absolute right-0 mt-2 w-32 rounded-lg bg-white/90 backdrop-blur-sm shadow-lg py-1 hidden group-hover:block border border-slate-100">
                 <div className="absolute -top-2 left-0 right-0 h-2 bg-transparent" />
-                <button className="w-full px-3 py-2 text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 text-left font-medium transition-all">
+                <button className="w-full px-3 py-2 text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 text-left font-medium transition-all">
                   English
                 </button>
-                <button className="w-full px-3 py-2 text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 text-left font-medium transition-all">
+                <button className="w-full px-3 py-2 text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 text-left font-medium transition-all">
                   Polski
                 </button>
               </div>
             </div>
             <button
               type="button"
-              className="hidden sm:block text-sm font-medium text-slate-600 hover:text-emerald-500 transition-colors"
+              className="hidden sm:block text-base font-medium text-slate-600 hover:text-emerald-500 transition-colors"
             >
               Zaloguj się
             </button>
             <button
               type="button"
-              className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium hover:from-emerald-600 hover:to-teal-600 transition-all"
+              className="hidden sm:inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-base font-medium hover:from-emerald-600 hover:to-teal-600 transition-all"
             >
               Rozpocznij
               <svg
