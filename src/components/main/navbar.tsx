@@ -23,18 +23,18 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center space-x-8">
-            <div className="text-2xl font-bold bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
+            <div className="text-2xl font-bold bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent whitespace-nowrap">
               AthletiX
             </div>
-            <div className="hidden sm:flex items-center space-x-8">
+            <div className="hidden md:flex items-center space-x-8">
               <button
                 onClick={() => scrollToSection("start")}
-                className="text-base text-slate-600 hover:text-emerald-500 transition-colors"
+                className="text-base text-slate-600 hover:text-emerald-500 transition-colors whitespace-nowrap cursor-pointer"
               >
                 Start
               </button>
               <div className="relative group">
-                <button className="flex items-center space-x-1 text-base text-slate-600 hover:text-emerald-500 transition-colors">
+                <button className="flex items-center space-x-1 text-base text-slate-600 hover:text-emerald-500 transition-colors whitespace-nowrap cursor-pointer">
                   <span>Oferta</span>
                   <svg
                     className="w-4 h-4"
@@ -54,19 +54,19 @@ export default function Navbar() {
                   <div className="absolute -top-2 left-0 right-0 h-2 bg-transparent" />
                   <button
                     onClick={() => scrollToSection("dla-klientow")}
-                    className="w-full px-4 py-2.5 text-left text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all"
+                    className="w-full px-4 py-2.5 text-left text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer"
                   >
                     Dla klientów
                   </button>
                   <button
                     onClick={() => scrollToSection("dla-profesjonalistow")}
-                    className="w-full px-4 py-2.5 text-left text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all"
+                    className="w-full px-4 py-2.5 text-left text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer"
                   >
                     Dla profesjonalistów
                   </button>
                   <button
                     onClick={() => scrollToSection("dla-firm")}
-                    className="w-full px-4 py-2.5 text-left text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all"
+                    className="w-full px-4 py-2.5 text-left text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer"
                   >
                     Dla firm
                   </button>
@@ -74,7 +74,7 @@ export default function Navbar() {
               </div>
               <button
                 onClick={() => scrollToSection("cennik")}
-                className="text-base text-slate-600 hover:text-emerald-500 transition-colors"
+                className="text-base text-slate-600 hover:text-emerald-500 transition-colors whitespace-nowrap cursor-pointer"
               >
                 Cennik
               </button>
@@ -84,7 +84,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="p-2 rounded-md text-slate-600 hover:text-emerald-500 hover:bg-slate-50 transition-all"
+              className="p-2 rounded-md text-slate-600 hover:text-emerald-500 hover:bg-slate-50 transition-all cursor-pointer"
             >
               {isDarkMode ? (
                 <svg
@@ -116,8 +116,8 @@ export default function Navbar() {
                 </svg>
               )}
             </button>
-            <div className="relative group hidden sm:block">
-              <button className="flex items-center space-x-1 p-2 rounded-md text-slate-600 hover:text-emerald-500 hover:bg-slate-50 transition-all">
+            <div className="relative group hidden md:block">
+              <button className="flex items-center space-x-1 p-2 rounded-md text-slate-600 hover:text-emerald-500 hover:bg-slate-50 transition-all cursor-pointer">
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -148,23 +148,23 @@ export default function Navbar() {
               </button>
               <div className="absolute right-0 mt-2 w-32 rounded-lg bg-white/90 backdrop-blur-sm shadow-lg py-1 hidden group-hover:block border border-slate-100">
                 <div className="absolute -top-2 left-0 right-0 h-2 bg-transparent" />
-                <button className="w-full px-3 py-2 text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 text-left font-medium transition-all">
+                <button className="w-full px-3 py-2 text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 text-left font-medium transition-all whitespace-nowrap cursor-pointer">
                   English
                 </button>
-                <button className="w-full px-3 py-2 text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 text-left font-medium transition-all">
+                <button className="w-full px-3 py-2 text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 text-left font-medium transition-all whitespace-nowrap cursor-pointer">
                   Polski
                 </button>
               </div>
             </div>
             <button
               type="button"
-              className="hidden sm:block text-base font-medium text-slate-600 hover:text-emerald-500 transition-colors"
+              className="hidden md:block text-base font-medium text-slate-600 hover:text-emerald-500 transition-colors whitespace-nowrap cursor-pointer"
             >
               Zaloguj się
             </button>
             <button
               type="button"
-              className="hidden sm:inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-base font-medium hover:from-emerald-600 hover:to-teal-600 transition-all"
+              className="hidden md:inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-base font-medium hover:from-emerald-600 hover:to-teal-600 transition-all whitespace-nowrap cursor-pointer"
             >
               Rozpocznij
               <svg
@@ -185,11 +185,11 @@ export default function Navbar() {
             {/* Hamburger menu dla mobilnych */}
             <button
               type="button"
-              className="sm:hidden p-2 rounded-lg hover:bg-slate-50 transition-colors"
+              className="md:hidden p-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               <svg
-                className="w-5 h-5"
+                className="w-5 h-5 text-slate-800"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -206,7 +206,7 @@ export default function Navbar() {
         </div>
         {/* Mobile/Tablet menu */}
         <div
-          className={`sm:hidden transition-all duration-300 ease-in-out bg-white border-t border-slate-100 ${
+          className={`md:hidden transition-all duration-300 ease-in-out bg-white border-t border-slate-100 ${
             isMenuOpen
               ? "max-h-[40rem] opacity-100"
               : "max-h-0 opacity-0 overflow-hidden"
@@ -215,7 +215,7 @@ export default function Navbar() {
           <div className="flex flex-col py-6 px-6 space-y-6">
             <button
               onClick={() => scrollToSection("start")}
-              className="flex items-center space-x-3 text-slate-700 hover:text-emerald-500 transition-colors text-left text-base font-medium"
+              className="flex items-center space-x-3 text-slate-700 hover:text-emerald-500 transition-colors text-left text-base font-medium cursor-pointer"
             >
               <svg
                 className="w-5 h-5"
@@ -253,7 +253,7 @@ export default function Navbar() {
               <div className="flex flex-col space-y-4 pl-8">
                 <button
                   onClick={() => scrollToSection("dla-klientow")}
-                  className="flex items-center space-x-3 text-slate-600 hover:text-emerald-500 transition-colors text-left"
+                  className="flex items-center space-x-3 text-slate-600 hover:text-emerald-500 transition-colors text-left cursor-pointer"
                 >
                   <svg
                     className="w-5 h-5"
@@ -272,7 +272,7 @@ export default function Navbar() {
                 </button>
                 <button
                   onClick={() => scrollToSection("dla-profesjonalistow")}
-                  className="flex items-center space-x-3 text-slate-600 hover:text-emerald-500 transition-colors text-left"
+                  className="flex items-center space-x-3 text-slate-600 hover:text-emerald-500 transition-colors text-left cursor-pointer"
                 >
                   <svg
                     className="w-5 h-5"
@@ -291,7 +291,7 @@ export default function Navbar() {
                 </button>
                 <button
                   onClick={() => scrollToSection("dla-firm")}
-                  className="flex items-center space-x-3 text-slate-600 hover:text-emerald-500 transition-colors text-left"
+                  className="flex items-center space-x-3 text-slate-600 hover:text-emerald-500 transition-colors text-left cursor-pointer"
                 >
                   <svg
                     className="w-5 h-5"
@@ -313,7 +313,7 @@ export default function Navbar() {
 
             <button
               onClick={() => scrollToSection("cennik")}
-              className="flex items-center space-x-3 text-slate-700 hover:text-emerald-500 transition-colors text-left text-base font-medium"
+              className="flex items-center space-x-3 text-slate-700 hover:text-emerald-500 transition-colors text-left text-base font-medium cursor-pointer"
             >
               <svg
                 className="w-5 h-5"
@@ -350,13 +350,13 @@ export default function Navbar() {
                 <span>Język</span>
               </span>
               <div className="flex flex-col space-y-4 pl-8">
-                <button className="flex items-center justify-between text-slate-600 hover:text-emerald-500 transition-all w-full">
+                <button className="flex items-center justify-between text-slate-600 hover:text-emerald-500 transition-all w-full cursor-pointer">
                   <div className="flex items-center space-x-3">
                     <span>English</span>
                   </div>
                   <span className="text-xs text-slate-400">EN</span>
                 </button>
-                <button className="flex items-center justify-between text-slate-600 hover:text-emerald-500 transition-all w-full">
+                <button className="flex items-center justify-between text-slate-600 hover:text-emerald-500 transition-all w-full cursor-pointer">
                   <div className="flex items-center space-x-3">
                     <span>Polski</span>
                   </div>
@@ -367,7 +367,7 @@ export default function Navbar() {
 
             {/* Auth buttons */}
             <div className="flex flex-col space-y-4 pt-4 border-t border-slate-100">
-              <button className="flex items-center space-x-3 text-slate-700 hover:text-emerald-500 transition-colors text-left text-base font-medium">
+              <button className="flex items-center space-x-3 text-slate-700 hover:text-emerald-500 transition-colors text-left text-base font-medium cursor-pointer">
                 <svg
                   className="w-5 h-5"
                   fill="none"
@@ -383,7 +383,7 @@ export default function Navbar() {
                 </svg>
                 <span>Zaloguj się</span>
               </button>
-              <button className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-base font-medium hover:from-emerald-600 hover:to-teal-600 transition-all">
+              <button className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-base font-medium hover:from-emerald-600 hover:to-teal-600 transition-all whitespace-nowrap cursor-pointer">
                 <span>Rozpocznij</span>
                 <svg
                   className="w-5 h-5 ml-2"
