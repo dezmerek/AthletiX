@@ -1,8 +1,8 @@
 "use client";
 
-export default function DietSection() {
+export default function SecuritySection() {
   return (
-    <section id="dieta" className="py-20 bg-white">
+    <section id="bezpieczenstwo" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-4xl font-bold text-center mb-16">
           <span className="bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent">
@@ -16,8 +16,8 @@ export default function DietSection() {
               Ochrona danych
             </h3>
             <p className="text-slate-600">
-              Pełna zgodność z RODO i najwyższe standardy bezpieczeństwa
-              danych osobowych
+              Pełna zgodność z RODO i najwyższe standardy bezpieczeństwa danych
+              osobowych
             </p>
           </div>
           <div className="p-6 rounded-xl border border-slate-100 hover:border-cyan-100 transition-colors">
