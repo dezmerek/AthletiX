@@ -4,6 +4,7 @@ import ClientSection from "@/containers/main/ClientSection";
 import SecuritySection from "@/containers/main/SecuritySection";
 import ProfessionalSection from "@/containers/main/ProfessionalSection";
 import CommunicationSection from "@/containers/main/CommunicationSection";
+import BusinessSection from "@/containers/main/BusinessSection";
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
       <SecuritySection />
       <ProfessionalSection />
       <CommunicationSection />
+      <BusinessSection />
     </>
   );
 }
