@@ -37,7 +37,7 @@ export default function Navbar() {
                 <button className="flex items-center space-x-1 text-base text-slate-600 hover:text-emerald-500 transition-colors whitespace-nowrap cursor-pointer">
                   <span>Oferta</span>
                   <svg
-                    className="w-4 h-4"
+                    className="w-4 h-4 transition-transform group-hover:rotate-180"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -50,25 +50,64 @@ export default function Navbar() {
                     />
                   </svg>
                 </button>
-                <div className="absolute left-0 mt-2 w-48 rounded-lg bg-white/90 backdrop-blur-sm shadow-lg py-2 hidden group-hover:block border border-slate-100">
+                <div className="absolute left-0 mt-2 w-56 rounded-xl bg-white/95 backdrop-blur-sm shadow-lg py-3 hidden group-hover:block border border-slate-100">
                   <div className="absolute -top-2 left-0 right-0 h-2 bg-transparent" />
                   <button
                     onClick={() => scrollToSection("dla-klientow")}
-                    className="w-full px-4 py-2.5 text-left text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer"
+                    className="w-full px-4 py-2.5 text-left text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
                   >
-                    Dla klientów
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                    <span>Dla klientów</span>
                   </button>
                   <button
                     onClick={() => scrollToSection("dla-profesjonalistow")}
-                    className="w-full px-4 py-2.5 text-left text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer"
+                    className="w-full px-4 py-2.5 text-left text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
                   >
-                    Dla profesjonalistów
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <span>Dla profesjonalistów</span>
                   </button>
                   <button
                     onClick={() => scrollToSection("dla-firm")}
-                    className="w-full px-4 py-2.5 text-left text-base text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer"
+                    className="w-full px-4 py-2.5 text-left text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
                   >
-                    Dla firm
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                      />
+                    </svg>
+                    <span>Dla firm</span>
                   </button>
                 </div>
               </div>
