@@ -40,7 +40,10 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`${montserrat.className} antialiased`}>
+      <body
+        suppressHydrationWarning
+        className={`${montserrat.className} antialiased`}
+      >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Navbar />
           {children}
