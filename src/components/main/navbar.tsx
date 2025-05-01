@@ -26,7 +26,7 @@ export default function Navbar() {
             <div className="text-2xl font-bold bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent whitespace-nowrap">
               AthletiX
             </div>
-            <div className="hidden md:flex items-center space-x-8">
+            <div className="hidden md:flex items-center space-x-6">
               <button
                 onClick={() => scrollToSection("start")}
                 className="text-base text-slate-600 hover:text-emerald-500 transition-colors whitespace-nowrap cursor-pointer"
@@ -119,7 +119,7 @@ export default function Navbar() {
               </button>
             </div>
           </div>
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-2">
             <button
               type="button"
               onClick={() => setIsDarkMode(!isDarkMode)}
@@ -170,7 +170,7 @@ export default function Navbar() {
                     d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
                   />
                 </svg>
-                <span className="text-base font-medium">PL</span>
+                <span className="text-sm font-medium">PL</span>
                 <svg
                   className="w-3 h-3 opacity-75"
                   fill="none"
@@ -195,31 +195,33 @@ export default function Navbar() {
                 </button>
               </div>
             </div>
-            <button
-              type="button"
-              className="hidden md:block text-base font-medium text-slate-600 hover:text-emerald-500 transition-colors whitespace-nowrap cursor-pointer"
-            >
-              Zaloguj się
-            </button>
-            <button
-              type="button"
-              className="hidden md:inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-base font-medium hover:from-emerald-600 hover:to-teal-600 transition-all whitespace-nowrap cursor-pointer"
-            >
-              Rozpocznij
-              <svg
-                className="w-4 h-4 ml-2 -mr-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <div className="space-x-7 hidden md:flex">
+              <button
+                type="button"
+                className="hidden md:block text-sm font-medium text-slate-600 hover:text-emerald-500 transition-colors whitespace-nowrap cursor-pointer"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                />
-              </svg>
-            </button>
+                Zaloguj się
+              </button>
+              <button
+                type="button"
+                className="hidden md:inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium hover:from-emerald-600 hover:to-teal-600 transition-all whitespace-nowrap cursor-pointer"
+              >
+                Rozpocznij
+                <svg
+                  className="w-4 h-4 ml-2 -mr-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  />
+                </svg>
+              </button>
+            </div>
 
             {/* Hamburger menu dla mobilnych */}
             <button
