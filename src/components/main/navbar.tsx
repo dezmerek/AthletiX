@@ -48,6 +48,9 @@ export default function Navbar() {
   };
 
   const changeLanguage = (newLocale: string) => {
+    // Don't change if it's the same language
+    if (newLocale === locale) return;
+
     setIsChangingLanguage(true);
     setTargetLanguage(newLocale as "pl" | "en");
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000`;
