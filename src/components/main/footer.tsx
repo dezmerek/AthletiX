@@ -1,6 +1,9 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 export default function Footer() {
+  const t = useTranslations("Footer");
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -22,20 +25,19 @@ export default function Footer() {
             <span className="text-xl font-bold bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
               AthletiX
             </span>
-            <p className="mt-4 text-slate-400 text-sm">
-              Kompleksowa platforma fitness łącząca klientów, trenerów i kluby
-              sportowe. Trenuj, zarządzaj i rozwijaj się z nami.
-            </p>
+            <p className="mt-4 text-slate-400 text-sm">{t("description")}</p>
           </div>
           <div>
-            <h4 className="text-base font-semibold mb-3">Platforma</h4>
+            <h4 className="text-base font-semibold mb-3">
+              {t("sections.platform.title")}
+            </h4>
             <ul className="space-y-2 text-sm text-slate-300">
               <li>
                 <button
                   onClick={() => scrollToSection("for-clients")}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Dla klientów
+                  {t("sections.platform.forClients")}
                 </button>
               </li>
               <li>
@@ -43,7 +45,7 @@ export default function Footer() {
                   onClick={() => scrollToSection("for-professionals")}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Dla profesjonalistów
+                  {t("sections.platform.forProfessionals")}
                 </button>
               </li>
               <li>
@@ -51,20 +53,22 @@ export default function Footer() {
                   onClick={() => scrollToSection("for-business")}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Dla firm
+                  {t("sections.platform.forBusiness")}
                 </button>
               </li>
             </ul>
           </div>
           <div>
-            <h4 className="text-base font-semibold mb-3">Zasoby</h4>
+            <h4 className="text-base font-semibold mb-3">
+              {t("sections.resources.title")}
+            </h4>
             <ul className="space-y-2 text-sm text-slate-300">
               <li>
                 <a
                   href="#"
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Dokumentacja
+                  {t("sections.resources.documentation")}
                 </a>
               </li>
               <li>
@@ -72,7 +76,7 @@ export default function Footer() {
                   href="#"
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Centrum pomocy
+                  {t("sections.resources.helpCenter")}
                 </a>
               </li>
               <li>
@@ -80,20 +84,22 @@ export default function Footer() {
                   href="#"
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Wsparcie
+                  {t("sections.resources.support")}
                 </a>
               </li>
             </ul>
           </div>
           <div>
-            <h4 className="text-base font-semibold mb-3">Kontakt</h4>
+            <h4 className="text-base font-semibold mb-3">
+              {t("sections.contact.title")}
+            </h4>
             <ul className="space-y-2 text-sm text-slate-300">
               <li>
                 <a
                   href="#"
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Napisz do nas
+                  {t("sections.contact.writeToUs")}
                 </a>
               </li>
               <li>
@@ -101,7 +107,7 @@ export default function Footer() {
                   href="#"
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Demo
+                  {t("sections.platform.demo")}
                 </a>
               </li>
               <li>
@@ -109,7 +115,7 @@ export default function Footer() {
                   href="#"
                   className="hover:text-white transition-colors cursor-pointer"
                 >
-                  Cennik
+                  {t("sections.platform.pricing")}
                 </a>
               </li>
             </ul>
@@ -119,16 +125,14 @@ export default function Footer() {
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
             <div className="flex items-center space-x-4">
               <button className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer">
-                Polityka prywatności
+                {t("legal.privacyPolicy")}
               </button>
               <span className="text-slate-600">•</span>
               <button className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer">
-                Regulamin
+                {t("legal.terms")}
               </button>
             </div>
-            <p className="text-xs text-slate-400">
-              © 2025 AthletiX. Wszystkie prawa zastrzeżone.
-            </p>
+            <p className="text-xs text-slate-400">{t("legal.copyright")}</p>
           </div>
         </div>
       </div>

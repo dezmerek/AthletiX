@@ -1,6 +1,10 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 export default function HeroSection() {
+  const t = useTranslations("HeroSection");
+
   return (
     <section
       id="start"
@@ -8,18 +12,17 @@ export default function HeroSection() {
     >
       <div className="max-w-7xl mx-auto text-center">
         <span className="inline-block bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-4 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg">
-          Witaj w AthletiX
+          {t("welcome")}
         </span>
         <h1 className="text-5xl sm:text-6xl font-bold mb-6">
           <span className="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
-            Cyfrowa transformacja
+            {t("digitalTransformation")}
           </span>
           <br />
-          <span className="text-slate-800">branży fitness</span>
+          <span className="text-slate-800">{t("fitnessIndustry")}</span>
         </h1>
         <p className="text-xl sm:text-2xl text-slate-600 mb-12 max-w-3xl mx-auto">
-          Kompleksowa platforma łącząca klientów, trenerów, dietetyków i
-          właścicieli firm fitness w jednym miejscu.
+          {t("description")}
         </p>
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-4 md:gap-6 max-w-3xl mx-auto">
           <div className="bg-white rounded-xl p-3 sm:p-4 md:p-5 shadow-lg hover:shadow-xl transition-all group">
@@ -27,10 +30,10 @@ export default function HeroSection() {
               👥
             </div>
             <h3 className="text-slate-800 font-bold mb-1 text-sm sm:text-xs md:text-base lg:text-lg">
-              Dla klientów
+              {t("forClients.title")}
             </h3>
             <p className="text-slate-600 text-xs sm:text-xs md:text-sm">
-              Treningi, dieta i monitoring postępów
+              {t("forClients.description")}
             </p>
           </div>
           <div className="bg-white rounded-xl p-3 sm:p-4 md:p-5 shadow-lg hover:shadow-xl transition-all group">
@@ -38,10 +41,10 @@ export default function HeroSection() {
               👨‍🏫
             </div>
             <h3 className="text-slate-800 font-bold mb-1 text-sm sm:text-xs md:text-base lg:text-lg">
-              Dla profesjonalistów
+              {t("forProfessionals.title")}
             </h3>
             <p className="text-slate-600 text-xs sm:text-xs md:text-sm">
-              Narzędzia dla trenerów i dietetyków
+              {t("forProfessionals.description")}
             </p>
           </div>
           <div className="bg-white rounded-xl p-3 sm:p-4 md:p-5 shadow-lg hover:shadow-xl transition-all group">
@@ -49,10 +52,10 @@ export default function HeroSection() {
               💼
             </div>
             <h3 className="text-slate-800 font-bold mb-1 text-sm sm:text-xs md:text-base lg:text-lg">
-              Dla firm
+              {t("forBusiness.title")}
             </h3>
             <p className="text-slate-600 text-xs sm:text-xs md:text-sm">
-              Zarządzanie i analityka biznesowa
+              {t("forBusiness.description")}
             </p>
           </div>
         </div>

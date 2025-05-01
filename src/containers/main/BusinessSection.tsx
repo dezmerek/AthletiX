@@ -1,6 +1,10 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 export default function BusinessSection() {
+  const t = useTranslations("BusinessSection");
+
   return (
     <section
       id="for-business"
@@ -9,16 +13,16 @@ export default function BusinessSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <span className="inline-block bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg">
-            Dla firm fitness
+            {t("badge")}
           </span>
           <h2 className="text-4xl font-bold mb-4">
             <span className="bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">
-              Cyfrowa transformacja
+              {t("title.digital")}
             </span>
-            <span className="text-slate-800"> Twojego biznesu</span>
+            <span className="text-slate-800">{t("title.business")}</span>
           </h2>
           <p className="text-slate-600 text-xl max-w-2xl mx-auto">
-            Kompleksowe rozwiązanie do zarządzania firmą fitness
+            {t("description")}
           </p>
         </div>
 
@@ -27,24 +31,24 @@ export default function BusinessSection() {
           <div className="bg-white rounded-xl shadow-lg p-8">
             <div className="text-3xl mb-4">💼</div>
             <h3 className="text-xl font-bold mb-4 text-slate-800">
-              Zarządzanie biznesem
+              {t("businessManagement.title")}
             </h3>
             <ul className="space-y-3">
               <li className="flex items-center text-slate-600">
                 <span className="mr-2 text-blue-500">✓</span>
-                Harmonogramy zajęć
+                {t("businessManagement.features.schedules")}
               </li>
               <li className="flex items-center text-slate-600">
                 <span className="mr-2 text-blue-500">✓</span>
-                Zarządzanie członkostwami
+                {t("businessManagement.features.memberships")}
               </li>
               <li className="flex items-center text-slate-600">
                 <span className="mr-2 text-blue-500">✓</span>
-                System płatności
+                {t("businessManagement.features.payments")}
               </li>
               <li className="flex items-center text-slate-600">
                 <span className="mr-2 text-blue-500">✓</span>
-                Zarządzanie personelem
+                {t("businessManagement.features.staff")}
               </li>
             </ul>
           </div>
@@ -52,24 +56,24 @@ export default function BusinessSection() {
           <div className="bg-white rounded-xl shadow-lg p-8">
             <div className="text-3xl mb-4">📊</div>
             <h3 className="text-xl font-bold mb-4 text-slate-800">
-              Analityka biznesowa
+              {t("businessAnalytics.title")}
             </h3>
             <ul className="space-y-3">
               <li className="flex items-center text-slate-600">
                 <span className="mr-2 text-blue-500">✓</span>
-                Raporty finansowe
+                {t("businessAnalytics.features.financial")}
               </li>
               <li className="flex items-center text-slate-600">
                 <span className="mr-2 text-blue-500">✓</span>
-                Statystyki członkostwa
+                {t("businessAnalytics.features.membership")}
               </li>
               <li className="flex items-center text-slate-600">
                 <span className="mr-2 text-blue-500">✓</span>
-                Analiza trendów
+                {t("businessAnalytics.features.trends")}
               </li>
               <li className="flex items-center text-slate-600">
                 <span className="mr-2 text-blue-500">✓</span>
-                Prognozy biznesowe
+                {t("businessAnalytics.features.forecasts")}
               </li>
             </ul>
           </div>
@@ -77,24 +81,24 @@ export default function BusinessSection() {
           <div className="bg-white rounded-xl shadow-lg p-8">
             <div className="text-3xl mb-4">🤝</div>
             <h3 className="text-xl font-bold mb-4 text-slate-800">
-              Integracja zespołu
+              {t("teamIntegration.title")}
             </h3>
             <ul className="space-y-3">
               <li className="flex items-center text-slate-600">
                 <span className="mr-2 text-blue-500">✓</span>
-                Portal pracowniczy
+                {t("teamIntegration.features.portal")}
               </li>
               <li className="flex items-center text-slate-600">
                 <span className="mr-2 text-blue-500">✓</span>
-                Komunikacja wewnętrzna
+                {t("teamIntegration.features.communication")}
               </li>
               <li className="flex items-center text-slate-600">
                 <span className="mr-2 text-blue-500">✓</span>
-                Zarządzanie zadaniami
+                {t("teamIntegration.features.tasks")}
               </li>
               <li className="flex items-center text-slate-600">
                 <span className="mr-2 text-blue-500">✓</span>
-                Harmonogramy pracy
+                {t("teamIntegration.features.schedules")}
               </li>
             </ul>
           </div>

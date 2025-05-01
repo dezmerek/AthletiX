@@ -1,102 +1,17 @@
 "use client";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
-type PlanFeatures = {
-  title: string;
-  description: string;
-  price: string;
-  features: string[];
-};
-
-type PlanType = {
-  free: PlanFeatures;
-  pro: PlanFeatures;
-};
-
-type PlanTypes = {
-  client: PlanType;
-  professional: PlanType;
-  business: PlanType;
-};
-
-const planTypes: PlanTypes = {
-  client: {
-    free: {
-      title: "Darmowy",
-      description: "Podstawowe funkcje dla początkujących",
-      price: "0",
-      features: [
-        "Podstawowy dziennik treningowy",
-        "Podstawowe statystyki",
-        "Dostęp do społeczności",
-      ],
-    },
-    pro: {
-      title: "Pro",
-      description: "Zaawansowane funkcje i wsparcie",
-      price: "49",
-      features: [
-        "Wszystko z planu Darmowego",
-        "Zaawansowane analizy postępów",
-        "Spersonalizowane plany treningowe",
-        "Priorytetowe wsparcie",
-      ],
-    },
-  },
-  professional: {
-    free: {
-      title: "Darmowy",
-      description: "Rozpocznij swoją praktykę",
-      price: "0",
-      features: [
-        "Podstawowe narzędzia zarządzania klientami",
-        "Ograniczona liczba klientów (do 5)",
-        "Podstawowe szablony planów",
-        "Podstawowa komunikacja",
-      ],
-    },
-    pro: {
-      title: "Pro",
-      description: "Rozwijaj swoją praktykę",
-      price: "99",
-      features: [
-        "Nieograniczona liczba klientów",
-        "Zaawansowane narzędzia analityczne",
-        "Własny branding",
-        "Priorytetowe wsparcie",
-      ],
-    },
-  },
-  business: {
-    free: {
-      title: "Darmowy",
-      description: "Poznaj możliwości",
-      price: "0",
-      features: [
-        "Podstawowe zarządzanie klubem",
-        "Do 50 członków",
-        "Podstawowe raporty",
-        "Standardowe wsparcie",
-      ],
-    },
-    pro: {
-      title: "Pro",
-      description: "Pełna kontrola i automatyzacja",
-      price: "299",
-      features: [
-        "Nieograniczona liczba członków",
-        "Pełna automatyzacja",
-        "Zaawansowana analityka biznesowa",
-        "Dedykowane wsparcie 24/7",
-      ],
-    },
-  },
+type UserType = "client" | "professional" | "business";
+const PRICES = {
+  client: { free: "0", pro: "49" },
+  professional: { free: "0", pro: "99" },
+  business: { free: "0", pro: "299" },
 };
 
 export default function PricingSection() {
-  const [activePlanType, setActivePlanType] =
-    useState<keyof PlanTypes>("client");
-  const activePlans = planTypes[activePlanType];
+  const t = useTranslations("PricingSection");
+  const [activePlanType, setActivePlanType] = useState<UserType>("client");
 
   return (
     <section
@@ -107,15 +22,15 @@ export default function PricingSection() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <span className="inline-block px-4 py-1 mb-4 text-sm font-semibold text-emerald-700 bg-emerald-50 rounded-full">
-            Cennik
+            {t("badge")}
           </span>
           <h2 className="text-4xl font-bold mb-4">
             <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-              Wybierz plan dla siebie
+              {t("title")}
             </span>
           </h2>
           <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
-            Dopasowane rozwiązania dla każdego uczestnika ekosystemu fitness
+            {t("description")}
           </p>
 
           <div className="inline-flex rounded-xl border border-slate-200 bg-white/80 backdrop-blur-sm p-2 mb-12 shadow-sm">
@@ -128,7 +43,7 @@ export default function PricingSection() {
                   : "text-slate-600 hover:text-slate-800"
               }`}
             >
-              Dla klientów
+              {t("tabs.forClients")}
             </button>
             <button
               type="button"
@@ -139,7 +54,7 @@ export default function PricingSection() {
                   : "text-slate-600 hover:text-slate-800"
               }`}
             >
-              Dla profesjonalistów
+              {t("tabs.forProfessionals")}
             </button>
             <button
               type="button"
@@ -150,7 +65,7 @@ export default function PricingSection() {
                   : "text-slate-600 hover:text-slate-800"
               }`}
             >
-              Dla firm
+              {t("tabs.forBusiness")}
             </button>
           </div>
         </div>
@@ -159,19 +74,22 @@ export default function PricingSection() {
           <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-8 border border-slate-200 flex flex-col min-h-[600px]">
             <div className="mb-6">
               <h3 className="text-2xl font-bold text-slate-800 mb-2">
-                {activePlans.free.title}
+                {t(`plans.free.${activePlanType}.title`)}
               </h3>
-              <p className="text-slate-600">{activePlans.free.description}</p>
+              <p className="text-slate-600">
+                {t(`plans.free.${activePlanType}.description`)}
+              </p>
             </div>
             <div className="mb-6">
               <span className="text-4xl font-bold text-slate-800">
-                {activePlans.free.price} zł
+                {PRICES[activePlanType].free} zł
               </span>
-              <span className="text-slate-500">/miesiąc</span>
+              <span className="text-slate-500">{t("perMonth")}</span>
             </div>
             <ul className="space-y-4 mb-8 flex-grow">
-              {activePlans.free.features.map(
-                (feature: string, index: number) => (
+              {t
+                .raw(`plans.free.${activePlanType}.features`)
+                .map((feature: string, index: number) => (
                   <li key={index} className="flex items-start text-slate-600">
                     <svg
                       className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0 mt-0.5"
@@ -186,36 +104,38 @@ export default function PricingSection() {
                     </svg>
                     {feature}
                   </li>
-                )
-              )}
+                ))}
             </ul>
             <button
               type="button"
               className="w-full py-3 cursor-pointer px-4 rounded-xl border-2 border-slate-300 text-slate-600 hover:border-emerald-500 hover:text-emerald-500 font-medium transition-colors mt-auto"
             >
-              Rozpocznij za darmo
+              {t("startFree")}
             </button>
           </div>
 
           <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-lg hover:shadow-xl transition-shadow p-8 border border-slate-700 flex flex-col min-h-[600px] relative overflow-hidden">
             <div className="absolute top-5 -right-10 w-36 bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-1 text-center rotate-45 text-xs font-medium">
-              Popularne
+              {t("popular")}
             </div>
             <div className="mb-6">
               <h3 className="text-2xl font-bold text-white mb-2">
-                {activePlans.pro.title}
+                {t(`plans.pro.${activePlanType}.title`)}
               </h3>
-              <p className="text-slate-300">{activePlans.pro.description}</p>
+              <p className="text-slate-300">
+                {t(`plans.pro.${activePlanType}.description`)}
+              </p>
             </div>
             <div className="mb-6">
               <span className="text-4xl font-bold text-white">
-                {activePlans.pro.price} zł
+                {PRICES[activePlanType].pro} zł
               </span>
-              <span className="text-slate-300">/miesiąc</span>
+              <span className="text-slate-300">{t("perMonth")}</span>
             </div>
             <ul className="space-y-4 mb-8 flex-grow">
-              {activePlans.pro.features.map(
-                (feature: string, index: number) => (
+              {t
+                .raw(`plans.pro.${activePlanType}.features`)
+                .map((feature: string, index: number) => (
                   <li key={index} className="flex items-start text-slate-300">
                     <svg
                       className="w-5 h-5 text-emerald-400 mr-3 flex-shrink-0 mt-0.5"
@@ -230,59 +150,14 @@ export default function PricingSection() {
                     </svg>
                     {feature}
                   </li>
-                )
-              )}
+                ))}
             </ul>
             <button
               type="button"
               className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium hover:from-emerald-600 hover:to-teal-600 transition-all mt-auto cursor-pointer"
             >
-              Wybierz plan Pro
+              {t("choosePro")}
             </button>
-          </div>
-
-          <div className="hidden">
-            <div className="bg-white rounded-2xl shadow-sm p-8 border border-slate-200">
-              <h3 className="text-2xl font-bold text-slate-800 mb-2">
-                Darmowy
-              </h3>
-              <ul className="space-y-4">
-                <li>Podstawowe narzędzia zarządzania klientami</li>
-                <li>Ograniczona liczba klientów</li>
-                <li>Podstawowe szablony planów</li>
-              </ul>
-            </div>
-
-            <div className="bg-slate-900 rounded-2xl shadow-lg p-8 text-white">
-              <h3 className="text-2xl font-bold mb-2">
-                Pro dla profesjonalistów
-              </h3>
-              <ul className="space-y-4">
-                <li>Nieograniczona liczba klientów</li>
-                <li>Zaawansowane narzędzia analityczne</li>
-                <li>Własny branding</li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-sm p-8 border border-slate-200">
-              <h3 className="text-2xl font-bold text-slate-800 mb-2">
-                Darmowy dla firm
-              </h3>
-              <ul className="space-y-4">
-                <li>Podstawowe zarządzanie klubem</li>
-                <li>Do 50 członków</li>
-                <li>Podstawowe raporty</li>
-              </ul>
-            </div>
-
-            <div className="bg-slate-900 rounded-2xl shadow-lg p-8 text-white">
-              <h3 className="text-2xl font-bold mb-2">Pro dla firm</h3>
-              <ul className="space-y-4">
-                <li>Nieograniczona liczba członków</li>
-                <li>Pełna automatyzacja</li>
-                <li>Zaawansowana analityka biznesowa</li>
-              </ul>
-            </div>
           </div>
         </div>
       </div>
