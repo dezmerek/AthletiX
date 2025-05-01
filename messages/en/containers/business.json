@@ -1,0 +1,35 @@
+{
+  "badge": "For Business",
+  "title": {
+    "digital": "Digital transformation",
+    "business": " of your business"
+  },
+  "description": "Comprehensive solution for fitness business management",
+  "businessManagement": {
+    "title": "Business Management",
+    "features": {
+      "schedules": "Class schedules",
+      "memberships": "Membership management",
+      "payments": "Payment system",
+      "staff": "Staff management"
+    }
+  },
+  "businessAnalytics": {
+    "title": "Business Analytics",
+    "features": {
+      "financial": "Financial reports",
+      "membership": "Membership statistics",
+      "trends": "Trend analysis",
+      "forecasts": "Business forecasts"
+    }
+  },
+  "teamIntegration": {
+    "title": "Team Integration",
+    "features": {
+      "portal": "Employee portal",
+      "communication": "Internal communication",
+      "tasks": "Task management",
+      "schedules": "Work schedules"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "badge": "Dla profesjonalistów",
+  "title": "Narzędzia dla profesjonalistów",
+  "description": "Zaawansowane funkcje dla trenerów i dietetyków",
+  "trainer": {
+    "title": "Narzędzia trenera",
+    "clientManagement": {
+      "title": "Zarządzanie klientami",
+      "profiles": "Profile klientów",
+      "trainingPlans": "Plany treningowe",
+      "progressMonitoring": "Monitorowanie postępów"
+    },
+    "trainingTools": {
+      "title": "Narzędzia treningowe",
+      "exerciseLibrary": "Biblioteka ćwiczeń",
+      "calculators": "Kalkulatory treningowe",
+      "techniqueAnalysis": "Analiza techniki"
+    }
+  },
+  "dietitian": {
+    "title": "Narzędzia dietetyka",
+    "dietManagement": {
+      "title": "Zarządzanie dietą",
+      "mealPlans": "Plany żywieniowe",
+      "calculators": "Kalkulatory dietetyczne",
+      "foodDatabase": "Baza produktów"
+    },
+    "progressMonitoring": {
+      "title": "Monitorowanie postępów",
+      "dietAnalysis": "Analiza diety",
+      "foodDiaries": "Dzienniki żywieniowe",
+      "reports": "Raporty"
+    }
+  },
+  "additionalFeatures": {
+    "analytics": {
+      "title": "Analityka",
+      "description": "Zaawansowane narzędzia analityczne do śledzenia postępów"
+    },
+    "communication": {
+      "title": "Komunikacja",
+      "description": "Efektywna komunikacja z klientami"
+    },
+    "businessGrowth": {
+      "title": "Rozwój biznesu",
+      "description": "Narzędzia do rozwoju praktyki zawodowej"
+    }
+  }
+}

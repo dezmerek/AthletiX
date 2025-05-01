@@ -1,0 +1,22 @@
+{
+  "badge": "Komunikacja",
+  "title": "Wszystko w jednym miejscu",
+  "features": {
+    "chat": {
+      "title": "Chat",
+      "description": "Bezpośrednia komunikacja między trenerami a klientami"
+    },
+    "calendar": {
+      "title": "Kalendarz",
+      "description": "Planowanie zajęć i terminów konsultacji"
+    },
+    "notes": {
+      "title": "Notatki",
+      "description": "Notatki i komentarze do postępów klientów"
+    },
+    "reports": {
+      "title": "Raporty",
+      "description": "Regularne podsumowania postępów"
+    }
+  }
+}

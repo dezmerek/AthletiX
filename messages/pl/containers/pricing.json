@@ -1,0 +1,79 @@
+{
+  "badge": "Cennik",
+  "title": "Wybierz plan dla siebie",
+  "description": "Dopasowane rozwiązania dla każdego uczestnika ekosystemu fitness",
+  "tabs": {
+    "forClients": "Dla klientów",
+    "forProfessionals": "Dla profesjonalistów",
+    "forBusiness": "Dla firm"
+  },
+  "plans": {
+    "free": {
+      "client": {
+        "title": "Darmowy",
+        "description": "Podstawowe funkcje dla początkujących",
+        "features": [
+          "Podstawowy dziennik treningowy",
+          "Podstawowe statystyki",
+          "Dostęp do społeczności"
+        ]
+      },
+      "professional": {
+        "title": "Darmowy",
+        "description": "Rozpocznij swoją praktykę",
+        "features": [
+          "Podstawowe narzędzia zarządzania klientami",
+          "Ograniczona liczba klientów (do 5)",
+          "Podstawowe szablony planów",
+          "Podstawowa komunikacja"
+        ]
+      },
+      "business": {
+        "title": "Darmowy",
+        "description": "Poznaj możliwości",
+        "features": [
+          "Podstawowe zarządzanie klubem",
+          "Do 50 członków",
+          "Podstawowe raporty",
+          "Standardowe wsparcie"
+        ]
+      }
+    },
+    "pro": {
+      "client": {
+        "title": "Pro",
+        "description": "Zaawansowane funkcje i wsparcie",
+        "features": [
+          "Wszystko z planu Darmowego",
+          "Zaawansowane analizy postępów",
+          "Spersonalizowane plany treningowe",
+          "Priorytetowe wsparcie"
+        ]
+      },
+      "professional": {
+        "title": "Pro",
+        "description": "Rozwijaj swoją praktykę",
+        "features": [
+          "Nieograniczona liczba klientów",
+          "Zaawansowane narzędzia analityczne",
+          "Własny branding",
+          "Priorytetowe wsparcie"
+        ]
+      },
+      "business": {
+        "title": "Pro",
+        "description": "Pełna kontrola i automatyzacja",
+        "features": [
+          "Nieograniczona liczba członków",
+          "Pełna automatyzacja",
+          "Zaawansowana analityka biznesowa",
+          "Dedykowane wsparcie 24/7"
+        ]
+      }
+    }
+  },
+  "popular": "Popularne",
+  "perMonth": "/miesiąc",
+  "startFree": "Rozpocznij za darmo",
+  "choosePro": "Wybierz plan Pro"
+}

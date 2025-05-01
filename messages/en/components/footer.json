@@ -1,0 +1,28 @@
+{
+  "description": "A comprehensive fitness platform connecting clients, trainers, and sports clubs. Train, manage, and grow with us.",
+  "sections": {
+    "platform": {
+      "title": "Platform",
+      "forClients": "For Clients",
+      "forProfessionals": "For Professionals",
+      "forBusiness": "For Business",
+      "demo": "Demo",
+      "pricing": "Pricing"
+    },
+    "resources": {
+      "title": "Resources",
+      "documentation": "Documentation",
+      "helpCenter": "Help Center",
+      "support": "Support"
+    },
+    "contact": {
+      "title": "Contact",
+      "writeToUs": "Write to Us"
+    }
+  },
+  "legal": {
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "copyright": "© 2025 AthletiX. All rights reserved."
+  }
+}

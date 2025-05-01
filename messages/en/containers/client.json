@@ -1,0 +1,33 @@
+{
+  "badge": "For Clients",
+  "title": {
+    "achieve": "Achieve your goals",
+    "with": "with us"
+  },
+  "trainingPlan": {
+    "title": "Training Plan",
+    "personalizedPlans": "Personalized training plans",
+    "exerciseLibrary": "Exercise library",
+    "videoInstructions": "Video instructions"
+  },
+  "progressTracking": {
+    "title": "Progress Tracking",
+    "resultTracking": "Result tracking",
+    "trainingStats": "Training statistics",
+    "progressAnalysis": "Progress analysis"
+  },
+  "dietPlan": {
+    "title": "Diet Plan",
+    "mealPlans": "Meal plans",
+    "calorieTracking": "Calorie tracking",
+    "recipesAndTips": "Recipes and tips"
+  },
+  "allInOne": {
+    "title": "Everything in One App",
+    "trainingCalendar": "Training calendar",
+    "foodDiary": "Food diary",
+    "measurements": "Measurements",
+    "community": "Community"
+  },
+  "cta": "Get Started"
+}

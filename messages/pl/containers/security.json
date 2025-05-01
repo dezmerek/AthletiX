@@ -1,0 +1,15 @@
+{
+  "title": "Bezpieczeństwo i prywatność",
+  "dataProtection": {
+    "title": "Ochrona danych",
+    "description": "Twoje dane są chronione zaawansowaną technologią szyfrowania"
+  },
+  "dataAnalysis": {
+    "title": "Analiza danych",
+    "description": "Zaawansowana analityka z zachowaniem prywatności"
+  },
+  "backup": {
+    "title": "Regularne kopie zapasowe",
+    "description": "Twoje dane są regularnie archiwizowane i zawsze dostępne"
+  }
+}

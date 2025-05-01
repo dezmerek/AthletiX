@@ -1,0 +1,22 @@
+{
+  "badge": "Communication",
+  "title": "Everything in One Place",
+  "features": {
+    "chat": {
+      "title": "Chat",
+      "description": "Direct communication between trainers and clients"
+    },
+    "calendar": {
+      "title": "Calendar",
+      "description": "Planning sessions and consultation times"
+    },
+    "notes": {
+      "title": "Notes",
+      "description": "Notes and comments on client progress"
+    },
+    "reports": {
+      "title": "Reports",
+      "description": "Regular progress summaries"
+    }
+  }
+}

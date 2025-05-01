@@ -1,0 +1,18 @@
+{
+  "welcome": "Witaj w AthletiX",
+  "digitalTransformation": "Cyfrowa transformacja",
+  "fitnessIndustry": "branży fitness",
+  "description": "Kompleksowa platforma łącząca klientów, trenerów, dietetyków i właścicieli firm fitness w jednym miejscu.",
+  "forClients": {
+    "title": "Dla klientów",
+    "description": "Treningi, dieta i monitoring postępów"
+  },
+  "forProfessionals": {
+    "title": "Dla profesjonalistów",
+    "description": "Narzędzia dla trenerów i dietetyków"
+  },
+  "forBusiness": {
+    "title": "Dla firm",
+    "description": "Zarządzanie i analityka biznesowa"
+  }
+}

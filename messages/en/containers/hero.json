@@ -1,0 +1,18 @@
+{
+  "welcome": "Welcome to AthletiX",
+  "digitalTransformation": "Digital transformation",
+  "fitnessIndustry": "of fitness industry",
+  "description": "A comprehensive platform connecting clients, trainers, dietitians and fitness business owners in one place.",
+  "forClients": {
+    "title": "For Clients",
+    "description": "Training, diet and progress monitoring"
+  },
+  "forProfessionals": {
+    "title": "For Professionals",
+    "description": "Tools for trainers and dietitians"
+  },
+  "forBusiness": {
+    "title": "For Business",
+    "description": "Management and business analytics"
+  }
+}

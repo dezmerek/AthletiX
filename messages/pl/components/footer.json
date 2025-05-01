@@ -1,0 +1,28 @@
+{
+  "description": "Kompleksowa platforma fitness łącząca klientów, trenerów i kluby sportowe. Trenuj, zarządzaj i rozwijaj się z nami.",
+  "sections": {
+    "platform": {
+      "title": "Platforma",
+      "forClients": "Dla klientów",
+      "forProfessionals": "Dla profesjonalistów",
+      "forBusiness": "Dla firm",
+      "demo": "Demo",
+      "pricing": "Cennik"
+    },
+    "resources": {
+      "title": "Zasoby",
+      "documentation": "Dokumentacja",
+      "helpCenter": "Centrum pomocy",
+      "support": "Wsparcie"
+    },
+    "contact": {
+      "title": "Kontakt",
+      "writeToUs": "Napisz do nas"
+    }
+  },
+  "legal": {
+    "privacyPolicy": "Polityka prywatności",
+    "terms": "Regulamin",
+    "copyright": "© 2025 AthletiX. Wszystkie prawa zastrzeżone."
+  }
+}

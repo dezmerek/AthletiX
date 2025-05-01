@@ -1,0 +1,15 @@
+{
+  "title": "Security and Privacy",
+  "dataProtection": {
+    "title": "Data Protection",
+    "description": "Your data is protected with advanced encryption technology"
+  },
+  "dataAnalysis": {
+    "title": "Data Analysis",
+    "description": "Advanced analytics with privacy in mind"
+  },
+  "backup": {
+    "title": "Regular Backups",
+    "description": "Your data is regularly backed up and always available"
+  }
+}

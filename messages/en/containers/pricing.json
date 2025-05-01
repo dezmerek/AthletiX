@@ -1,0 +1,79 @@
+{
+  "badge": "Pricing",
+  "title": "Choose your plan",
+  "description": "Tailored solutions for every fitness ecosystem participant",
+  "tabs": {
+    "forClients": "For Clients",
+    "forProfessionals": "For Professionals",
+    "forBusiness": "For Business"
+  },
+  "plans": {
+    "free": {
+      "client": {
+        "title": "Free",
+        "description": "Basic features for beginners",
+        "features": [
+          "Basic training diary",
+          "Basic statistics",
+          "Community access"
+        ]
+      },
+      "professional": {
+        "title": "Free",
+        "description": "Start your practice",
+        "features": [
+          "Basic client management tools",
+          "Limited number of clients (up to 5)",
+          "Basic plan templates",
+          "Basic communication"
+        ]
+      },
+      "business": {
+        "title": "Free",
+        "description": "Discover the possibilities",
+        "features": [
+          "Basic gym management",
+          "Up to 50 members",
+          "Basic reports",
+          "Standard support"
+        ]
+      }
+    },
+    "pro": {
+      "client": {
+        "title": "Pro",
+        "description": "Advanced features and support",
+        "features": [
+          "Everything from Free plan",
+          "Advanced progress analytics",
+          "Personalized training plans",
+          "Priority support"
+        ]
+      },
+      "professional": {
+        "title": "Pro",
+        "description": "Grow your practice",
+        "features": [
+          "Unlimited clients",
+          "Advanced analytics tools",
+          "Custom branding",
+          "Priority support"
+        ]
+      },
+      "business": {
+        "title": "Pro",
+        "description": "Full control and automation",
+        "features": [
+          "Unlimited members",
+          "Full automation",
+          "Advanced business analytics",
+          "Dedicated 24/7 support"
+        ]
+      }
+    }
+  },
+  "popular": "Popular",
+  "perMonth": "/month",
+  "startFree": "Start for free",
+  "choosePro": "Choose Pro plan"
+}

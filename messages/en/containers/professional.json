@@ -1,0 +1,49 @@
+{
+  "badge": "For professionals",
+  "title": "Professional Tools",
+  "description": "Advanced features for trainers and dietitians",
+  "trainer": {
+    "title": "Trainer Tools",
+    "clientManagement": {
+      "title": "Client Management",
+      "profiles": "Client profiles",
+      "trainingPlans": "Training plans",
+      "progressMonitoring": "Progress monitoring"
+    },
+    "trainingTools": {
+      "title": "Training Tools",
+      "exerciseLibrary": "Exercise library",
+      "calculators": "Training calculators",
+      "techniqueAnalysis": "Technique analysis"
+    }
+  },
+  "dietitian": {
+    "title": "Dietitian Tools",
+    "dietManagement": {
+      "title": "Diet Management",
+      "mealPlans": "Meal plans",
+      "calculators": "Diet calculators",
+      "foodDatabase": "Food database"
+    },
+    "progressMonitoring": {
+      "title": "Progress Monitoring",
+      "dietAnalysis": "Diet analysis",
+      "foodDiaries": "Food diaries",
+      "reports": "Reports"
+    }
+  },
+  "additionalFeatures": {
+    "analytics": {
+      "title": "Analytics",
+      "description": "Advanced analytics tools for progress tracking"
+    },
+    "communication": {
+      "title": "Communication",
+      "description": "Efficient client communication"
+    },
+    "businessGrowth": {
+      "title": "Business Growth",
+      "description": "Tools to grow your professional practice"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "badge": "Dla firm",
+  "title": {
+    "digital": "Cyfrowa transformacja",
+    "business": " Twojego biznesu"
+  },
+  "description": "Kompleksowe rozwiązanie do zarządzania firmą fitness",
+  "businessManagement": {
+    "title": "Zarządzanie biznesem",
+    "features": {
+      "schedules": "Harmonogramy zajęć",
+      "memberships": "Zarządzanie członkostwami",
+      "payments": "System płatności",
+      "staff": "Zarządzanie personelem"
+    }
+  },
+  "businessAnalytics": {
+    "title": "Analityka biznesowa",
+    "features": {
+      "financial": "Raporty finansowe",
+      "membership": "Statystyki członkostwa",
+      "trends": "Analiza trendów",
+      "forecasts": "Prognozy biznesowe"
+    }
+  },
+  "teamIntegration": {
+    "title": "Integracja zespołu",
+    "features": {
+      "portal": "Portal pracowniczy",
+      "communication": "Komunikacja wewnętrzna",
+      "tasks": "Zarządzanie zadaniami",
+      "schedules": "Harmonogramy pracy"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "badge": "Dla klientów",
+  "title": {
+    "achieve": "Osiągaj swoje cele",
+    "with": "razem z nami"
+  },
+  "trainingPlan": {
+    "title": "Plan treningowy",
+    "personalizedPlans": "Spersonalizowane plany treningowe",
+    "exerciseLibrary": "Biblioteka ćwiczeń",
+    "videoInstructions": "Instrukcje wideo"
+  },
+  "progressTracking": {
+    "title": "Śledzenie postępów",
+    "resultTracking": "Monitorowanie wyników",
+    "trainingStats": "Statystyki treningowe",
+    "progressAnalysis": "Analiza postępów"
+  },
+  "dietPlan": {
+    "title": "Plan dietetyczny",
+    "mealPlans": "Plany posiłków",
+    "calorieTracking": "Liczenie kalorii",
+    "recipesAndTips": "Przepisy i wskazówki"
+  },
+  "allInOne": {
+    "title": "Wszystko w jednej aplikacji",
+    "trainingCalendar": "Kalendarz treningowy",
+    "foodDiary": "Dziennik żywieniowy",
+    "measurements": "Pomiary",
+    "community": "Społeczność"
+  },
+  "cta": "Rozpocznij"
+}
