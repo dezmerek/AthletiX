@@ -1,6 +1,19 @@
 "use client";
 
 export default function Footer() {
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const navHeight = 80;
+      const elementPosition =
+        element.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({
+        top: elementPosition - navHeight,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <footer className="bg-slate-800 text-white py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -19,24 +32,24 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-slate-300">
               <li>
                 <button
-                  type="button"
-                  className="hover:text-white transition-colors"
+                  onClick={() => scrollToSection("dla-klientow")}
+                  className="hover:text-white transition-colors cursor-pointer"
                 >
                   Dla klientów
                 </button>
               </li>
               <li>
                 <button
-                  type="button"
-                  className="hover:text-white transition-colors"
+                  onClick={() => scrollToSection("dla-profesjonalistow")}
+                  className="hover:text-white transition-colors cursor-pointer"
                 >
                   Dla profesjonalistów
                 </button>
               </li>
               <li>
                 <button
-                  type="button"
-                  className="hover:text-white transition-colors"
+                  onClick={() => scrollToSection("dla-firm")}
+                  className="hover:text-white transition-colors cursor-pointer"
                 >
                   Dla firm
                 </button>
@@ -47,17 +60,26 @@ export default function Footer() {
             <h4 className="text-base font-semibold mb-3">Zasoby</h4>
             <ul className="space-y-2 text-sm text-slate-300">
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
                   Dokumentacja
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
                   Centrum pomocy
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
                   Wsparcie
                 </a>
               </li>
@@ -67,41 +89,46 @@ export default function Footer() {
             <h4 className="text-base font-semibold mb-3">Kontakt</h4>
             <ul className="space-y-2 text-sm text-slate-300">
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
                   Napisz do nas
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
                   Demo
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
                   Cennik
                 </a>
               </li>
             </ul>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t border-slate-700 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-xs text-slate-400">
-            {" "}
-            2025 AthletiX. Wszystkie prawa zastrzeżone.
-          </p>
-          <div className="flex space-x-4 mt-4 sm:mt-0">
-            <a
-              href="#"
-              className="text-xs text-slate-400 hover:text-white transition-colors"
-            >
-              Polityka prywatności
-            </a>
-            <a
-              href="#"
-              className="text-xs text-slate-400 hover:text-white transition-colors"
-            >
-              Regulamin
-            </a>
+        <div className="mt-8 pt-8 border-t border-slate-700">
+          <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+            <div className="flex items-center space-x-4">
+              <button className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer">
+                Polityka prywatności
+              </button>
+              <span className="text-slate-600">•</span>
+              <button className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer">
+                Regulamin
+              </button>
+            </div>
+            <p className="text-xs text-slate-400">
+              © 2025 AthletiX. Wszystkie prawa zastrzeżone.
+            </p>
           </div>
         </div>
       </div>
