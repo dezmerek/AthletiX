@@ -1,14 +1,34 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function Navbar() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      const navHeight = 80; // Height of the fixed navigation
+      const navHeight = 68; // Height of the fixed navigation
       const elementPosition =
         element.getBoundingClientRect().top + window.pageYOffset;
       window.scrollTo({
@@ -85,7 +105,7 @@ export default function Navbar() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 2 0 002 2z"
                       />
                     </svg>
                     <span>Dla profesjonalistów</span>
@@ -228,6 +248,7 @@ export default function Navbar() {
               type="button"
               className="md:hidden p-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              ref={buttonRef}
             >
               <svg
                 className="w-5 h-5 text-slate-800"
@@ -247,7 +268,8 @@ export default function Navbar() {
         </div>
         {/* Mobile/Tablet menu */}
         <div
-          className={`md:hidden transition-all duration-300 ease-in-out bg-white border-t border-slate-100 ${
+          ref={menuRef}
+          className={`md:hidden transition-all duration-500 ease-in-out bg-white border-t border-slate-100 ${
             isMenuOpen
               ? "max-h-[40rem] opacity-100"
               : "max-h-0 opacity-0 overflow-hidden"
@@ -325,7 +347,7 @@ export default function Navbar() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 2 0 002 2z"
                     />
                   </svg>
                   <span>Dla profesjonalistów</span>
@@ -350,31 +372,10 @@ export default function Navbar() {
                   <span>Dla firm</span>
                 </button>
               </div>
-            </div>
-
-            <button
-              onClick={() => scrollToSection("cennik")}
-              className="flex items-center space-x-3 text-slate-700 hover:text-emerald-500 transition-colors text-left text-base font-medium cursor-pointer"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+              <button
+                onClick={() => scrollToSection("cennik")}
+                className="flex items-center space-x-3 text-slate-700 hover:text-emerald-500 transition-colors text-left text-base font-medium cursor-pointer"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>Cennik</span>
-            </button>
-
-            {/* Language Selector */}
-            <div className="space-y-4 pt-4 border-t border-slate-100">
-              <span className="flex items-center space-x-3 text-slate-400 uppercase tracking-wider text-xs font-medium">
                 <svg
                   className="w-5 h-5"
                   fill="none"
@@ -385,61 +386,81 @@ export default function Navbar() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <span>Język</span>
-              </span>
-              <div className="flex flex-col space-y-4 pl-8">
-                <button className="flex items-center justify-between text-slate-600 hover:text-emerald-500 transition-all w-full cursor-pointer">
-                  <div className="flex items-center space-x-3">
-                    <span>English</span>
-                  </div>
-                  <span className="text-xs text-slate-400">EN</span>
+                <span>Cennik</span>
+              </button>
+
+              {/* Language Selector */}
+              <div className="space-y-4 pt-4 border-t border-slate-100">
+                <span className="flex items-center space-x-3 text-slate-400 uppercase tracking-wider text-xs font-medium">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
+                    />
+                  </svg>
+                  <span>Język</span>
+                </span>
+                <div className="flex flex-col space-y-4 pl-8">
+                  <button className="flex items-center justify-between text-slate-600 hover:text-emerald-500 transition-all w-full cursor-pointer">
+                    <div className="flex items-center space-x-3">
+                      <span>English</span>
+                    </div>
+                    <span className="text-xs text-slate-400">EN</span>
+                  </button>
+                  <button className="flex items-center justify-between text-slate-600 hover:text-emerald-500 transition-all w-full cursor-pointer">
+                    <div className="flex items-center space-x-3">
+                      <span>Polski</span>
+                    </div>
+                    <span className="text-xs text-slate-400">PL</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Auth buttons */}
+              <div className="flex flex-col space-y-4 pt-4 border-t border-slate-100">
+                <button className="flex items-center space-x-3 text-slate-700 hover:text-emerald-500 transition-colors text-left text-base font-medium cursor-pointer">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                    />
+                  </svg>
+                  <span>Zaloguj się</span>
                 </button>
-                <button className="flex items-center justify-between text-slate-600 hover:text-emerald-500 transition-all w-full cursor-pointer">
-                  <div className="flex items-center space-x-3">
-                    <span>Polski</span>
-                  </div>
-                  <span className="text-xs text-slate-400">PL</span>
+                <button className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-base font-medium hover:from-emerald-600 hover:to-teal-600 transition-all whitespace-nowrap cursor-pointer">
+                  <span>Rozpocznij</span>
+                  <svg
+                    className="w-5 h-5 ml-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
                 </button>
               </div>
-            </div>
-
-            {/* Auth buttons */}
-            <div className="flex flex-col space-y-4 pt-4 border-t border-slate-100">
-              <button className="flex items-center space-x-3 text-slate-700 hover:text-emerald-500 transition-colors text-left text-base font-medium cursor-pointer">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
-                  />
-                </svg>
-                <span>Zaloguj się</span>
-              </button>
-              <button className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-base font-medium hover:from-emerald-600 hover:to-teal-600 transition-all whitespace-nowrap cursor-pointer">
-                <span>Rozpocznij</span>
-                <svg
-                  className="w-5 h-5 ml-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  />
-                </svg>
-              </button>
             </div>
           </div>
         </div>
