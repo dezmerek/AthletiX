@@ -3,7 +3,7 @@
 export default function ProfessionalSection() {
   return (
     <section
-      id="dla-profesjonalistow"
+      id="for-professionals"
       className="py-20 bg-gradient-to-br from-cyan-500 to-blue-600"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

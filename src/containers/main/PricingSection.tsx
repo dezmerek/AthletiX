@@ -100,7 +100,7 @@ export default function PricingSection() {
 
   return (
     <section
-      id="cennik"
+      id="pricing"
       className="relative py-24 overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-teal-50"
     >
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 via-white to-teal-50 opacity-70"></div>

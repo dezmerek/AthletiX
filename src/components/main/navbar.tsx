@@ -73,7 +73,7 @@ export default function Navbar() {
                 <div className="absolute left-0 mt-2 w-56 rounded-xl bg-white/95 backdrop-blur-sm shadow-lg py-3 hidden group-hover:block border border-slate-100">
                   <div className="absolute -top-2 left-0 right-0 h-2 bg-transparent" />
                   <button
-                    onClick={() => scrollToSection("dla-klientow")}
+                    onClick={() => scrollToSection("for-clients")}
                     className="w-full px-4 py-2.5 text-left text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
                   >
                     <svg
@@ -92,7 +92,7 @@ export default function Navbar() {
                     <span>Dla klientów</span>
                   </button>
                   <button
-                    onClick={() => scrollToSection("dla-profesjonalistow")}
+                    onClick={() => scrollToSection("for-professionals")}
                     className="w-full px-4 py-2.5 text-left text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
                   >
                     <svg
@@ -111,7 +111,7 @@ export default function Navbar() {
                     <span>Dla profesjonalistów</span>
                   </button>
                   <button
-                    onClick={() => scrollToSection("dla-firm")}
+                    onClick={() => scrollToSection("for-business")}
                     className="w-full px-4 py-2.5 text-left text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
                   >
                     <svg
@@ -132,7 +132,7 @@ export default function Navbar() {
                 </div>
               </div>
               <button
-                onClick={() => scrollToSection("cennik")}
+                onClick={() => scrollToSection("pricing")}
                 className="text-base text-slate-600 hover:text-emerald-500 transition-colors whitespace-nowrap cursor-pointer"
               >
                 Cennik
@@ -315,7 +315,7 @@ export default function Navbar() {
               </span>
               <div className="flex flex-col space-y-4 pl-8">
                 <button
-                  onClick={() => scrollToSection("dla-klientow")}
+                  onClick={() => scrollToSection("for-clients")}
                   className="flex items-center space-x-3 text-slate-600 hover:text-emerald-500 transition-colors text-left cursor-pointer"
                 >
                   <svg
@@ -334,7 +334,7 @@ export default function Navbar() {
                   <span>Dla klientów</span>
                 </button>
                 <button
-                  onClick={() => scrollToSection("dla-profesjonalistow")}
+                  onClick={() => scrollToSection("for-professionals")}
                   className="flex items-center space-x-3 text-slate-600 hover:text-emerald-500 transition-colors text-left cursor-pointer"
                 >
                   <svg
@@ -353,7 +353,7 @@ export default function Navbar() {
                   <span>Dla profesjonalistów</span>
                 </button>
                 <button
-                  onClick={() => scrollToSection("dla-firm")}
+                  onClick={() => scrollToSection("for-business")}
                   className="flex items-center space-x-3 text-slate-600 hover:text-emerald-500 transition-colors text-left cursor-pointer"
                 >
                   <svg
@@ -373,7 +373,7 @@ export default function Navbar() {
                 </button>
               </div>
               <button
-                onClick={() => scrollToSection("cennik")}
+                onClick={() => scrollToSection("pricing")}
                 className="flex items-center space-x-3 text-slate-700 hover:text-emerald-500 transition-colors text-left text-base font-medium cursor-pointer"
               >
                 <svg

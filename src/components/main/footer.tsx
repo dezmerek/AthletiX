@@ -4,7 +4,7 @@ export default function Footer() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      const navHeight = 80;
+      const navHeight = 68;
       const elementPosition =
         element.getBoundingClientRect().top + window.pageYOffset;
       window.scrollTo({
@@ -32,7 +32,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-slate-300">
               <li>
                 <button
-                  onClick={() => scrollToSection("dla-klientow")}
+                  onClick={() => scrollToSection("for-clients")}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
                   Dla klientów
@@ -40,7 +40,7 @@ export default function Footer() {
               </li>
               <li>
                 <button
-                  onClick={() => scrollToSection("dla-profesjonalistow")}
+                  onClick={() => scrollToSection("for-professionals")}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
                   Dla profesjonalistów
@@ -48,7 +48,7 @@ export default function Footer() {
               </li>
               <li>
                 <button
-                  onClick={() => scrollToSection("dla-firm")}
+                  onClick={() => scrollToSection("for-business")}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
                   Dla firm
