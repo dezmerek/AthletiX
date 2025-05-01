@@ -8,11 +8,21 @@ import { cookies, headers } from "next/headers";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "AthletiX - Asystent Treningowy",
-  description:
-    "AthletiX - zaawansowana aplikacja do planowania i śledzenia treningów. Twórz spersonalizowane plany treningowe, monitoruj postępy i osiągaj swoje cele fitness z profesjonalnym asystentem treningowym.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const cookieStore = await cookies();
+  const headersList = await headers();
+  const acceptLanguage = headersList.get("accept-language");
+  const locale =
+    cookieStore.get("NEXT_LOCALE")?.value || detectLanguage(acceptLanguage);
+
+  const metadata = (await import(`../../messages/${locale}/metadata.json`))
+    .default;
+
+  return {
+    title: metadata.title,
+    description: metadata.description,
+  };
+}
 
 function detectLanguage(acceptLanguageHeader: string | null): "pl" | "en" {
   if (!acceptLanguageHeader) return "en";
