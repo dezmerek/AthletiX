@@ -1,0 +1,17 @@
+{
+  "Navbar": {
+    "start": "Start",
+    "offer": "Offer",
+    "forClients": "For Clients",
+    "forProfessionals": "For Professionals",
+    "forBusiness": "For Business",
+    "pricing": "Pricing",
+    "signIn": "Sign In",
+    "getStarted": "Get Started",
+    "language": "Language",
+    "english": "English",
+    "polish": "Polish",
+    "en": "EN",
+    "pl": "PL"
+  }
+}
