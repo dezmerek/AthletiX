@@ -21,35 +21,39 @@ export default function HeroSection() {
           Kompleksowa platforma łącząca klientów, trenerów, dietetyków i
           właścicieli firm fitness w jednym miejscu.
         </p>
-        <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
-          <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all group">
-            <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">
+        <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-4 md:gap-6 max-w-3xl mx-auto">
+          <div className="bg-white rounded-xl p-3 sm:p-4 md:p-5 shadow-lg hover:shadow-xl transition-all group">
+            <div className="text-2xl sm:text-2xl md:text-3xl mb-2 group-hover:scale-110 transition-transform">
               👥
             </div>
-            <h3 className="text-slate-800 font-bold mb-1 text-lg">
+            <h3 className="text-slate-800 font-bold mb-1 text-sm sm:text-xs md:text-base lg:text-lg">
               Dla klientów
             </h3>
-            <p className="text-slate-600">
+            <p className="text-slate-600 text-xs sm:text-xs md:text-sm">
               Treningi, dieta i monitoring postępów
             </p>
           </div>
-          <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all group">
-            <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">
+          <div className="bg-white rounded-xl p-3 sm:p-4 md:p-5 shadow-lg hover:shadow-xl transition-all group">
+            <div className="text-2xl sm:text-2xl md:text-3xl mb-2 group-hover:scale-110 transition-transform">
               👨‍🏫
             </div>
-            <h3 className="text-slate-800 font-bold mb-1 text-lg">
+            <h3 className="text-slate-800 font-bold mb-1 text-sm sm:text-xs md:text-base lg:text-lg">
               Dla profesjonalistów
             </h3>
-            <p className="text-slate-600">
+            <p className="text-slate-600 text-xs sm:text-xs md:text-sm">
               Narzędzia dla trenerów i dietetyków
             </p>
           </div>
-          <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all group">
-            <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">
+          <div className="bg-white rounded-xl p-3 sm:p-4 md:p-5 shadow-lg hover:shadow-xl transition-all group">
+            <div className="text-2xl sm:text-2xl md:text-3xl mb-2 group-hover:scale-110 transition-transform">
               💼
             </div>
-            <h3 className="text-slate-800 font-bold mb-1 text-lg">Dla firm</h3>
-            <p className="text-slate-600">Zarządzanie i analityka biznesowa</p>
+            <h3 className="text-slate-800 font-bold mb-1 text-sm sm:text-xs md:text-base lg:text-lg">
+              Dla firm
+            </h3>
+            <p className="text-slate-600 text-xs sm:text-xs md:text-sm">
+              Zarządzanie i analityka biznesowa
+            </p>
           </div>
         </div>
       </div>
