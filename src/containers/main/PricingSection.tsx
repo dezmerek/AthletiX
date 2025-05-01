@@ -45,7 +45,7 @@ const planTypes: PlanTypes = {
   },
   professional: {
     free: {
-      title: "Darmowy dla profesjonalistów",
+      title: "Darmowy",
       description: "Rozpocznij swoją praktykę",
       price: "0",
       features: [
@@ -56,7 +56,7 @@ const planTypes: PlanTypes = {
       ],
     },
     pro: {
-      title: "Pro dla profesjonalistów",
+      title: "Pro",
       description: "Rozwijaj swoją praktykę",
       price: "99",
       features: [
@@ -69,7 +69,7 @@ const planTypes: PlanTypes = {
   },
   business: {
     free: {
-      title: "Darmowy dla firm",
+      title: "Darmowy",
       description: "Poznaj możliwości",
       price: "0",
       features: [
@@ -80,7 +80,7 @@ const planTypes: PlanTypes = {
       ],
     },
     pro: {
-      title: "Pro dla firm",
+      title: "Pro",
       description: "Pełna kontrola i automatyzacja",
       price: "299",
       features: [
@@ -118,12 +118,11 @@ export default function PricingSection() {
             Dopasowane rozwiązania dla każdego uczestnika ekosystemu fitness
           </p>
 
-          {/* Plan Type Selector */}
           <div className="inline-flex rounded-xl border border-slate-200 bg-white/80 backdrop-blur-sm p-2 mb-12 shadow-sm">
             <button
               type="button"
               onClick={() => setActivePlanType("client")}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-md cursor-pointer text-sm font-medium transition-colors ${
                 activePlanType === "client"
                   ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white"
                   : "text-slate-600 hover:text-slate-800"
@@ -134,7 +133,7 @@ export default function PricingSection() {
             <button
               type="button"
               onClick={() => setActivePlanType("professional")}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`px-4 py-2 cursor-pointer rounded-md text-sm font-medium transition-colors ${
                 activePlanType === "professional"
                   ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white"
                   : "text-slate-600 hover:text-slate-800"
@@ -145,7 +144,7 @@ export default function PricingSection() {
             <button
               type="button"
               onClick={() => setActivePlanType("business")}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-md cursor-pointer text-sm font-medium transition-colors ${
                 activePlanType === "business"
                   ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white"
                   : "text-slate-600 hover:text-slate-800"
@@ -156,9 +155,7 @@ export default function PricingSection() {
           </div>
         </div>
 
-        {/* Plans Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {/* Free Plan */}
           <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-8 border border-slate-200 flex flex-col min-h-[600px]">
             <div className="mb-6">
               <h3 className="text-2xl font-bold text-slate-800 mb-2">
@@ -175,9 +172,9 @@ export default function PricingSection() {
             <ul className="space-y-4 mb-8 flex-grow">
               {activePlans.free.features.map(
                 (feature: string, index: number) => (
-                  <li key={index} className="flex items-center text-slate-600">
+                  <li key={index} className="flex items-start text-slate-600">
                     <svg
-                      className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0"
+                      className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0 mt-0.5"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -194,13 +191,12 @@ export default function PricingSection() {
             </ul>
             <button
               type="button"
-              className="w-full py-3 px-4 rounded-xl border-2 border-slate-300 text-slate-600 hover:border-emerald-500 hover:text-emerald-500 font-medium transition-colors mt-auto"
+              className="w-full py-3 cursor-pointer px-4 rounded-xl border-2 border-slate-300 text-slate-600 hover:border-emerald-500 hover:text-emerald-500 font-medium transition-colors mt-auto"
             >
               Rozpocznij za darmo
             </button>
           </div>
 
-          {/* Pro Plan */}
           <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-lg hover:shadow-xl transition-shadow p-8 border border-slate-700 flex flex-col min-h-[600px] relative overflow-hidden">
             <div className="absolute top-5 -right-10 w-36 bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-1 text-center rotate-45 text-xs font-medium">
               Popularne
@@ -220,9 +216,9 @@ export default function PricingSection() {
             <ul className="space-y-4 mb-8 flex-grow">
               {activePlans.pro.features.map(
                 (feature: string, index: number) => (
-                  <li key={index} className="flex items-center text-slate-300">
+                  <li key={index} className="flex items-start text-slate-300">
                     <svg
-                      className="w-5 h-5 text-emerald-400 mr-3 flex-shrink-0"
+                      className="w-5 h-5 text-emerald-400 mr-3 flex-shrink-0 mt-0.5"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -239,18 +235,16 @@ export default function PricingSection() {
             </ul>
             <button
               type="button"
-              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium hover:from-emerald-600 hover:to-teal-600 transition-all mt-auto"
+              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium hover:from-emerald-600 hover:to-teal-600 transition-all mt-auto cursor-pointer"
             >
               Wybierz plan Pro
             </button>
           </div>
 
-          {/* Hidden Professional Plans */}
           <div className="hidden">
-            {/* Free Professional Plan */}
             <div className="bg-white rounded-2xl shadow-sm p-8 border border-slate-200">
               <h3 className="text-2xl font-bold text-slate-800 mb-2">
-                Darmowy dla profesjonalistów
+                Darmowy
               </h3>
               <ul className="space-y-4">
                 <li>Podstawowe narzędzia zarządzania klientami</li>
@@ -259,7 +253,6 @@ export default function PricingSection() {
               </ul>
             </div>
 
-            {/* Pro Professional Plan */}
             <div className="bg-slate-900 rounded-2xl shadow-lg p-8 text-white">
               <h3 className="text-2xl font-bold mb-2">
                 Pro dla profesjonalistów
@@ -271,7 +264,6 @@ export default function PricingSection() {
               </ul>
             </div>
 
-            {/* Free Business Plan */}
             <div className="bg-white rounded-2xl shadow-sm p-8 border border-slate-200">
               <h3 className="text-2xl font-bold text-slate-800 mb-2">
                 Darmowy dla firm
@@ -283,7 +275,6 @@ export default function PricingSection() {
               </ul>
             </div>
 
-            {/* Pro Business Plan */}
             <div className="bg-slate-900 rounded-2xl shadow-lg p-8 text-white">
               <h3 className="text-2xl font-bold mb-2">Pro dla firm</h3>
               <ul className="space-y-4">
