@@ -1,16 +1,38 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 export default function ClientSection() {
   const t = useTranslations("ClientSection");
+  const { theme, systemTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Get current theme, considering system preference
+  const currentTheme = !mounted
+    ? "light"
+    : theme === "system"
+    ? systemTheme
+    : theme;
 
   return (
     <section
       id="for-clients"
-      className="py-20 bg-gradient-to-br from-teal-50 via-white to-cyan-50"
+      className={`relative py-20 ${
+        currentTheme === "dark"
+          ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800"
+          : "bg-gradient-to-br from-teal-50 via-white to-cyan-50"
+      } transition-colors duration-300`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Background gradient overlay that stays in both modes */}
+      <div className="absolute inset-0 bg-gradient-to-br from-teal-500/[0.07] via-transparent to-cyan-500/[0.07] opacity-70"></div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <span className="inline-block bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-4 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg">
           {t("badge")}
         </span>
@@ -18,66 +40,143 @@ export default function ClientSection() {
           <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">
             {t("title.achieve")}{" "}
           </span>
-          <span className="text-slate-800">{t("title.with")}</span>
+          <span
+            className={
+              currentTheme === "dark" ? "text-white" : "text-slate-800"
+            }
+          >
+            {t("title.with")}
+          </span>
         </h2>
 
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all">
+          {/* Training Plan Card */}
+          <div
+            className={`p-6 rounded-xl shadow-lg hover:shadow-xl transition-all ${
+              currentTheme === "dark"
+                ? "bg-slate-800/50 backdrop-blur-sm border border-slate-700/50"
+                : "bg-white"
+            }`}
+          >
             <div className="text-3xl mb-4">🎯</div>
-            <h3 className="text-xl font-bold mb-3 text-slate-800">
+            <h3
+              className={`text-xl font-bold mb-3 ${
+                currentTheme === "dark" ? "text-white" : "text-slate-800"
+              }`}
+            >
               {t("trainingPlan.title")}
             </h3>
             <ul className="space-y-2">
-              <li className="flex items-center text-slate-600">
+              <li
+                className={`flex items-center ${
+                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
+                }`}
+              >
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("trainingPlan.personalizedPlans")}
               </li>
-              <li className="flex items-center text-slate-600">
+              <li
+                className={`flex items-center ${
+                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
+                }`}
+              >
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("trainingPlan.exerciseLibrary")}
               </li>
-              <li className="flex items-center text-slate-600">
+              <li
+                className={`flex items-center ${
+                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
+                }`}
+              >
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("trainingPlan.videoInstructions")}
               </li>
             </ul>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all">
+
+          {/* Progress Tracking Card */}
+          <div
+            className={`p-6 rounded-xl shadow-lg hover:shadow-xl transition-all ${
+              currentTheme === "dark"
+                ? "bg-slate-800/50 backdrop-blur-sm border border-slate-700/50"
+                : "bg-white"
+            }`}
+          >
             <div className="text-3xl mb-4">📊</div>
-            <h3 className="text-xl font-bold mb-3 text-slate-800">
+            <h3
+              className={`text-xl font-bold mb-3 ${
+                currentTheme === "dark" ? "text-white" : "text-slate-800"
+              }`}
+            >
               {t("progressTracking.title")}
             </h3>
             <ul className="space-y-2">
-              <li className="flex items-center text-slate-600">
+              <li
+                className={`flex items-center ${
+                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
+                }`}
+              >
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("progressTracking.resultTracking")}
               </li>
-              <li className="flex items-center text-slate-600">
+              <li
+                className={`flex items-center ${
+                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
+                }`}
+              >
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("progressTracking.trainingStats")}
               </li>
-              <li className="flex items-center text-slate-600">
+              <li
+                className={`flex items-center ${
+                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
+                }`}
+              >
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("progressTracking.progressAnalysis")}
               </li>
             </ul>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all">
+
+          {/* Diet Plan Card */}
+          <div
+            className={`p-6 rounded-xl shadow-lg hover:shadow-xl transition-all ${
+              currentTheme === "dark"
+                ? "bg-slate-800/50 backdrop-blur-sm border border-slate-700/50"
+                : "bg-white"
+            }`}
+          >
             <div className="text-3xl mb-4">🥗</div>
-            <h3 className="text-xl font-bold mb-3 text-slate-800">
+            <h3
+              className={`text-xl font-bold mb-3 ${
+                currentTheme === "dark" ? "text-white" : "text-slate-800"
+              }`}
+            >
               {t("dietPlan.title")}
             </h3>
             <ul className="space-y-2">
-              <li className="flex items-center text-slate-600">
+              <li
+                className={`flex items-center ${
+                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
+                }`}
+              >
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("dietPlan.mealPlans")}
               </li>
-              <li className="flex items-center text-slate-600">
+              <li
+                className={`flex items-center ${
+                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
+                }`}
+              >
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("dietPlan.calorieTracking")}
               </li>
-              <li className="flex items-center text-slate-600">
+              <li
+                className={`flex items-center ${
+                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
+                }`}
+              >
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("dietPlan.recipesAndTips")}
               </li>
@@ -85,7 +184,7 @@ export default function ClientSection() {
           </div>
         </div>
 
-        {/* App Preview */}
+        {/* App Preview - Keeping original gradient as requested */}
         <div className="bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl p-8 md:p-12 text-white">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
