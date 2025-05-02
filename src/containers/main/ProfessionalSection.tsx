@@ -1,12 +1,23 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 
 export default function ProfessionalSection() {
   const t = useTranslations("ProfessionalSection");
   const { theme, systemTheme } = useTheme();
-  const currentTheme = theme === "system" ? systemTheme : theme;
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const currentTheme = !mounted
+    ? "light"
+    : theme === "system"
+    ? systemTheme
+    : theme;
 
   return (
     <section

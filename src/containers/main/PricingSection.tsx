@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 
@@ -14,9 +14,17 @@ export default function PricingSection() {
   const t = useTranslations("PricingSection");
   const [activePlanType, setActivePlanType] = useState<UserType>("client");
   const { theme, systemTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  // Get current theme, considering system preference
-  const currentTheme = theme === "system" ? systemTheme : theme;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const currentTheme = !mounted
+    ? "light"
+    : theme === "system"
+    ? systemTheme
+    : theme;
 
   return (
     <section
