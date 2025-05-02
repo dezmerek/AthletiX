@@ -423,12 +423,16 @@ export default function Navbar() {
               {/* Hamburger menu dla mobilnych */}
               <button
                 type="button"
-                className="md:hidden p-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
+                className={`md:hidden p-2 rounded-lg ${
+                  currentTheme === "dark"
+                    ? "text-slate-300 hover:bg-slate-800"
+                    : "text-slate-800 hover:bg-slate-50"
+                } transition-colors cursor-pointer`}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 ref={buttonRef}
               >
                 <svg
-                  className="w-5 h-5 text-slate-800"
+                  className="w-5 h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -446,7 +450,11 @@ export default function Navbar() {
           {/* Mobile/Tablet menu */}
           <div
             ref={menuRef}
-            className={`md:hidden transition-all duration-500 ease-in-out bg-white border-t border-slate-100 ${
+            className={`md:hidden transition-all duration-500 ease-in-out ${
+              currentTheme === "dark"
+                ? "bg-slate-900 border-slate-800"
+                : "bg-white border-slate-100"
+            } border-t ${
               isMenuOpen
                 ? "max-h-[40rem] opacity-100"
                 : "max-h-0 opacity-0 overflow-hidden"
@@ -455,7 +463,11 @@ export default function Navbar() {
             <div className="flex flex-col py-6 px-6 space-y-6">
               <button
                 onClick={() => scrollToSection("start")}
-                className="flex items-center space-x-3 text-slate-700 hover:text-emerald-500 transition-colors text-left text-base font-medium cursor-pointer"
+                className={`flex items-center space-x-3 ${
+                  currentTheme === "dark"
+                    ? "text-slate-300 hover:text-emerald-400"
+                    : "text-slate-700 hover:text-emerald-500"
+                } transition-colors text-left text-base font-medium cursor-pointer`}
               >
                 <svg
                   className="w-5 h-5"
@@ -474,7 +486,13 @@ export default function Navbar() {
               </button>
 
               <div className="space-y-4">
-                <span className="flex items-center space-x-3 text-slate-400 uppercase tracking-wider text-xs font-medium">
+                <span
+                  className={`flex items-center space-x-3 ${
+                    currentTheme === "dark"
+                      ? "text-slate-500"
+                      : "text-slate-400"
+                  } uppercase tracking-wider text-xs font-medium`}
+                >
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -493,7 +511,11 @@ export default function Navbar() {
                 <div className="flex flex-col space-y-4 pl-8">
                   <button
                     onClick={() => scrollToSection("for-clients")}
-                    className="flex items-center space-x-3 text-slate-600 hover:text-emerald-500 transition-colors text-left cursor-pointer"
+                    className={`flex items-center space-x-3 ${
+                      currentTheme === "dark"
+                        ? "text-slate-300 hover:text-emerald-400"
+                        : "text-slate-600 hover:text-emerald-500"
+                    } transition-colors text-left cursor-pointer`}
                   >
                     <svg
                       className="w-5 h-5"
@@ -512,7 +534,11 @@ export default function Navbar() {
                   </button>
                   <button
                     onClick={() => scrollToSection("for-professionals")}
-                    className="flex items-center space-x-3 text-slate-600 hover:text-emerald-500 transition-colors text-left cursor-pointer"
+                    className={`flex items-center space-x-3 ${
+                      currentTheme === "dark"
+                        ? "text-slate-300 hover:text-emerald-400"
+                        : "text-slate-600 hover:text-emerald-500"
+                    } transition-colors text-left cursor-pointer`}
                   >
                     <svg
                       className="w-5 h-5"
@@ -531,7 +557,11 @@ export default function Navbar() {
                   </button>
                   <button
                     onClick={() => scrollToSection("for-business")}
-                    className="flex items-center space-x-3 text-slate-600 hover:text-emerald-500 transition-colors text-left cursor-pointer"
+                    className={`flex items-center space-x-3 ${
+                      currentTheme === "dark"
+                        ? "text-slate-300 hover:text-emerald-400"
+                        : "text-slate-600 hover:text-emerald-500"
+                    } transition-colors text-left cursor-pointer`}
                   >
                     <svg
                       className="w-5 h-5"
@@ -552,7 +582,11 @@ export default function Navbar() {
                 <div className="flex flex-col">
                   <button
                     onClick={() => scrollToSection("pricing")}
-                    className="flex items-center space-x-3 text-slate-700 hover:text-emerald-500 transition-colors text-left text-base font-medium cursor-pointer"
+                    className={`flex items-center space-x-3 ${
+                      currentTheme === "dark"
+                        ? "text-slate-300 hover:text-emerald-400"
+                        : "text-slate-700 hover:text-emerald-500"
+                    } transition-colors text-left text-base font-medium cursor-pointer`}
                   >
                     <svg
                       className="w-5 h-5"
@@ -572,8 +606,20 @@ export default function Navbar() {
                 </div>
 
                 {/* Language Selector */}
-                <div className="space-y-4 pt-4 border-t border-slate-100">
-                  <span className="flex items-center space-x-3 text-slate-400 uppercase tracking-wider text-xs font-medium">
+                <div
+                  className={`space-y-4 pt-4 border-t ${
+                    currentTheme === "dark"
+                      ? "border-slate-800"
+                      : "border-slate-100"
+                  }`}
+                >
+                  <span
+                    className={`flex items-center space-x-3 ${
+                      currentTheme === "dark"
+                        ? "text-slate-500"
+                        : "text-slate-400"
+                    } uppercase tracking-wider text-xs font-medium`}
+                  >
                     <svg
                       className="w-5 h-5"
                       fill="none"
@@ -598,13 +644,23 @@ export default function Navbar() {
                       className={`flex items-center justify-between ${
                         locale === "en"
                           ? "text-emerald-500"
+                          : currentTheme === "dark"
+                          ? "text-slate-300 hover:text-emerald-400"
                           : "text-slate-600 hover:text-emerald-500"
                       } transition-all w-full cursor-pointer`}
                     >
                       <div className="flex items-center space-x-3">
                         <span>{t("english")}</span>
                       </div>
-                      <span className="text-xs text-slate-400">{t("en")}</span>
+                      <span
+                        className={`text-xs ${
+                          currentTheme === "dark"
+                            ? "text-slate-500"
+                            : "text-slate-400"
+                        }`}
+                      >
+                        {t("en")}
+                      </span>
                     </button>
                     <button
                       onClick={() => {
@@ -614,19 +670,35 @@ export default function Navbar() {
                       className={`flex items-center justify-between ${
                         locale === "pl"
                           ? "text-emerald-500"
+                          : currentTheme === "dark"
+                          ? "text-slate-300 hover:text-emerald-400"
                           : "text-slate-600 hover:text-emerald-500"
                       } transition-all w-full cursor-pointer`}
                     >
                       <div className="flex items-center space-x-3">
                         <span>{t("polish")}</span>
                       </div>
-                      <span className="text-xs text-slate-400">{t("pl")}</span>
+                      <span
+                        className={`text-xs ${
+                          currentTheme === "dark"
+                            ? "text-slate-500"
+                            : "text-slate-400"
+                        }`}
+                      >
+                        {t("pl")}
+                      </span>
                     </button>
                   </div>
                 </div>
 
                 {/* Auth buttons in mobile menu */}
-                <div className="flex flex-col space-y-4 pt-4 border-t border-slate-100">
+                <div
+                  className={`flex flex-col space-y-4 pt-4 border-t ${
+                    currentTheme === "dark"
+                      ? "border-slate-800"
+                      : "border-slate-100"
+                  }`}
+                >
                   <button
                     className={`flex items-center space-x-3 ${
                       currentTheme === "dark"
