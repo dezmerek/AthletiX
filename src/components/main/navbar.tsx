@@ -11,13 +11,14 @@ export default function Navbar() {
     null
   );
   const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, systemTheme } = useTheme();
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const t = useTranslations("Navbar");
   const locale = useLocale();
   const router = useRouter();
 
+  // Only show theme UI after hydration to prevent flash
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -69,6 +70,13 @@ export default function Navbar() {
     }, 300);
   };
 
+  // Get current theme, considering system preference
+  const currentTheme = !mounted
+    ? "light"
+    : theme === "system"
+    ? systemTheme
+    : theme;
+
   return (
     <>
       <div
@@ -108,7 +116,7 @@ export default function Navbar() {
       </div>
       <nav
         className={`fixed top-0 left-0 right-0 z-50 ${
-          theme === "dark" ? "bg-slate-900" : "bg-white"
+          currentTheme === "dark" ? "bg-slate-900" : "bg-white"
         } shadow-sm transition-colors duration-300`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -121,7 +129,7 @@ export default function Navbar() {
                 <button
                   onClick={() => scrollToSection("start")}
                   className={`text-base ${
-                    theme === "dark"
+                    currentTheme === "dark"
                       ? "text-slate-300 hover:text-emerald-400"
                       : "text-slate-600 hover:text-emerald-500"
                   } transition-colors whitespace-nowrap cursor-pointer`}
@@ -131,7 +139,7 @@ export default function Navbar() {
                 <div className="relative group">
                   <button
                     className={`flex items-center space-x-1 text-base ${
-                      theme === "dark"
+                      currentTheme === "dark"
                         ? "text-slate-300 hover:text-emerald-400"
                         : "text-slate-600 hover:text-emerald-500"
                     } transition-colors whitespace-nowrap cursor-pointer`}
@@ -153,16 +161,20 @@ export default function Navbar() {
                   </button>
                   <div
                     className={`absolute left-0 mt-2 w-56 rounded-xl ${
-                      theme === "dark" ? "bg-slate-800/95" : "bg-white/95"
+                      currentTheme === "dark"
+                        ? "bg-slate-800/95"
+                        : "bg-white/95"
                     } backdrop-blur-sm shadow-lg py-3 hidden group-hover:block ${
-                      theme === "dark" ? "border-slate-700" : "border-slate-100"
+                      currentTheme === "dark"
+                        ? "border-slate-700"
+                        : "border-slate-100"
                     } border`}
                   >
                     <div className="absolute -top-2 left-0 right-0 h-2 bg-transparent" />
                     <button
                       onClick={() => scrollToSection("for-clients")}
                       className={`w-full px-4 py-2.5 text-left text-sm ${
-                        theme === "dark"
+                        currentTheme === "dark"
                           ? "text-slate-300 hover:bg-slate-700 hover:text-emerald-400"
                           : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-500"
                       } transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2`}
@@ -185,7 +197,7 @@ export default function Navbar() {
                     <button
                       onClick={() => scrollToSection("for-professionals")}
                       className={`w-full px-4 py-2.5 text-left text-sm ${
-                        theme === "dark"
+                        currentTheme === "dark"
                           ? "text-slate-300 hover:bg-slate-700 hover:text-emerald-400"
                           : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-500"
                       } transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2`}
@@ -208,7 +220,7 @@ export default function Navbar() {
                     <button
                       onClick={() => scrollToSection("for-business")}
                       className={`w-full px-4 py-2.5 text-left text-sm ${
-                        theme === "dark"
+                        currentTheme === "dark"
                           ? "text-slate-300 hover:bg-slate-700 hover:text-emerald-400"
                           : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-500"
                       } transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2`}
@@ -233,7 +245,7 @@ export default function Navbar() {
                 <button
                   onClick={() => scrollToSection("pricing")}
                   className={`text-base ${
-                    theme === "dark"
+                    currentTheme === "dark"
                       ? "text-slate-300 hover:text-emerald-400"
                       : "text-slate-600 hover:text-emerald-500"
                   } transition-colors whitespace-nowrap cursor-pointer`}
@@ -247,14 +259,14 @@ export default function Navbar() {
                 type="button"
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 className={`p-2 rounded-md transition-all cursor-pointer ${
-                  theme === "dark"
+                  currentTheme === "dark"
                     ? "text-slate-300 hover:text-emerald-400 hover:bg-slate-800"
                     : "text-slate-600 hover:text-emerald-500 hover:bg-slate-50"
                 }`}
                 aria-label="Toggle theme"
               >
                 {mounted &&
-                  (theme === "dark" ? (
+                  (currentTheme === "dark" ? (
                     <svg
                       className="w-5 h-5"
                       fill="none"
@@ -287,7 +299,7 @@ export default function Navbar() {
               <div className="relative group hidden md:block">
                 <button
                   className={`flex items-center space-x-1 p-2 rounded-md transition-all cursor-pointer ${
-                    theme === "dark"
+                    currentTheme === "dark"
                       ? "text-slate-300 hover:text-emerald-400 hover:bg-slate-800"
                       : "text-slate-600 hover:text-emerald-500 hover:bg-slate-50"
                   }`}
@@ -324,7 +336,7 @@ export default function Navbar() {
                 </button>
                 <div
                   className={`absolute right-0 mt-2 w-36 rounded-xl ${
-                    theme === "dark"
+                    currentTheme === "dark"
                       ? "bg-slate-800/95 border-slate-700"
                       : "bg-white/95 border-slate-100"
                   } backdrop-blur-sm shadow-lg py-3 hidden group-hover:block border`}
@@ -336,7 +348,7 @@ export default function Navbar() {
                       setIsMenuOpen(false);
                     }}
                     className={`w-full px-4 py-2.5 text-left text-sm ${
-                      theme === "dark"
+                      currentTheme === "dark"
                         ? "text-slate-300 hover:bg-slate-700 hover:text-emerald-400"
                         : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-500"
                     } transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2`}
@@ -344,7 +356,9 @@ export default function Navbar() {
                     <span className="font-medium">Polski</span>
                     <span
                       className={`text-xs font-normal ${
-                        theme === "dark" ? "text-slate-500" : "text-slate-400"
+                        currentTheme === "dark"
+                          ? "text-slate-500"
+                          : "text-slate-400"
                       }`}
                     >
                       (PL)
@@ -356,7 +370,7 @@ export default function Navbar() {
                       setIsMenuOpen(false);
                     }}
                     className={`w-full px-4 py-2.5 text-left text-sm ${
-                      theme === "dark"
+                      currentTheme === "dark"
                         ? "text-slate-300 hover:bg-slate-700 hover:text-emerald-400"
                         : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-500"
                     } transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2`}
@@ -364,7 +378,9 @@ export default function Navbar() {
                     <span className="font-medium">English</span>
                     <span
                       className={`text-xs font-normal ${
-                        theme === "dark" ? "text-slate-500" : "text-slate-400"
+                        currentTheme === "dark"
+                          ? "text-slate-500"
+                          : "text-slate-400"
                       }`}
                     >
                       (EN)
@@ -376,7 +392,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   className={`hidden md:block text-sm font-medium ${
-                    theme === "dark"
+                    currentTheme === "dark"
                       ? "text-slate-300 hover:text-emerald-400"
                       : "text-slate-600 hover:text-emerald-500"
                   } transition-colors whitespace-nowrap cursor-pointer`}
@@ -613,7 +629,7 @@ export default function Navbar() {
                 <div className="flex flex-col space-y-4 pt-4 border-t border-slate-100">
                   <button
                     className={`flex items-center space-x-3 ${
-                      theme === "dark"
+                      currentTheme === "dark"
                         ? "text-slate-300 hover:text-emerald-400"
                         : "text-slate-700 hover:text-emerald-500"
                     } transition-colors text-left text-base font-medium cursor-pointer`}
