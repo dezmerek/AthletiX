@@ -2,19 +2,25 @@
 import { useState, useEffect, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 
 export default function Navbar() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isChangingLanguage, setIsChangingLanguage] = useState(false);
   const [targetLanguage, setTargetLanguage] = useState<"pl" | "en" | null>(
     null
   );
+  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme();
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const t = useTranslations("Navbar");
   const locale = useLocale();
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -100,7 +106,11 @@ export default function Navbar() {
           </div>
         )}
       </div>
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 ${
+          theme === "dark" ? "bg-slate-900" : "bg-white"
+        } shadow-sm transition-colors duration-300`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-8">
@@ -110,12 +120,22 @@ export default function Navbar() {
               <div className="hidden md:flex items-center space-x-6">
                 <button
                   onClick={() => scrollToSection("start")}
-                  className="text-base text-slate-600 hover:text-emerald-500 transition-colors whitespace-nowrap cursor-pointer"
+                  className={`text-base ${
+                    theme === "dark"
+                      ? "text-slate-300 hover:text-emerald-400"
+                      : "text-slate-600 hover:text-emerald-500"
+                  } transition-colors whitespace-nowrap cursor-pointer`}
                 >
                   Start
                 </button>
                 <div className="relative group">
-                  <button className="flex items-center space-x-1 text-base text-slate-600 hover:text-emerald-500 transition-colors whitespace-nowrap cursor-pointer">
+                  <button
+                    className={`flex items-center space-x-1 text-base ${
+                      theme === "dark"
+                        ? "text-slate-300 hover:text-emerald-400"
+                        : "text-slate-600 hover:text-emerald-500"
+                    } transition-colors whitespace-nowrap cursor-pointer`}
+                  >
                     <span>{t("offer")}</span>
                     <svg
                       className="w-4 h-4 transition-transform group-hover:rotate-180"
@@ -131,11 +151,21 @@ export default function Navbar() {
                       />
                     </svg>
                   </button>
-                  <div className="absolute left-0 mt-2 w-56 rounded-xl bg-white/95 backdrop-blur-sm shadow-lg py-3 hidden group-hover:block border border-slate-100">
+                  <div
+                    className={`absolute left-0 mt-2 w-56 rounded-xl ${
+                      theme === "dark" ? "bg-slate-800/95" : "bg-white/95"
+                    } backdrop-blur-sm shadow-lg py-3 hidden group-hover:block ${
+                      theme === "dark" ? "border-slate-700" : "border-slate-100"
+                    } border`}
+                  >
                     <div className="absolute -top-2 left-0 right-0 h-2 bg-transparent" />
                     <button
                       onClick={() => scrollToSection("for-clients")}
-                      className="w-full px-4 py-2.5 text-left text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
+                      className={`w-full px-4 py-2.5 text-left text-sm ${
+                        theme === "dark"
+                          ? "text-slate-300 hover:bg-slate-700 hover:text-emerald-400"
+                          : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-500"
+                      } transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2`}
                     >
                       <svg
                         className="w-5 h-5"
@@ -154,7 +184,11 @@ export default function Navbar() {
                     </button>
                     <button
                       onClick={() => scrollToSection("for-professionals")}
-                      className="w-full px-4 py-2.5 text-left text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
+                      className={`w-full px-4 py-2.5 text-left text-sm ${
+                        theme === "dark"
+                          ? "text-slate-300 hover:bg-slate-700 hover:text-emerald-400"
+                          : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-500"
+                      } transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2`}
                     >
                       <svg
                         className="w-5 h-5"
@@ -173,7 +207,11 @@ export default function Navbar() {
                     </button>
                     <button
                       onClick={() => scrollToSection("for-business")}
-                      className="w-full px-4 py-2.5 text-left text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
+                      className={`w-full px-4 py-2.5 text-left text-sm ${
+                        theme === "dark"
+                          ? "text-slate-300 hover:bg-slate-700 hover:text-emerald-400"
+                          : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-500"
+                      } transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2`}
                     >
                       <svg
                         className="w-5 h-5"
@@ -194,7 +232,11 @@ export default function Navbar() {
                 </div>
                 <button
                   onClick={() => scrollToSection("pricing")}
-                  className="text-base text-slate-600 hover:text-emerald-500 transition-colors whitespace-nowrap cursor-pointer"
+                  className={`text-base ${
+                    theme === "dark"
+                      ? "text-slate-300 hover:text-emerald-400"
+                      : "text-slate-600 hover:text-emerald-500"
+                  } transition-colors whitespace-nowrap cursor-pointer`}
                 >
                   {t("pricing")}
                 </button>
@@ -203,41 +245,53 @@ export default function Navbar() {
             <div className="flex items-center space-x-2">
               <button
                 type="button"
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className="p-2 rounded-md text-slate-600 hover:text-emerald-500 hover:bg-slate-50 transition-all cursor-pointer"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className={`p-2 rounded-md transition-all cursor-pointer ${
+                  theme === "dark"
+                    ? "text-slate-300 hover:text-emerald-400 hover:bg-slate-800"
+                    : "text-slate-600 hover:text-emerald-500 hover:bg-slate-50"
+                }`}
+                aria-label="Toggle theme"
               >
-                {isDarkMode ? (
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                    />
-                  </svg>
-                )}
+                {mounted &&
+                  (theme === "dark" ? (
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                      />
+                    </svg>
+                  ))}
               </button>
               <div className="relative group hidden md:block">
-                <button className="flex items-center space-x-1 p-2 rounded-md text-slate-600 hover:text-emerald-500 hover:bg-slate-50 transition-all cursor-pointer">
+                <button
+                  className={`flex items-center space-x-1 p-2 rounded-md transition-all cursor-pointer ${
+                    theme === "dark"
+                      ? "text-slate-300 hover:text-emerald-400 hover:bg-slate-800"
+                      : "text-slate-600 hover:text-emerald-500 hover:bg-slate-50"
+                  }`}
+                >
                   <svg
                     className="w-4 h-4"
                     fill="none"
@@ -268,17 +322,31 @@ export default function Navbar() {
                     />
                   </svg>
                 </button>
-                <div className="absolute right-0 mt-2 w-36 rounded-xl bg-white/95 backdrop-blur-sm shadow-lg py-3 hidden group-hover:block border border-slate-100">
+                <div
+                  className={`absolute right-0 mt-2 w-36 rounded-xl ${
+                    theme === "dark"
+                      ? "bg-slate-800/95 border-slate-700"
+                      : "bg-white/95 border-slate-100"
+                  } backdrop-blur-sm shadow-lg py-3 hidden group-hover:block border`}
+                >
                   <div className="absolute -top-2 left-0 right-0 h-2 bg-transparent" />
                   <button
                     onClick={() => {
                       changeLanguage("pl");
                       setIsMenuOpen(false);
                     }}
-                    className="w-full px-4 py-2.5 text-left text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
+                    className={`w-full px-4 py-2.5 text-left text-sm ${
+                      theme === "dark"
+                        ? "text-slate-300 hover:bg-slate-700 hover:text-emerald-400"
+                        : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-500"
+                    } transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2`}
                   >
                     <span className="font-medium">Polski</span>
-                    <span className="text-xs font-normal text-slate-400">
+                    <span
+                      className={`text-xs font-normal ${
+                        theme === "dark" ? "text-slate-500" : "text-slate-400"
+                      }`}
+                    >
                       (PL)
                     </span>
                   </button>
@@ -287,10 +355,18 @@ export default function Navbar() {
                       changeLanguage("en");
                       setIsMenuOpen(false);
                     }}
-                    className="w-full px-4 py-2.5 text-left text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-500 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
+                    className={`w-full px-4 py-2.5 text-left text-sm ${
+                      theme === "dark"
+                        ? "text-slate-300 hover:bg-slate-700 hover:text-emerald-400"
+                        : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-500"
+                    } transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2`}
                   >
                     <span className="font-medium">English</span>
-                    <span className="text-xs font-normal text-slate-400">
+                    <span
+                      className={`text-xs font-normal ${
+                        theme === "dark" ? "text-slate-500" : "text-slate-400"
+                      }`}
+                    >
                       (EN)
                     </span>
                   </button>
@@ -299,13 +375,17 @@ export default function Navbar() {
               <div className="space-x-7 hidden md:flex">
                 <button
                   type="button"
-                  className="hidden md:block text-sm font-medium text-slate-600 hover:text-emerald-500 transition-colors whitespace-nowrap cursor-pointer"
+                  className={`hidden md:block text-sm font-medium ${
+                    theme === "dark"
+                      ? "text-slate-300 hover:text-emerald-400"
+                      : "text-slate-600 hover:text-emerald-500"
+                  } transition-colors whitespace-nowrap cursor-pointer`}
                 >
                   {t("signIn")}
                 </button>
                 <button
                   type="button"
-                  className="hidden md:inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium hover:from-emerald-600 hover:to-teal-600 transition-all whitespace-nowrap cursor-pointer"
+                  className="hidden md:inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium hover:from-emerald-600 hover:to-teal-600 transition-all whitespace-nowrap cursor-pointer shadow-sm hover:shadow"
                 >
                   {t("getStarted")}
                   <svg
@@ -529,9 +609,15 @@ export default function Navbar() {
                   </div>
                 </div>
 
-                {/* Auth buttons */}
+                {/* Auth buttons in mobile menu */}
                 <div className="flex flex-col space-y-4 pt-4 border-t border-slate-100">
-                  <button className="flex items-center space-x-3 text-slate-700 hover:text-emerald-500 transition-colors text-left text-base font-medium cursor-pointer">
+                  <button
+                    className={`flex items-center space-x-3 ${
+                      theme === "dark"
+                        ? "text-slate-300 hover:text-emerald-400"
+                        : "text-slate-700 hover:text-emerald-500"
+                    } transition-colors text-left text-base font-medium cursor-pointer`}
+                  >
                     <svg
                       className="w-5 h-5"
                       fill="none"
@@ -547,7 +633,7 @@ export default function Navbar() {
                     </svg>
                     <span>{t("signIn")}</span>
                   </button>
-                  <button className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-base font-medium hover:from-emerald-600 hover:to-teal-600 transition-all whitespace-nowrap cursor-pointer">
+                  <button className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-base font-medium hover:from-emerald-600 hover:to-teal-600 transition-all whitespace-nowrap cursor-pointer shadow-sm hover:shadow">
                     <span>{t("getStarted")}</span>
                     <svg
                       className="w-5 h-5 ml-2"

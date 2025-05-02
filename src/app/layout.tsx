@@ -5,6 +5,7 @@ import Navbar from "@/components/main/navbar";
 import Footer from "@/components/main/footer";
 import { NextIntlClientProvider } from "next-intl";
 import { cookies, headers } from "next/headers";
+import { ThemeProvider } from "next-themes";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -81,11 +82,13 @@ export default async function RootLayout({
         suppressHydrationWarning
         className={`${montserrat.className} antialiased`}
       >
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <Navbar />
-          {children}
-          <Footer />
-        </NextIntlClientProvider>
+        <ThemeProvider attribute="class">
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <Navbar />
+            {children}
+            <Footer />
+          </NextIntlClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
