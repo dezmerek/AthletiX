@@ -1,33 +1,14 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 
 export default function ClientSection() {
   const t = useTranslations("ClientSection");
-  const { theme, systemTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Get current theme, considering system preference
-  const currentTheme = !mounted
-    ? "light"
-    : theme === "system"
-    ? systemTheme
-    : theme;
 
   return (
     <section
       id="for-clients"
-      className={`relative py-20 ${
-        currentTheme === "dark"
-          ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800"
-          : "bg-gradient-to-br from-teal-50 via-white to-cyan-50"
-      } transition-colors duration-300`}
+      className="relative py-20 bg-gradient-to-br from-teal-50 via-white to-cyan-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300"
     >
       {/* Background gradient overlay that stays in both modes */}
       <div className="absolute inset-0 bg-gradient-to-br from-teal-500/[0.07] via-transparent to-cyan-500/[0.07] opacity-70"></div>
@@ -40,11 +21,7 @@ export default function ClientSection() {
           <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">
             {t("title.achieve")}{" "}
           </span>
-          <span
-            className={
-              currentTheme === "dark" ? "text-white" : "text-slate-800"
-            }
-          >
+          <span className="text-slate-800 dark:text-white">
             {t("title.with")}
           </span>
         </h2>
@@ -52,43 +29,21 @@ export default function ClientSection() {
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
           {/* Training Plan Card */}
-          <div
-            className={`p-6 rounded-xl shadow-lg hover:shadow-xl transition-all ${
-              currentTheme === "dark"
-                ? "bg-slate-800/50 backdrop-blur-sm border border-slate-700/50"
-                : "bg-white"
-            }`}
-          >
+          <div className="p-6 rounded-xl shadow-lg hover:shadow-xl transition-all bg-white dark:bg-slate-800/50 dark:backdrop-blur-sm dark:border dark:border-slate-700/50">
             <div className="text-3xl mb-4">🎯</div>
-            <h3
-              className={`text-xl font-bold mb-3 ${
-                currentTheme === "dark" ? "text-white" : "text-slate-800"
-              }`}
-            >
+            <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-white">
               {t("trainingPlan.title")}
             </h3>
             <ul className="space-y-2">
-              <li
-                className={`flex items-center ${
-                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
-                }`}
-              >
+              <li className="flex items-center text-slate-600 dark:text-slate-300">
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("trainingPlan.personalizedPlans")}
               </li>
-              <li
-                className={`flex items-center ${
-                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
-                }`}
-              >
+              <li className="flex items-center text-slate-600 dark:text-slate-300">
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("trainingPlan.exerciseLibrary")}
               </li>
-              <li
-                className={`flex items-center ${
-                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
-                }`}
-              >
+              <li className="flex items-center text-slate-600 dark:text-slate-300">
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("trainingPlan.videoInstructions")}
               </li>
@@ -96,43 +51,21 @@ export default function ClientSection() {
           </div>
 
           {/* Progress Tracking Card */}
-          <div
-            className={`p-6 rounded-xl shadow-lg hover:shadow-xl transition-all ${
-              currentTheme === "dark"
-                ? "bg-slate-800/50 backdrop-blur-sm border border-slate-700/50"
-                : "bg-white"
-            }`}
-          >
+          <div className="p-6 rounded-xl shadow-lg hover:shadow-xl transition-all bg-white dark:bg-slate-800/50 dark:backdrop-blur-sm dark:border dark:border-slate-700/50">
             <div className="text-3xl mb-4">📊</div>
-            <h3
-              className={`text-xl font-bold mb-3 ${
-                currentTheme === "dark" ? "text-white" : "text-slate-800"
-              }`}
-            >
+            <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-white">
               {t("progressTracking.title")}
             </h3>
             <ul className="space-y-2">
-              <li
-                className={`flex items-center ${
-                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
-                }`}
-              >
+              <li className="flex items-center text-slate-600 dark:text-slate-300">
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("progressTracking.resultTracking")}
               </li>
-              <li
-                className={`flex items-center ${
-                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
-                }`}
-              >
+              <li className="flex items-center text-slate-600 dark:text-slate-300">
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("progressTracking.trainingStats")}
               </li>
-              <li
-                className={`flex items-center ${
-                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
-                }`}
-              >
+              <li className="flex items-center text-slate-600 dark:text-slate-300">
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("progressTracking.progressAnalysis")}
               </li>
@@ -140,43 +73,21 @@ export default function ClientSection() {
           </div>
 
           {/* Diet Plan Card */}
-          <div
-            className={`p-6 rounded-xl shadow-lg hover:shadow-xl transition-all ${
-              currentTheme === "dark"
-                ? "bg-slate-800/50 backdrop-blur-sm border border-slate-700/50"
-                : "bg-white"
-            }`}
-          >
+          <div className="p-6 rounded-xl shadow-lg hover:shadow-xl transition-all bg-white dark:bg-slate-800/50 dark:backdrop-blur-sm dark:border dark:border-slate-700/50">
             <div className="text-3xl mb-4">🥗</div>
-            <h3
-              className={`text-xl font-bold mb-3 ${
-                currentTheme === "dark" ? "text-white" : "text-slate-800"
-              }`}
-            >
+            <h3 className="text-xl font-bold mb-3 text-slate-800 dark:text-white">
               {t("dietPlan.title")}
             </h3>
             <ul className="space-y-2">
-              <li
-                className={`flex items-center ${
-                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
-                }`}
-              >
+              <li className="flex items-center text-slate-600 dark:text-slate-300">
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("dietPlan.mealPlans")}
               </li>
-              <li
-                className={`flex items-center ${
-                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
-                }`}
-              >
+              <li className="flex items-center text-slate-600 dark:text-slate-300">
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("dietPlan.calorieTracking")}
               </li>
-              <li
-                className={`flex items-center ${
-                  currentTheme === "dark" ? "text-slate-300" : "text-slate-600"
-                }`}
-              >
+              <li className="flex items-center text-slate-600 dark:text-slate-300">
                 <span className="mr-2 text-teal-500">✓</span>
                 {t("dietPlan.recipesAndTips")}
               </li>
@@ -184,7 +95,7 @@ export default function ClientSection() {
           </div>
         </div>
 
-        {/* App Preview - Keeping original gradient as requested */}
+        {/* App Preview */}
         <div className="bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl p-8 md:p-12 text-white">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
