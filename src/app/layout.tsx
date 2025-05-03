@@ -5,7 +5,7 @@ import Navbar from "@/components/main/navbar";
 import Footer from "@/components/main/footer";
 import { NextIntlClientProvider } from "next-intl";
 import { cookies, headers } from "next/headers";
-import { ThemeProvider } from "next-themes";
+import ThemeProvider from "@/theme/ThemeProvider";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -78,51 +78,13 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <head>
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-          :root { forced-color-adjust: none; }
-          html { visibility: hidden; }
-          html.dark { background: #0a0a0a; }
-          html.light { background: #ffffff; }
-          .init-theme { visibility: visible; }
-        `,
-          }}
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-          (function() {
-            try {
-              const storageKey = 'athletix-theme';
-              const theme = localStorage.getItem(storageKey);
-              const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-              
-              if (theme === 'dark' || (theme === 'system' && systemPrefersDark)) {
-                document.documentElement.classList.add('dark');
-              } else if (theme === 'light' || (theme === 'system' && !systemPrefersDark)) {
-                document.documentElement.classList.remove('dark');
-              }
-              document.documentElement.classList.add('init-theme');
-            } catch (e) {
-              document.documentElement.classList.add('init-theme');
-              console.error('Failed to set initial theme', e);
-            }
-          })();
-        `,
-          }}
-        />
-      </head>
       <body
-        suppressHydrationWarning
-        className={`${montserrat.className} antialiased`}
+        className={`bg-white dark:bg-[#191919] text-[#37352f] dark:text-[#ffffffcf] ${montserrat.className} antialiased`}
       >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
-          enableSystem={true}
-          storageKey="athletix-theme"
+          enableSystem
           disableTransitionOnChange
         >
           <NextIntlClientProvider locale={locale} messages={messages}>
