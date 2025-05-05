@@ -26,6 +26,10 @@ export default function Footer() {
     }
   };
 
+  const handleLegalNavigation = (page: string) => {
+    router.push(`/${page}`);
+  };
+
   return (
     <footer className="bg-slate-800 text-white py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -73,28 +77,28 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-sm text-slate-300">
               <li>
-                <a
-                  href="#"
-                  className="hover:text-white transition-colors cursor-pointer"
+                <button
+                  disabled
+                  className="text-slate-400 cursor-not-allowed"
                 >
                   {t("sections.resources.documentation")}
-                </a>
+                </button>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="hover:text-white transition-colors cursor-pointer"
+                <button
+                  disabled
+                  className="text-slate-400 cursor-not-allowed"
                 >
                   {t("sections.resources.helpCenter")}
-                </a>
+                </button>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="hover:text-white transition-colors cursor-pointer"
+                <button
+                  disabled
+                  className="text-slate-400 cursor-not-allowed"
                 >
                   {t("sections.resources.support")}
-                </a>
+                </button>
               </li>
             </ul>
           </div>
@@ -104,20 +108,20 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-sm text-slate-300">
               <li>
-                <a
-                  href="#"
-                  className="hover:text-white transition-colors cursor-pointer"
+                <button
+                  disabled
+                  className="text-slate-400 cursor-not-allowed"
                 >
                   {t("sections.contact.writeToUs")}
-                </a>
+                </button>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="hover:text-white transition-colors cursor-pointer"
+                <button
+                  disabled
+                  className="text-slate-400 cursor-not-allowed"
                 >
                   {t("sections.platform.demo")}
-                </a>
+                </button>
               </li>
               <li>
                 <button
@@ -133,11 +137,17 @@ export default function Footer() {
         <div className="mt-8 pt-8 border-t border-slate-700">
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
             <div className="flex items-center space-x-4">
-              <button className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer">
+              <button 
+                onClick={() => handleLegalNavigation("privacy-policy")}
+                className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer"
+              >
                 {t("legal.privacyPolicy")}
               </button>
               <span className="text-slate-600">•</span>
-              <button className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer">
+              <button 
+                onClick={() => handleLegalNavigation("terms")}
+                className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer"
+              >
                 {t("legal.terms")}
               </button>
             </div>

@@ -1,0 +1,30 @@
+{
+  "title": "Polityka Prywatności",
+  "lastUpdated": "Ostatnia aktualizacja: 5 maja 2024",
+  "sections": {
+    "introduction": {
+      "title": "Wprowadzenie",
+      "content": "W AthletiX poważnie traktujemy Twoją prywatność. Niniejsza Polityka Prywatności wyjaśnia, w jaki sposób zbieramy, wykorzystujemy i chronimy Twoje dane osobowe."
+    },
+    "dataCollection": {
+      "title": "Zbieranie danych",
+      "content": "Zbieramy informacje, które przekazujesz nam bezpośrednio, na przykład podczas tworzenia konta, korzystania z naszych usług lub komunikowania się z nami."
+    },
+    "dataUsage": {
+      "title": "W jaki sposób wykorzystujemy Twoje dane",
+      "content": "Wykorzystujemy Twoje informacje, aby świadczyć i ulepszać nasze usługi, komunikować się z Tobą oraz zapewniać bezpieczeństwo naszej platformy."
+    },
+    "dataProtection": {
+      "title": "Ochrona danych",
+      "content": "Wdrażamy odpowiednie środki bezpieczeństwa, aby chronić Twoje dane osobowe przed nieautoryzowanym dostępem, modyfikacją lub ujawnieniem."
+    },
+    "cookies": {
+      "title": "Pliki cookies",
+      "content": "Używamy plików cookies, aby zapamiętać Twoje preferencje językowe i poprawić Twoje doświadczenie na naszej platformie."
+    },
+    "yourRights": {
+      "title": "Twoje prawa",
+      "content": "Masz prawo dostępu do swoich danych osobowych, ich poprawiania lub usunięcia. Skontaktuj się z nami, aby skorzystać z tych praw."
+    }
+  }
+} 

@@ -1,0 +1,30 @@
+{
+  "title": "Regulamin",
+  "lastUpdated": "Ostatnia aktualizacja: 5 maja 2024",
+  "sections": {
+    "introduction": {
+      "title": "Wprowadzenie",
+      "content": "Witamy w AthletiX. Korzystając z naszej platformy, akceptujesz niniejszy Regulamin."
+    },
+    "definitions": {
+      "title": "Definicje",
+      "content": "W niniejszym Regulaminie 'Platforma' oznacza AthletiX, 'Użytkownik' oznacza każdą osobę lub podmiot korzystający z naszych usług."
+    },
+    "userAgreement": {
+      "title": "Umowa z Użytkownikiem",
+      "content": "Korzystając z Platformy, zobowiązujesz się przestrzegać wszystkich obowiązujących przepisów prawa."
+    },
+    "intellectualProperty": {
+      "title": "Własność intelektualna",
+      "content": "Wszystkie treści na Platformie są chronione prawem autorskim i innymi przepisami dotyczącymi własności intelektualnej."
+    },
+    "limitationOfLiability": {
+      "title": "Ograniczenie odpowiedzialności",
+      "content": "AthletiX nie ponosi odpowiedzialności za jakiekolwiek pośrednie, przypadkowe, szczególne, wynikowe lub karne szkody."
+    },
+    "changesToTerms": {
+      "title": "Zmiany w Regulaminie",
+      "content": "Zastrzegamy sobie prawo do modyfikacji niniejszego Regulaminu w dowolnym momencie. O wszelkich istotnych zmianach poinformujemy użytkowników."
+    }
+  }
+} 

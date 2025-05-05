@@ -50,6 +50,9 @@ export default getRequestConfig(async () => {
     // Pages
     NotFoundSection: (await import(`../../messages/${locale}/not-found.json`))
       .default,
+    terms: (await import(`../../messages/${locale}/terms.json`)).default,
+    privacyPolicy: (await import(`../../messages/${locale}/privacy-policy.json`))
+      .default,
   };
 
   return {

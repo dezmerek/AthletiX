@@ -1,0 +1,30 @@
+{
+  "title": "Terms of Service",
+  "lastUpdated": "Last updated: May 5, 2024",
+  "sections": {
+    "introduction": {
+      "title": "Introduction",
+      "content": "Welcome to AthletiX. By accessing or using our platform, you agree to be bound by these Terms of Service."
+    },
+    "definitions": {
+      "title": "Definitions",
+      "content": "In these Terms, 'Platform' refers to AthletiX, 'User' refers to any individual or entity using our services."
+    },
+    "userAgreement": {
+      "title": "User Agreement",
+      "content": "By using our Platform, you agree to comply with all applicable laws and regulations."
+    },
+    "intellectualProperty": {
+      "title": "Intellectual Property",
+      "content": "All content on the Platform is protected by copyright and other intellectual property laws."
+    },
+    "limitationOfLiability": {
+      "title": "Limitation of Liability",
+      "content": "AthletiX shall not be liable for any indirect, incidental, special, consequential, or punitive damages."
+    },
+    "changesToTerms": {
+      "title": "Changes to Terms",
+      "content": "We reserve the right to modify these Terms at any time. We will notify users of any material changes."
+    }
+  }
+} 
