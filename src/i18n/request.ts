@@ -1,6 +1,23 @@
 import { getRequestConfig } from "next-intl/server";
+import { cookies, headers } from "next/headers";
 
-export default getRequestConfig(async ({ locale = "pl" }) => {
+function detectLanguage(acceptLanguageHeader: string | null): "pl" | "en" {
+  if (!acceptLanguageHeader) return "en";
+
+  // Check if Polish is one of the preferred languages
+  const hasPolish = acceptLanguageHeader.toLowerCase().includes("pl");
+  return hasPolish ? "pl" : "en";
+}
+
+export default getRequestConfig(async () => {
+  const cookieStore = await cookies();
+  const headersList = await headers();
+  const acceptLanguage = headersList.get("accept-language");
+
+  // Use cookie if exists, otherwise detect from browser
+  const locale =
+    cookieStore.get("NEXT_LOCALE")?.value || detectLanguage(acceptLanguage);
+
   const messages = {
     // Components
     Navbar: (await import(`../../messages/${locale}/components/navbar.json`))
@@ -32,7 +49,7 @@ export default getRequestConfig(async ({ locale = "pl" }) => {
   };
 
   return {
-    locale: locale as string,
+    locale,
     messages,
   };
 });
