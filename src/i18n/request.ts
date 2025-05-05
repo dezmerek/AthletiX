@@ -46,6 +46,10 @@ export default getRequestConfig(async () => {
     PricingSection: (
       await import(`../../messages/${locale}/containers/pricing.json`)
     ).default,
+
+    // Pages
+    NotFoundSection: (await import(`../../messages/${locale}/not-found.json`))
+      .default,
   };
 
   return {
