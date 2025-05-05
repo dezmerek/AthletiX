@@ -1,19 +1,28 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function Footer() {
   const t = useTranslations("Footer");
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const navHeight = 68;
-      const elementPosition =
-        element.getBoundingClientRect().top + window.pageYOffset;
-      window.scrollTo({
-        top: elementPosition - navHeight,
-        behavior: "smooth",
-      });
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleNavigation = (sectionId: string) => {
+    if (pathname === "/") {
+      // On the homepage - smooth scrolling
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const navHeight = 68;
+        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo({
+          top: elementPosition - navHeight,
+          behavior: "smooth",
+        });
+      }
+    } else {
+      // On subpages - redirect to homepage with section parameter
+      router.push(`/?section=${sectionId}`);
     }
   };
 
@@ -34,7 +43,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-slate-300">
               <li>
                 <button
-                  onClick={() => scrollToSection("for-clients")}
+                  onClick={() => handleNavigation("for-clients")}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
                   {t("sections.platform.forClients")}
@@ -42,7 +51,7 @@ export default function Footer() {
               </li>
               <li>
                 <button
-                  onClick={() => scrollToSection("for-professionals")}
+                  onClick={() => handleNavigation("for-professionals")}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
                   {t("sections.platform.forProfessionals")}
@@ -50,7 +59,7 @@ export default function Footer() {
               </li>
               <li>
                 <button
-                  onClick={() => scrollToSection("for-business")}
+                  onClick={() => handleNavigation("for-business")}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
                   {t("sections.platform.forBusiness")}
@@ -111,12 +120,12 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
+                <button
+                  onClick={() => handleNavigation("pricing")}
                   className="hover:text-white transition-colors cursor-pointer"
                 >
                   {t("sections.platform.pricing")}
-                </a>
+                </button>
               </li>
             </ul>
           </div>
