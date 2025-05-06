@@ -8,7 +8,7 @@ export default function HeroSection() {
   return (
     <section
       id="start"
-      className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-16 overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300"
+      className="relative max-lg:mt-8 lg:min-h-screen flex flex-col justify-start md:justify-center px-4 sm:px-6 lg:px-8 pt-24 overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300"
     >
       {/* Main background with gradients */}
       <div className="absolute inset-0 overflow-hidden">
@@ -22,7 +22,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto text-center relative">
+      <div className="w-full max-w-7xl mx-auto text-center relative">
         <span className="inline-block bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-6 py-2.5 rounded-full text-sm font-semibold mb-8 shadow-lg hover:shadow-emerald-500/20 transition-all duration-300">
           {t("welcome")}
         </span>
@@ -38,7 +38,7 @@ export default function HeroSection() {
         <p className="text-xl sm:text-2xl mb-16 max-w-3xl mx-auto text-slate-600 dark:text-slate-300/90 leading-relaxed">
           {t("description")}
         </p>
-        <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto">
+        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto">
           {/* For Clients Card */}
           <div className="group rounded-2xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 bg-white dark:bg-slate-800/50 hover:bg-white/80 dark:hover:bg-slate-800/80 backdrop-blur-sm border border-slate-100 dark:border-slate-700/50">
             <div className="text-3xl sm:text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -78,21 +78,22 @@ export default function HeroSection() {
             </p>
           </div>
         </div>
-      </div>
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce text-slate-600 dark:text-white/80">
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 14l-7 7m0 0l-7-7m7 7V3"
-          />
-        </svg>
+
+        <div className="my-8 text-slate-600 dark:text-white/80 animate-bounce">
+          <svg
+            className="w-6 h-6 mx-auto"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
+        </div>
       </div>
     </section>
   );

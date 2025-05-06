@@ -7,7 +7,9 @@ import ThemeToggle from "@/theme/ThemeToggle";
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isChangingLanguage, setIsChangingLanguage] = useState(false);
-  const [targetLanguage, setTargetLanguage] = useState<"pl" | "en" | null>(null);
+  const [targetLanguage, setTargetLanguage] = useState<"pl" | "en" | null>(
+    null
+  );
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const t = useTranslations("Navbar");
@@ -35,23 +37,24 @@ export default function Navbar() {
 
   const handleNavigation = (sectionId: string) => {
     if (pathname === "/") {
-      // Na stronie głównej - płynne przewijanie
+      // On main page - smooth scroll
       const element = document.getElementById(sectionId);
       if (element) {
         const navHeight = 68; // Height of the fixed navigation
-        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        const elementPosition =
+          element.getBoundingClientRect().top + window.pageYOffset;
         window.scrollTo({
           top: elementPosition - navHeight,
           behavior: "smooth",
         });
       }
     } else {
-      // Na podstronie - przekierowanie do strony głównej z hash
+      // On subpage - redirect to main page with hash
       router.push(`/?section=${sectionId}`);
     }
   };
 
-  // Obsługa przewijania po przekierowaniu z podstrony
+  // Handle scroll after redirecting from subpage
   useEffect(() => {
     if (pathname === "/") {
       const urlParams = new URLSearchParams(window.location.search);
@@ -60,17 +63,23 @@ export default function Navbar() {
         const element = document.getElementById(sectionId);
         if (element) {
           const navHeight = 68;
-          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+          const elementPosition =
+            element.getBoundingClientRect().top + window.pageYOffset;
           window.scrollTo({
             top: elementPosition - navHeight,
             behavior: "smooth",
           });
-          // Usuń parametr z URL po przewinięciu
+          // Remove parameter from URL after scrolling
           window.history.replaceState({}, "", "/");
         }
       }
     }
   }, [pathname]);
+
+  const handleAuth = (type: "login" | "register") => {
+    const route = type === "login" ? "/auth/login" : "/auth/register";
+    router.push(route);
+  };
 
   const changeLanguage = (newLocale: string) => {
     if (newLocale === locale) return;
@@ -89,8 +98,9 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Language change overlay */}
       <div
-        className={`fixed inset-0 bg-white/80 backdrop-blur-sm z-[60] transition-opacity duration-500 flex items-center justify-center ${
+        className={`fixed inset-0 backdrop-blur-sm z-[60] transition-opacity duration-500 flex items-center justify-center ${
           isChangingLanguage ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
@@ -124,13 +134,21 @@ export default function Navbar() {
           </div>
         )}
       </div>
+
+      {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
+            {/* Left side - Logo and Navigation */}
             <div className="flex items-center space-x-8">
-              <div className="text-2xl font-bold bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent whitespace-nowrap">
+              <div
+                onClick={() => router.push("/")}
+                className="text-2xl font-bold bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent whitespace-nowrap cursor-pointer hover:cursor-pointer"
+              >
                 AthletiX
               </div>
+
+              {/* Desktop Navigation */}
               <div className="hidden md:flex items-center space-x-6">
                 <button
                   onClick={() => handleNavigation("start")}
@@ -138,6 +156,8 @@ export default function Navbar() {
                 >
                   Start
                 </button>
+
+                {/* Offer dropdown */}
                 <div className="relative group">
                   <button className="flex items-center space-x-1 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors whitespace-nowrap cursor-pointer">
                     <span>{t("offer")}</span>
@@ -191,7 +211,7 @@ export default function Navbar() {
                               strokeLinecap="round"
                               strokeLinejoin="round"
                               strokeWidth={2}
-                              d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 2 0 002 2z"
+                              d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 2 0 00-2 2v10a2 2 2 0 002 2z"
                             />
                           </svg>
                           <span>{t("forProfessionals")}</span>
@@ -219,6 +239,7 @@ export default function Navbar() {
                     </div>
                   </div>
                 </div>
+
                 <button
                   onClick={() => handleNavigation("pricing")}
                   className="text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors whitespace-nowrap cursor-pointer"
@@ -227,8 +248,13 @@ export default function Navbar() {
                 </button>
               </div>
             </div>
+
+            {/* Right side - Theme, Language, Auth */}
             <div className="flex items-center space-x-2">
+              {/* Theme Toggle */}
               <ThemeToggle />
+
+              {/* Desktop Language Selector */}
               <div className="relative group hidden md:block">
                 <button className="flex items-center space-x-1 p-2 rounded-md text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer">
                   <svg
@@ -316,6 +342,37 @@ export default function Navbar() {
                   </div>
                 </div>
               </div>
+
+              {/* Desktop Auth Buttons */}
+              <div className="space-x-7 hidden md:flex items-center">
+                <button
+                  onClick={() => handleAuth("login")}
+                  className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors whitespace-nowrap cursor-pointer"
+                >
+                  {t("signIn")}
+                </button>
+                <button
+                  onClick={() => handleAuth("register")}
+                  className="inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium hover:from-emerald-600 hover:to-teal-600 transition-all whitespace-nowrap cursor-pointer"
+                >
+                  {t("getStarted")}
+                  <svg
+                    className="w-4 h-4 ml-2 -mr-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Mobile Menu Button */}
               <button
                 ref={buttonRef}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -338,104 +395,154 @@ export default function Navbar() {
             </div>
           </div>
         </div>
-      </nav>
-      <div
-        ref={menuRef}
-        className={`fixed top-16 left-0 right-0 z-40 bg-white dark:bg-slate-900 shadow-lg transition-all duration-300 md:hidden ${
-          isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="py-4 space-y-4">
-            <button
-              onClick={() => {
-                handleNavigation("start");
-                setIsMenuOpen(false);
-              }}
-              className="w-full text-left px-4 py-2 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
-            >
-              Start
-            </button>
-            <div className="space-y-2">
+
+        {/* Mobile Menu */}
+        <div
+          ref={menuRef}
+          className={`fixed top-16 left-0 right-0 z-40 bg-white dark:bg-slate-900 shadow-lg transition-all duration-300 md:hidden ${
+            isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
+          }`}
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="py-4 space-y-4">
               <button
                 onClick={() => {
-                  handleNavigation("for-clients");
+                  handleNavigation("start");
                   setIsMenuOpen(false);
                 }}
-                className="w-full text-left px-4 py-2 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors flex items-center space-x-2"
+                className="w-full text-left px-4 py-2 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                <span>{t("forClients")}</span>
+                Start
               </button>
+              <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    handleNavigation("for-clients");
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors flex items-center space-x-2"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                  <span>{t("forClients")}</span>
+                </button>
+                <button
+                  onClick={() => {
+                    handleNavigation("for-professionals");
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors flex items-center space-x-2"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 2 0 00-2-2H5a2 2 2 0 00-2 2v10a2 2 2 0 002 2z"
+                    />
+                  </svg>
+                  <span>{t("forProfessionals")}</span>
+                </button>
+                <button
+                  onClick={() => {
+                    handleNavigation("for-business");
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors flex items-center space-x-2"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                    />
+                  </svg>
+                  <span>{t("forBusiness")}</span>
+                </button>
+              </div>
               <button
                 onClick={() => {
-                  handleNavigation("for-professionals");
+                  handleNavigation("pricing");
                   setIsMenuOpen(false);
                 }}
-                className="w-full text-left px-4 py-2 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors flex items-center space-x-2"
+                className="w-full text-left px-4 py-2 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 2 0 002 2z"
-                  />
-                </svg>
-                <span>{t("forProfessionals")}</span>
+                {t("pricing")}
               </button>
-              <button
-                onClick={() => {
-                  handleNavigation("for-business");
-                  setIsMenuOpen(false);
-                }}
-                className="w-full text-left px-4 py-2 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors flex items-center space-x-2"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+
+              {/* Mobile Auth Buttons */}
+              <div className="flex flex-col space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  onClick={() => {
+                    handleAuth("login");
+                    setIsMenuOpen(false);
+                  }}
+                  className="flex items-center space-x-3 text-slate-700 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors text-left text-base font-medium cursor-pointer"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                  />
-                </svg>
-                <span>{t("forBusiness")}</span>
-              </button>
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                    />
+                  </svg>
+                  <span>{t("signIn")}</span>
+                </button>
+                <button
+                  onClick={() => {
+                    handleAuth("register");
+                    setIsMenuOpen(false);
+                  }}
+                  className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-base font-medium hover:from-emerald-600 hover:to-teal-600 transition-all whitespace-nowrap cursor-pointer"
+                >
+                  <span>{t("getStarted")}</span>
+                  <svg
+                    className="w-5 h-5 ml-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
-            <button
-              onClick={() => {
-                handleNavigation("pricing");
-                setIsMenuOpen(false);
-              }}
-              className="w-full text-left px-4 py-2 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
-            >
-              {t("pricing")}
-            </button>
           </div>
         </div>
-      </div>
+      </nav>
     </>
   );
 }
