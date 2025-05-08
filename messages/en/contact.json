@@ -1,0 +1,19 @@
+{
+  "badge": "Contact",
+  "title": "Write to Us",
+  "description": "Have questions or want to learn more about AthletiX? We're here to help! Fill out the form below and we'll get back to you as soon as possible.",
+  "form": {
+    "name": "Name",
+    "email": "Email",
+    "subject": "Subject",
+    "selectSubject": "Select a subject",
+    "subjects": {
+      "general": "General Inquiry",
+      "support": "Technical Support",
+      "business": "Business Partnership",
+      "other": "Other"
+    },
+    "message": "Message",
+    "submit": "Send Message"
+  }
+} 

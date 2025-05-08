@@ -53,6 +53,8 @@ export default getRequestConfig(async () => {
     terms: (await import(`../../messages/${locale}/terms.json`)).default,
     privacyPolicy: (await import(`../../messages/${locale}/privacy-policy.json`))
       .default,
+    ContactPage: (await import(`../../messages/${locale}/contact.json`))
+      .default,
   };
 
   return {

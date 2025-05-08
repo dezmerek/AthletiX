@@ -1,0 +1,19 @@
+{
+  "badge": "Kontakt",
+  "title": "Napisz do nas",
+  "description": "Masz pytania lub chcesz dowiedzieć się więcej o AthletiX? Jesteśmy tutaj, aby pomóc! Wypełnij poniższy formularz, a my skontaktujemy się z Tobą jak najszybciej.",
+  "form": {
+    "name": "Imię i nazwisko",
+    "email": "Email",
+    "subject": "Temat",
+    "selectSubject": "Wybierz temat",
+    "subjects": {
+      "general": "Zapytanie ogólne",
+      "support": "Wsparcie techniczne",
+      "business": "Współpraca biznesowa",
+      "other": "Inne"
+    },
+    "message": "Wiadomość",
+    "submit": "Wyślij wiadomość"
+  }
+} 
