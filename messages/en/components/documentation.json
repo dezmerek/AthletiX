@@ -1,0 +1,101 @@
+{
+  "title": "Documentation",
+  "description": "Comprehensive guide to using AthletiX platform",
+  "lastUpdated": "Last updated: May 2025",
+  "sections": {
+    "gettingStarted": {
+      "title": "Getting Started",
+      "content": "Welcome to AthletiX! This guide will help you understand how to use our platform effectively.",
+      "subsections": {
+        "navigation": {
+          "title": "Navigation",
+          "content": "The main navigation bar at the top of the page provides access to all major sections of the platform.",
+          "features": [
+            "Home page access",
+            "Contact information",
+            "Language selection",
+            "Theme switching (light/dark mode)"
+          ]
+        }
+      }
+    },
+    "mainFeatures": {
+      "title": "Main Features",
+      "content": "AthletiX currently offers the following core features:",
+      "subsections": {
+        "navigation": {
+          "title": "Navigation System",
+          "content": "Our intuitive navigation system helps you move through the platform with ease.",
+          "features": [
+            "Responsive navigation bar",
+            "Mobile-friendly design",
+            "Quick access to important sections",
+            "Smooth transitions between pages"
+          ]
+        },
+        "contact": {
+          "title": "Contact Information",
+          "content": "Stay connected with us through our contact page.",
+          "features": [
+            "Contact form",
+            "Business hours",
+            "Location information",
+            "Social media links"
+          ]
+        }
+      }
+    },
+    "legal": {
+      "title": "Legal Information",
+      "content": "Important legal documents and policies for using AthletiX.",
+      "subsections": {
+        "privacy": {
+          "title": "Privacy Policy",
+          "content": "Learn about how we protect your data and privacy.",
+          "features": [
+            "Data collection practices",
+            "User rights",
+            "Security measures",
+            "Cookie policy"
+          ]
+        },
+        "terms": {
+          "title": "Terms of Service",
+          "content": "Understand the terms and conditions for using AthletiX.",
+          "features": [
+            "User obligations",
+            "Platform rules",
+            "Service limitations",
+            "Account policies"
+          ]
+        }
+      }
+    },
+    "customization": {
+      "title": "Platform Customization",
+      "content": "Personalize your AthletiX experience with our customization options.",
+      "subsections": {
+        "theme": {
+          "title": "Theme Settings",
+          "content": "Choose between light and dark mode to suit your preferences.",
+          "features": [
+            "Light mode",
+            "Dark mode",
+            "Automatic theme switching",
+            "Persistent theme selection"
+          ]
+        },
+        "language": {
+          "title": "Language Options",
+          "content": "Use AthletiX in your preferred language.",
+          "features": [
+            "English support",
+            "Polish support",
+            "Easy language switching",
+            "Persistent language selection"
+          ]
+        }
+      }
+    }
+  }
+} 

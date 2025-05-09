@@ -55,6 +55,8 @@ export default getRequestConfig(async () => {
       .default,
     ContactPage: (await import(`../../messages/${locale}/contact.json`))
       .default,
+    documentation: (await import(`../../messages/${locale}/components/documentation.json`))
+      .default,
   };
 
   return {

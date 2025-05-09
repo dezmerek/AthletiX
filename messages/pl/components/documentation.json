@@ -1,0 +1,101 @@
+{
+  "title": "Dokumentacja",
+  "description": "Kompleksowy przewodnik po platformie AthletiX",
+  "lastUpdated": "Ostatnia aktualizacja: Maj 2025",
+  "sections": {
+    "gettingStarted": {
+      "title": "Wprowadzenie",
+      "content": "Witaj w AthletiX! Ten przewodnik pomoże Ci zrozumieć, jak efektywnie korzystać z naszej platformy.",
+      "subsections": {
+        "navigation": {
+          "title": "Nawigacja",
+          "content": "Główny pasek nawigacyjny na górze strony zapewnia dostęp do wszystkich głównych sekcji platformy.",
+          "features": [
+            "Dostęp do strony głównej",
+            "Informacje kontaktowe",
+            "Wybór języka",
+            "Przełączanie motywu (jasny/ciemny)"
+          ]
+        }
+      }
+    },
+    "mainFeatures": {
+      "title": "Główne Funkcje",
+      "content": "AthletiX obecnie oferuje następujące podstawowe funkcje:",
+      "subsections": {
+        "navigation": {
+          "title": "System Nawigacji",
+          "content": "Nasz intuicyjny system nawigacji pomaga Ci łatwo poruszać się po platformie.",
+          "features": [
+            "Responsywny pasek nawigacyjny",
+            "Projekt przyjazny dla urządzeń mobilnych",
+            "Szybki dostęp do ważnych sekcji",
+            "Płynne przejścia między stronami"
+          ]
+        },
+        "contact": {
+          "title": "Informacje Kontaktowe",
+          "content": "Pozostań w kontakcie z nami przez naszą stronę kontaktową.",
+          "features": [
+            "Formularz kontaktowy",
+            "Godziny pracy",
+            "Informacje o lokalizacji",
+            "Linki do mediów społecznościowych"
+          ]
+        }
+      }
+    },
+    "legal": {
+      "title": "Informacje Prawne",
+      "content": "Ważne dokumenty prawne i polityki dotyczące korzystania z AthletiX.",
+      "subsections": {
+        "privacy": {
+          "title": "Polityka Prywatności",
+          "content": "Dowiedz się, jak chronimy Twoje dane i prywatność.",
+          "features": [
+            "Praktyki zbierania danych",
+            "Prawa użytkownika",
+            "Środki bezpieczeństwa",
+            "Polityka plików cookie"
+          ]
+        },
+        "terms": {
+          "title": "Warunki Użytkowania",
+          "content": "Zrozum zasady i warunki korzystania z AthletiX.",
+          "features": [
+            "Obowiązki użytkownika",
+            "Zasady platformy",
+            "Ograniczenia usługi",
+            "Polityka konta"
+          ]
+        }
+      }
+    },
+    "customization": {
+      "title": "Dostosowanie Platformy",
+      "content": "Spersonalizuj swoje doświadczenie z AthletiX dzięki naszym opcjom dostosowania.",
+      "subsections": {
+        "theme": {
+          "title": "Ustawienia Motywu",
+          "content": "Wybierz między trybem jasnym i ciemnym, aby dostosować do swoich preferencji.",
+          "features": [
+            "Tryb jasny",
+            "Tryb ciemny",
+            "Automatyczne przełączanie motywu",
+            "Trwały wybór motywu"
+          ]
+        },
+        "language": {
+          "title": "Opcje Językowe",
+          "content": "Korzystaj z AthletiX w preferowanym języku.",
+          "features": [
+            "Wsparcie dla języka angielskiego",
+            "Wsparcie dla języka polskiego",
+            "Łatwe przełączanie języka",
+            "Trwały wybór języka"
+          ]
+        }
+      }
+    }
+  }
+} 

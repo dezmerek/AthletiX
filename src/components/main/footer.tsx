@@ -78,8 +78,8 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-slate-300">
               <li>
                 <button
-                  disabled
-                  className="text-slate-400 cursor-not-allowed"
+                  onClick={() => handleLegalNavigation("documentation")}
+                  className="hover:text-white transition-colors cursor-pointer"
                 >
                   {t("sections.resources.documentation")}
                 </button>
