@@ -14,7 +14,8 @@ export default function Footer() {
       const element = document.getElementById(sectionId);
       if (element) {
         const navHeight = 68;
-        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        const elementPosition =
+          element.getBoundingClientRect().top + window.pageYOffset;
         window.scrollTo({
           top: elementPosition - navHeight,
           behavior: "smooth",
@@ -84,22 +85,6 @@ export default function Footer() {
                   {t("sections.resources.documentation")}
                 </button>
               </li>
-              <li>
-                <button
-                  disabled
-                  className="text-slate-400 cursor-not-allowed"
-                >
-                  {t("sections.resources.helpCenter")}
-                </button>
-              </li>
-              <li>
-                <button
-                  disabled
-                  className="text-slate-400 cursor-not-allowed"
-                >
-                  {t("sections.resources.support")}
-                </button>
-              </li>
             </ul>
           </div>
           <div>
@@ -108,27 +93,8 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-sm text-slate-300">
               <li>
-                <button
-                  onClick={() => handleLegalNavigation("contact")}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  {t("sections.contact.writeToUs")}
-                </button>
-              </li>
-              <li>
-                <button
-                  disabled
-                  className="text-slate-400 cursor-not-allowed"
-                >
-                  {t("sections.platform.demo")}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => handleNavigation("pricing")}
-                  className="hover:text-white transition-colors cursor-pointer"
-                >
-                  {t("sections.platform.pricing")}
+                <button disabled className="text-slate-400 cursor-not-allowed">
+                  {t("sections.resources.helpCenter")}
                 </button>
               </li>
             </ul>
@@ -137,14 +103,14 @@ export default function Footer() {
         <div className="mt-8 pt-8 border-t border-slate-700">
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
             <div className="flex items-center space-x-4">
-              <button 
+              <button
                 onClick={() => handleLegalNavigation("privacy-policy")}
                 className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer"
               >
                 {t("legal.privacyPolicy")}
               </button>
               <span className="text-slate-600">•</span>
-              <button 
+              <button
                 onClick={() => handleLegalNavigation("terms")}
                 className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer"
               >
