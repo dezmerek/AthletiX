@@ -85,6 +85,14 @@ export default function Footer() {
                   {t("sections.resources.documentation")}
                 </button>
               </li>
+              <li>
+                <button
+                  onClick={() => handleLegalNavigation("faq")}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  {t("sections.resources.faq")}
+                </button>
+              </li>
             </ul>
           </div>
           <div>

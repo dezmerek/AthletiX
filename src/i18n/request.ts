@@ -51,12 +51,15 @@ export default getRequestConfig(async () => {
     NotFoundSection: (await import(`../../messages/${locale}/not-found.json`))
       .default,
     terms: (await import(`../../messages/${locale}/terms.json`)).default,
-    privacyPolicy: (await import(`../../messages/${locale}/privacy-policy.json`))
-      .default,
+    privacyPolicy: (
+      await import(`../../messages/${locale}/privacy-policy.json`)
+    ).default,
     ContactPage: (await import(`../../messages/${locale}/contact.json`))
       .default,
-    documentation: (await import(`../../messages/${locale}/components/documentation.json`))
-      .default,
+    documentation: (
+      await import(`../../messages/${locale}/components/documentation.json`)
+    ).default,
+    faq: (await import(`../../messages/${locale}/faq.json`)).default,
   };
 
   return {

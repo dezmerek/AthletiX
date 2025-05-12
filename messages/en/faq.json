@@ -1,0 +1,26 @@
+{
+  "title": "Frequently Asked Questions",
+  "description": "Find answers to the most common questions about AthletiX platform.",
+  "sections": {
+    "what-is-athletix": {
+      "question": "What is AthletiX?",
+      "answer": "AthletiX is a comprehensive fitness platform that connects clients, trainers, and sports clubs. It provides tools for training management, communication, and business growth in the fitness industry."
+    },
+    "how-to-start": {
+      "question": "How can I start using AthletiX?",
+      "answer": "Getting started with AthletiX is easy! Simply create an account, choose your role (client, trainer, or business), and follow the setup wizard to customize your profile and preferences."
+    },
+    "pricing": {
+      "question": "What are the pricing plans?",
+      "answer": "AthletiX offers flexible pricing plans for different user types. We have free and premium options for clients, trainers, and businesses. Visit our pricing page for detailed information about each plan."
+    },
+    "security": {
+      "question": "Is my data secure?",
+      "answer": "Yes, we take data security very seriously. All data is encrypted, and we follow industry best practices for data protection. We regularly update our security measures to ensure your information remains safe."
+    },
+    "support": {
+      "question": "How can I get support?",
+      "answer": "We offer multiple support channels including email support, documentation, and a help center. You can also contact our support team directly through the platform."
+    }
+  }
+}
