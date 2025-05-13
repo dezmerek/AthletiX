@@ -1,9 +1,11 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 
 export default function FAQPage() {
   const t = useTranslations("faq");
+  const router = useRouter();
 
   const sections = t.raw("sections") as Record<
     string,
@@ -47,6 +49,21 @@ export default function FAQPage() {
               </div>
             );
           })}
+        </div>
+
+        <div className="mt-12 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl p-8 text-center">
+          <h2 className="text-2xl font-semibold mb-4 text-slate-800 dark:text-white">
+            {t("sections.contact-link.question")}
+          </h2>
+          <p className="text-slate-600 dark:text-slate-300 mb-6 max-w-2xl mx-auto">
+            {t("sections.contact-link.answer")}
+          </p>
+          <button
+            onClick={() => router.push("/contact")}
+            className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl hover:from-emerald-600 hover:to-teal-600 cursor-pointer transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+          >
+            {t("sections.contact-link.button")}
+          </button>
         </div>
       </div>
     </div>

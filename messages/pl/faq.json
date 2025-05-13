@@ -21,6 +21,11 @@
     "support": {
       "question": "Jak mogę uzyskać wsparcie?",
       "answer": "Oferujemy wiele kanałów wsparcia, w tym wsparcie e-mail, dokumentację i centrum pomocy. Możesz również skontaktować się bezpośrednio z naszym zespołem wsparcia przez platformę."
+    },
+    "contact-link": {
+      "question": "Masz jeszcze pytania?",
+      "answer": "Nie znalazłeś odpowiedzi na swoje pytanie? Nasz zespół wsparcia jest tutaj, aby pomóc! Skontaktuj się z nami, a odpowiemy tak szybko, jak to możliwe.",
+      "button": "Skontaktuj się z Wsparciem"
     }
   }
 }
