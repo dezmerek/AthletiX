@@ -15,8 +15,12 @@ export default function DocumentationPage() {
               {t("title")}
             </span>
           </h1>
-          <p className="text-slate-600 dark:text-slate-300 text-lg">{t("description")}</p>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">{t("lastUpdated")}</p>
+          <p className="text-slate-600 dark:text-slate-300 text-lg">
+            {t("description")}
+          </p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+            {t("lastUpdated")}
+          </p>
         </div>
 
         {/* Table of Contents */}
@@ -80,67 +84,89 @@ export default function DocumentationPage() {
                   {/* Subsections */}
                   {typedSection.subsections && (
                     <div className="space-y-8 mt-8">
-                      {Object.entries(typedSection.subsections).map(([subKey, subsection]) => {
-                        const typedSubsection = subsection as {
-                          title: string;
-                          content: string;
-                          code?: string;
-                          steps?: string[];
-                          features?: string[];
-                          tools?: string[];
-                          measures?: string[];
-                          options?: string[];
-                          metrics?: string[];
-                          example?: {
+                      {Object.entries(typedSection.subsections).map(
+                        ([subKey, subsection]) => {
+                          const typedSubsection = subsection as {
                             title: string;
-                            code: string;
+                            content: string;
+                            code?: string;
+                            steps?: string[];
+                            features?: string[];
+                            tools?: string[];
+                            measures?: string[];
+                            options?: string[];
+                            metrics?: string[];
+                            example?: {
+                              title: string;
+                              code: string;
+                            };
                           };
-                        };
 
-                        return (
-                          <div key={subKey} className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-6">
-                            <h3 className="text-xl font-semibold mb-3 text-slate-800 dark:text-white">
-                              {typedSubsection.title}
-                            </h3>
-                            <p className="text-slate-600 dark:text-slate-300 mb-4">
-                              {typedSubsection.content}
-                            </p>
+                          return (
+                            <div
+                              key={subKey}
+                              className="bg-slate-50 dark:bg-slate-800/30 rounded-lg p-6"
+                            >
+                              <h3 className="text-xl font-semibold mb-3 text-slate-800 dark:text-white">
+                                {typedSubsection.title}
+                              </h3>
+                              <p className="text-slate-600 dark:text-slate-300 mb-4">
+                                {typedSubsection.content}
+                              </p>
 
-                            {/* Code Block */}
-                            {typedSubsection.code && (
-                              <div className="mb-4">
-                                <pre className="bg-slate-800 text-slate-200 p-4 rounded-lg overflow-x-auto">
-                                  <code>{typedSubsection.code}</code>
-                                </pre>
-                              </div>
-                            )}
+                              {/* Code Block */}
+                              {typedSubsection.code && (
+                                <div className="mb-4">
+                                  <pre className="bg-slate-800 text-slate-200 p-4 rounded-lg overflow-x-auto">
+                                    <code>{typedSubsection.code}</code>
+                                  </pre>
+                                </div>
+                              )}
 
-                            {/* Example with Code */}
-                            {typedSubsection.example && (
-                              <div className="mb-4">
-                                <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                                  {typedSubsection.example.title}
-                                </h4>
-                                <pre className="bg-slate-800 text-slate-200 p-4 rounded-lg overflow-x-auto">
-                                  <code>{typedSubsection.example.code}</code>
-                                </pre>
-                              </div>
-                            )}
+                              {/* Example with Code */}
+                              {typedSubsection.example && (
+                                <div className="mb-4">
+                                  <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                    {typedSubsection.example.title}
+                                  </h4>
+                                  <pre className="bg-slate-800 text-slate-200 p-4 rounded-lg overflow-x-auto">
+                                    <code>{typedSubsection.example.code}</code>
+                                  </pre>
+                                </div>
+                              )}
 
-                            {/* Lists */}
-                            {(typedSubsection.steps || typedSubsection.features || typedSubsection.tools || typedSubsection.measures || typedSubsection.options || typedSubsection.metrics) && (
-                              <ul className="space-y-2">
-                                {(typedSubsection.steps || typedSubsection.features || typedSubsection.tools || typedSubsection.measures || typedSubsection.options || typedSubsection.metrics)?.map((item, idx) => (
-                                  <li key={idx} className="flex items-start space-x-2 text-slate-600 dark:text-slate-300">
-                                    <span className="text-emerald-500 dark:text-emerald-400 mt-1">•</span>
-                                    <span>{item}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                          </div>
-                        );
-                      })}
+                              {/* Lists */}
+                              {(typedSubsection.steps ||
+                                typedSubsection.features ||
+                                typedSubsection.tools ||
+                                typedSubsection.measures ||
+                                typedSubsection.options ||
+                                typedSubsection.metrics) && (
+                                <ul className="space-y-2">
+                                  {(
+                                    typedSubsection.steps ||
+                                    typedSubsection.features ||
+                                    typedSubsection.tools ||
+                                    typedSubsection.measures ||
+                                    typedSubsection.options ||
+                                    typedSubsection.metrics
+                                  )?.map((item, idx) => (
+                                    <li
+                                      key={idx}
+                                      className="flex items-start space-x-2 text-slate-600 dark:text-slate-300"
+                                    >
+                                      <span className="text-emerald-500 dark:text-emerald-400 mt-1">
+                                        •
+                                      </span>
+                                      <span>{item}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </div>
+                          );
+                        }
+                      )}
                     </div>
                   )}
                 </div>
@@ -149,6 +175,21 @@ export default function DocumentationPage() {
           })}
         </div>
       </div>
+      {/* Contact encouragement section */}
+      <div className="mt-16 max-w-4xl mx-auto bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl p-8 text-center">
+        <h2 className="text-2xl font-semibold mb-4 text-slate-800 dark:text-white">
+          {t("contact.title")}
+        </h2>
+        <p className="text-slate-600 dark:text-slate-300 mb-6 max-w-2xl mx-auto">
+          {t("contact.description")}
+        </p>
+        <button
+          onClick={() => (window.location.href = "/contact")}
+          className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl hover:from-emerald-600 hover:to-teal-600 cursor-pointer transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+        >
+          {t("contact.button")}
+        </button>
+      </div>
     </div>
   );
-} 
+}

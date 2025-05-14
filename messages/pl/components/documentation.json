@@ -97,5 +97,10 @@
         }
       }
     }
+  },
+  "contact": {
+    "title": "Masz jeszcze pytania?",
+    "description": "Nie znalazłeś odpowiedzi w dokumentacji? Nasz zespół wsparcia jest tutaj, aby pomóc! Skontaktuj się z nami, a odpowiemy tak szybko, jak to możliwe.",
+    "button": "Skontaktuj się z Wsparciem"
   }
-} 
+}

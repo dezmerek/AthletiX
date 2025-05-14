@@ -97,5 +97,10 @@
         }
       }
     }
+  },
+  "contact": {
+    "title": "Still have questions?",
+    "description": "Couldn't find what you're looking for in the documentation? Our support team is here to help! Contact us and we'll get back to you as soon as possible.",
+    "button": "Contact Support"
   }
-} 
+}
