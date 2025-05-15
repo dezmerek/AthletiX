@@ -19,7 +19,9 @@ export default function ContactPage() {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -37,7 +39,9 @@ export default function ContactPage() {
               {t("title")}
             </span>
           </h1>
-          <p className="text-slate-600 dark:text-slate-300">{t("description")}</p>
+          <p className="text-slate-600 dark:text-slate-300">
+            {t("description")}
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -131,4 +135,4 @@ export default function ContactPage() {
       </div>
     </div>
   );
-} 
+}

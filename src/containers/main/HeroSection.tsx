@@ -8,7 +8,7 @@ export default function HeroSection() {
   return (
     <section
       id="start"
-      className="relative max-lg:mt-8 lg:min-h-screen flex flex-col justify-start md:justify-center px-4 sm:px-6 lg:px-8 pt-24 overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300"
+      className="relative pt-8 lg:pt-0 lg:min-h-screen flex flex-col justify-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300"
     >
       {/* Main background with gradients */}
       <div className="absolute inset-0 overflow-hidden">
@@ -79,7 +79,13 @@ export default function HeroSection() {
           </div>
         </div>
 
-        <div className="my-8 text-slate-600 dark:text-white/80 animate-bounce">
+        <div
+          className="my-8 text-slate-600 dark:text-white/80 animate-bounce cursor-pointer"
+          onClick={() => {
+            const el = document.getElementById("for-clients");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }}
+        >
           <svg
             className="w-6 h-6 mx-auto"
             fill="none"
