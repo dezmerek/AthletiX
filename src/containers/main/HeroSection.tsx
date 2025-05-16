@@ -8,7 +8,7 @@ export default function HeroSection() {
   return (
     <section
       id="start"
-      className="relative pt-8 lg:pt-0 lg:min-h-screen flex flex-col justify-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300"
+      className="relative pt-8 lg:pt-0 lg:min-h-[calc(100vh-68px)] flex flex-col justify-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300"
     >
       {/* Main background with gradients */}
       <div className="absolute inset-0 overflow-hidden">
