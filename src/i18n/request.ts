@@ -60,6 +60,7 @@ export default getRequestConfig(async () => {
       await import(`../../messages/${locale}/components/documentation.json`)
     ).default,
     faq: (await import(`../../messages/${locale}/faq.json`)).default,
+    auth: (await import(`../../messages/${locale}/auth.json`)).default,
   };
 
   return {
