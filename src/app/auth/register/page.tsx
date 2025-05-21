@@ -10,7 +10,6 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const t = useTranslations("auth.register");
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -21,11 +20,24 @@ export default function RegisterPage() {
     }
 
     try {
-      // TODO: Implement actual registration logic here
-      console.log("Registration attempt with:", { email, password });
-      // After successful registration, you can use window.location.href = '/dashboard'
-    } catch {
-      setError(t("error.emailExists"));
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || t("error.generic"));
+        return;
+      }
+
+      // Redirect to login page after successful registration
+      window.location.href = "/auth/login?registered=true";
+    } catch (err) {
+      console.error("Registration error:", err);
+      setError(t("error.generic"));
     }
   };
 
