@@ -9,6 +9,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const t = useTranslations("auth.register");
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,8 +19,8 @@ export default function RegisterPage() {
       setError(t("error.passwordMismatch"));
       return;
     }
-
     try {
+      setIsLoading(true);
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -29,7 +30,11 @@ export default function RegisterPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || t("error.generic"));
+        if (data.error === "Email already registered") {
+          setError(t("error.emailExists"));
+        } else {
+          setError(t("error.generic"));
+        }
         return;
       }
 
@@ -38,6 +43,8 @@ export default function RegisterPage() {
     } catch (err) {
       console.error("Registration error:", err);
       setError(t("error.generic"));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -120,11 +127,13 @@ export default function RegisterPage() {
           )}
 
           <div>
+            {" "}
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all duration-200 cursor-pointer"
+              disabled={isLoading}
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {t("createAccount")}
+              {isLoading ? t("creatingAccount") : t("createAccount")}
             </button>
           </div>
         </form>
