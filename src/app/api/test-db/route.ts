@@ -3,7 +3,7 @@ import connectDB from "@/lib/mongodb";
 
 export async function GET() {
   try {
-    await connectDB();
+    await connectDB.connect();
     return NextResponse.json({
       status: "success",
       message: "MongoDB Connected",
