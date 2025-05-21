@@ -1,13 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const t = useTranslations("auth.login");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -15,13 +19,28 @@ export default function LoginPage() {
     setError("");
 
     try {
-      // TODO: Implement actual login logic here
-      console.log("Login attempt with:", { email, password });
-      // After successful login, you can use window.location.href = '/dashboard'
-    } catch {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError(t("error"));
+        return;
+      }
+
+      // Handle successful login
+      startTransition(() => {
+        router.replace("/dashboard");
+        router.refresh();
+      });
+    } catch (error) {
+      console.error("Login error:", error);
       setError(t("error"));
     }
   };
+
   return (
     <main className="flex flex-col min-h-[calc(100vh-68px)] items-center bg-white dark:bg-slate-900 justify-center px-4">
       <div className="max-w-md w-full space-y-8 -mt-50">
@@ -39,6 +58,7 @@ export default function LoginPage() {
             </Link>
           </p>
         </div>
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <div>
@@ -57,6 +77,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+
             <div>
               <label htmlFor="password" className="sr-only">
                 {t("passwordLabel")}
@@ -93,9 +114,10 @@ export default function LoginPage() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all duration-200 cursor-pointer"
+              disabled={isPending}
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {t("signIn")}
+              {isPending ? t("signingIn") : t("signIn")}
             </button>
           </div>
         </form>

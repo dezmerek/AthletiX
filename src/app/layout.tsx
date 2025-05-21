@@ -6,6 +6,7 @@ import Footer from "@/components/main/footer";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import ThemeProvider from "@/theme/ThemeProvider";
+import AuthProvider from "@/components/auth/Providers";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -33,18 +34,20 @@ export default async function RootLayout({
       <body
         className={`bg-white dark:bg-[#191919] text-[#37352f] dark:text-[#ffffffcf] ${montserrat.className} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <NextIntlClientProvider locale={locale} messages={messages}>
-            <Navbar />
-            {children}
-            <Footer />
-          </NextIntlClientProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <NextIntlClientProvider locale={locale} messages={messages}>
+              <Navbar />
+              {children}
+              <Footer />
+            </NextIntlClientProvider>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );
