@@ -3,6 +3,10 @@ import { useState, useEffect, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import ThemeToggle from "@/theme/ThemeToggle";
+import DesktopNav from "./navbar/DesktopNav";
+import MobileNav from "./navbar/MobileNav";
+import LanguageSelector from "./navbar/LanguageSelector";
+import AuthButtons from "./navbar/AuthButtons";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -139,7 +143,7 @@ export default function Navbar() {
       <nav className="sticky top-0 z-50 bg-white dark:bg-slate-900 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            {/* Left side - Logo and Navigation */}
+            {/* Left side - Logo and Navigation */}{" "}
             <div className="flex items-center space-x-8">
               <div
                 onClick={() => router.push("/")}
@@ -149,237 +153,27 @@ export default function Navbar() {
               </div>
 
               {/* Desktop Navigation */}
-              <div className="hidden md:flex items-center space-x-6">
-                <button
-                  onClick={() => handleNavigation("start")}
-                  className="text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors whitespace-nowrap cursor-pointer"
-                >
-                  Start
-                </button>
-
-                {/* Offer dropdown */}
-                <div className="relative group">
-                  <button className="flex items-center space-x-1 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors whitespace-nowrap cursor-pointer">
-                    <span>{t("offer")}</span>
-                    <svg
-                      className="w-4 h-4 transition-transform group-hover:rotate-180"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </button>
-                  <div className="absolute left-0 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-in-out">
-                    <div className="pt-2">
-                      <div className="rounded-xl bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-lg border border-slate-100 dark:border-slate-700">
-                        <button
-                          onClick={() => handleNavigation("for-clients")}
-                          className="w-full px-4 py-2.5 text-left rounded-t-lg text-sm text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 hover:text-emerald-500 dark:hover:text-emerald-400 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
-                        >
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7z"
-                            />
-                          </svg>
-                          <span>{t("forClients")}</span>
-                        </button>
-                        <button
-                          onClick={() => handleNavigation("for-professionals")}
-                          className="w-full px-4 py-2.5 text-left text-sm text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 hover:text-emerald-500 dark:hover:text-emerald-400 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
-                        >
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M21 13.255A23.931 23.931 0 0 1 12 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2m4 6h.01M5 20h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"
-                            />
-                          </svg>
-                          <span>{t("forProfessionals")}</span>
-                        </button>
-                        <button
-                          onClick={() => handleNavigation("for-business")}
-                          className="w-full px-4 py-2.5 rounded-b-lg text-left text-sm text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 hover:text-emerald-500 dark:hover:text-emerald-400 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
-                        >
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5m-4 0h4"
-                            />
-                          </svg>
-                          <span>{t("forBusiness")}</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => handleNavigation("pricing")}
-                  className="text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors whitespace-nowrap cursor-pointer"
-                >
-                  {t("pricing")}
-                </button>
-              </div>
+              <DesktopNav handleNavigation={handleNavigation} />
             </div>
-
             {/* Right side - Theme, Language, Auth */}
             <div className="flex items-center space-x-2">
-              {/* Theme Toggle */}
               <ThemeToggle />
-
-              {/* Desktop Language Selector */}
-              <div className="relative group hidden md:block">
-                <button className="flex items-center space-x-1 p-2 rounded-md text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 0 1 6.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
-                    />
-                  </svg>
-                  <span className="text-sm font-medium">
-                    {locale.toUpperCase()}
-                  </span>
-                  <svg
-                    className="w-3 h-3 opacity-75"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-                <div className="absolute right-0 w-36 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-in-out">
-                  <div className="pt-2">
-                    <div className="rounded-xl bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-lg border border-slate-100 dark:border-slate-700">
-                      <button
-                        onClick={() => {
-                          changeLanguage("pl");
-                          setIsMenuOpen(false);
-                        }}
-                        className="w-full px-4 rounded-t-lg py-2.5 text-left text-sm text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 hover:text-emerald-500 dark:hover:text-emerald-400 transition-all whitespace-nowrap cursor-pointer flex items-center justify-between"
-                      >
-                        <span className="font-medium">Polski</span>
-                        {locale === "pl" && (
-                          <svg
-                            className="w-4 h-4 text-emerald-500"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                        )}
-                      </button>
-                      <button
-                        onClick={() => {
-                          changeLanguage("en");
-                          setIsMenuOpen(false);
-                        }}
-                        className="w-full px-4 rounded-b-lg py-2.5 text-left text-sm text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 hover:text-emerald-500 dark:hover:text-emerald-400 transition-all whitespace-nowrap cursor-pointer flex items-center justify-between"
-                      >
-                        <span className="font-medium">English</span>
-                        {locale === "en" && (
-                          <svg
-                            className="w-4 h-4 text-emerald-500"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Desktop Auth Buttons */}
-              <div className="space-x-7 hidden md:flex items-center">
-                <button
-                  onClick={() => handleAuth("login")}
-                  className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors whitespace-nowrap cursor-pointer"
-                >
-                  {t("signIn")}
-                </button>
-                <button
-                  onClick={() => handleAuth("register")}
-                  className="inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium hover:from-emerald-600 hover:to-teal-600 transition-all whitespace-nowrap cursor-pointer"
-                >
-                  {t("getStarted")}
-                  <svg
-                    className="w-4 h-4 ml-2 -mr-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14 5l7 7m0 0l-7 7m7-7H3"
-                    />
-                  </svg>
-                </button>
-              </div>
+              <LanguageSelector
+                locale={locale}
+                changeLanguage={changeLanguage}
+                setIsMenuOpen={setIsMenuOpen}
+              />
+              <AuthButtons handleAuth={handleAuth} />
 
               {/* Mobile Menu Button */}
               <button
-                ref={buttonRef}
+                type="button"
+                className="md:hidden p-2 rounded-lg text-slate-800 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden p-2 rounded-md text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                ref={buttonRef}
               >
                 <svg
-                  className="w-6 h-6"
+                  className="w-5 h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -394,153 +188,23 @@ export default function Navbar() {
               </button>
             </div>
           </div>
-        </div>
-
+        </div>{" "}
         {/* Mobile Menu */}
         <div
           ref={menuRef}
-          className={`fixed top-16 left-0 right-0 z-40 bg-white dark:bg-slate-900 shadow-lg transition-all duration-300 md:hidden ${
-            isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
+          className={`md:hidden transition-all duration-500 ease-in-out bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 ${
+            isMenuOpen
+              ? "max-h-[40rem] opacity-100"
+              : "max-h-0 opacity-0 overflow-hidden"
           }`}
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="py-4 space-y-4">
-              <button
-                onClick={() => {
-                  handleNavigation("start");
-                  setIsMenuOpen(false);
-                }}
-                className="w-full text-left px-4 py-2 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
-              >
-                Start
-              </button>
-              <div className="space-y-2">
-                <button
-                  onClick={() => {
-                    handleNavigation("for-clients");
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-full text-left px-4 py-2 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors flex items-center space-x-2"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7z"
-                    />
-                  </svg>
-                  <span>{t("forClients")}</span>
-                </button>
-                <button
-                  onClick={() => {
-                    handleNavigation("for-professionals");
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-full text-left px-4 py-2 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors flex items-center space-x-2"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 13.255A23.931 23.931 0 0 1 12 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2m4 6h.01M5 20h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"
-                    />
-                  </svg>
-                  <span>{t("forProfessionals")}</span>
-                </button>
-                <button
-                  onClick={() => {
-                    handleNavigation("for-business");
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-full text-left px-4 py-2 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors flex items-center space-x-2"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5m-4 0h4"
-                    />
-                  </svg>
-                  <span>{t("forBusiness")}</span>
-                </button>
-              </div>
-              <button
-                onClick={() => {
-                  handleNavigation("pricing");
-                  setIsMenuOpen(false);
-                }}
-                className="w-full text-left px-4 py-2 text-base text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
-              >
-                {t("pricing")}
-              </button>
-
-              {/* Mobile Auth Buttons */}
-              <div className="flex flex-col space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <button
-                  onClick={() => {
-                    handleAuth("login");
-                    setIsMenuOpen(false);
-                  }}
-                  className="flex items-center space-x-3 text-slate-700 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors text-left text-base font-medium cursor-pointer"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h7a3 3 0 0 1 3 3v1"
-                    />
-                  </svg>
-                  <span>{t("signIn")}</span>
-                </button>
-                <button
-                  onClick={() => {
-                    handleAuth("register");
-                    setIsMenuOpen(false);
-                  }}
-                  className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-base font-medium hover:from-emerald-600 hover:to-teal-600 transition-all whitespace-nowrap cursor-pointer"
-                >
-                  <span>{t("getStarted")}</span>
-                  <svg
-                    className="w-5 h-5 ml-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14 5l7 7m0 0l-7 7m7-7H3"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
+          <MobileNav
+            handleNavigation={handleNavigation}
+            handleAuth={handleAuth}
+            setIsMenuOpen={setIsMenuOpen}
+            locale={locale}
+            changeLanguage={changeLanguage}
+          />
         </div>
       </nav>
     </>
