@@ -2,11 +2,13 @@
 import { useState, useEffect, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import ThemeToggle from "@/theme/ThemeToggle";
 import DesktopNav from "./navbar/DesktopNav";
 import MobileNav from "./navbar/MobileNav";
 import LanguageSelector from "./navbar/LanguageSelector";
 import AuthButtons from "./navbar/AuthButtons";
+import type { IUser as User } from "@/models/User";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,6 +22,15 @@ export default function Navbar() {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+  const { data: session } = useSession(); // Only create user object if user is logged in and has an id
+  const user = session?.user?.id
+    ? ({
+        _id: session.user.id,
+        name: session.user.name || session.user.email?.split("@")[0] || "User",
+        email: session.user.email || "",
+        role: "user" as const,
+      } as User)
+    : undefined;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -85,6 +96,11 @@ export default function Navbar() {
     router.push(route);
   };
 
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    router.push("/");
+  };
+
   const changeLanguage = (newLocale: string) => {
     if (newLocale === locale) return;
 
@@ -137,12 +153,11 @@ export default function Navbar() {
             </div>
           </div>
         )}
-      </div>
-
+      </div>{" "}
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 bg-white dark:bg-slate-900 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+      <nav className="sticky top-0 z-50 bg-white dark:bg-slate-900 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800 h-[68px]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+          <div className="flex justify-between items-center h-full">
             {/* Left side - Logo and Navigation */}{" "}
             <div className="flex items-center space-x-8">
               <div
@@ -162,9 +177,12 @@ export default function Navbar() {
                 locale={locale}
                 changeLanguage={changeLanguage}
                 setIsMenuOpen={setIsMenuOpen}
+              />{" "}
+              <AuthButtons
+                handleAuth={handleAuth}
+                user={user}
+                onLogout={handleLogout}
               />
-              <AuthButtons handleAuth={handleAuth} />
-
               {/* Mobile Menu Button */}
               <button
                 type="button"
@@ -187,15 +205,15 @@ export default function Navbar() {
                 </svg>
               </button>
             </div>
-          </div>
+          </div>{" "}
         </div>{" "}
-        {/* Mobile Menu */}
+        {/* Mobile Menu */}{" "}
         <div
           ref={menuRef}
-          className={`md:hidden transition-all duration-500 ease-in-out bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 ${
+          className={`fixed left-0 right-0 top-[68px] md:hidden bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 transition-all duration-500 ease-in-out transform origin-top ${
             isMenuOpen
-              ? "max-h-[40rem] opacity-100"
-              : "max-h-0 opacity-0 overflow-hidden"
+              ? "translate-y-0 opacity-100 scale-y-100"
+              : "-translate-y-1 opacity-0 scale-y-95 pointer-events-none"
           }`}
         >
           <MobileNav
@@ -204,6 +222,8 @@ export default function Navbar() {
             setIsMenuOpen={setIsMenuOpen}
             locale={locale}
             changeLanguage={changeLanguage}
+            user={user}
+            onLogout={handleLogout}
           />
         </div>
       </nav>

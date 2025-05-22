@@ -6,11 +6,17 @@
   "forBusiness": "Dla firm",
   "pricing": "Cennik",
   "signIn": "Zaloguj się",
+  "signOut": "Wyloguj się",
   "getStarted": "Rozpocznij",
   "language": "Język",
   "english": "Angielski",
   "polish": "Polski",
   "en": "EN",
   "pl": "PL",
-  "changingTo": "Zmiana na"
+  "changingTo": "Zmiana na",
+  "dashboard": "Dashboard",
+  "settings": "Ustawienia",
+  "logout": "Wyloguj się",
+  "user": "Użytkownik",
+  "admin": "Administrator"
 }

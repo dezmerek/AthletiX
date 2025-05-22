@@ -1,13 +1,20 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import UserMenu from "./UserMenu";
+import type { IUser as User } from "@/models/User";
 
 interface Props {
   handleAuth: (type: "login" | "register") => void;
+  user?: User;
+  onLogout?: () => void;
 }
 
-export default function AuthButtons({ handleAuth }: Props) {
+export default function AuthButtons({ handleAuth, user, onLogout }: Props) {
   const t = useTranslations("Navbar");
+  if (user && onLogout) {
+    return <UserMenu user={user} onLogout={onLogout} />;
+  }
 
   return (
     <div className="space-x-7 hidden md:flex items-center">

@@ -6,11 +6,17 @@
   "forBusiness": "For Business",
   "pricing": "Pricing",
   "signIn": "Sign In",
+  "signOut": "Sign Out",
   "getStarted": "Get Started",
   "language": "Language",
   "english": "English",
   "polish": "Polish",
   "en": "EN",
   "pl": "PL",
-  "changingTo": "Changing to"
+  "changingTo": "Changing to",
+  "dashboard": "Dashboard",
+  "settings": "Settings",
+  "logout": "Sign Out",
+  "user": "User",
+  "admin": "Administrator"
 }
