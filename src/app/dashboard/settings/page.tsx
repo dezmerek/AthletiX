@@ -19,7 +19,7 @@ export default function SettingsPage() {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Profile settings */}
-          <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700">
+          <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
             <div className="flex items-center mb-8">
               <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
                 <svg
@@ -41,7 +41,7 @@ export default function SettingsPage() {
               </h2>
             </div>
 
-            <form className="space-y-6">
+            <form className="space-y-6 flex-1 flex flex-col">
               <div>
                 <label
                   htmlFor="name"
@@ -73,17 +73,19 @@ export default function SettingsPage() {
                   className="mt-1 block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                 />
               </div>
-              <button
-                type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 transition-all duration-200 cursor-pointer"
-              >
-                {t("profile.updateButton")}
-              </button>
+              <div className="mt-auto">
+                <button
+                  type="submit"
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 cursor-pointer"
+                >
+                  {t("profile.updateButton")}
+                </button>
+              </div>
             </form>
           </div>
 
           {/* Password */}
-          <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700">
+          <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
             <div className="flex items-center mb-8">
               <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
                 <svg
@@ -109,8 +111,9 @@ export default function SettingsPage() {
                 </p>
               </div>
             </div>
-            <form>
-              <div className="space-y-4 mb-8">
+
+            <form className="flex-1 flex flex-col">
+              <div className="space-y-4">
                 <div>
                   <label
                     htmlFor="currentPassword"
@@ -151,17 +154,19 @@ export default function SettingsPage() {
                   />
                 </div>
               </div>
-              <button
-                type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 transition-all duration-200 cursor-pointer"
-              >
-                {t("password.setButton")}
-              </button>
+              <div className="mt-auto pt-8">
+                <button
+                  type="submit"
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 cursor-pointer"
+                >
+                  {t("password.setButton")}
+                </button>
+              </div>
             </form>
           </div>
 
           {/* Connected accounts */}
-          <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700">
+          <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
             <div className="flex items-center mb-8">
               <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
                 <svg
@@ -221,7 +226,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Delete account */}
-          <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700">
+          <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
             <div className="flex items-center mb-8">
               <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center">
                 <svg
@@ -248,12 +253,14 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            <button
-              type="button"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 transition-all duration-200 cursor-pointer"
-            >
-              {t("deleteAccount.button")}
-            </button>
+            <div className="mt-auto">
+              <button
+                type="button"
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 cursor-pointer"
+              >
+                {t("deleteAccount.button")}
+              </button>
+            </div>
           </div>
         </div>
       </div>

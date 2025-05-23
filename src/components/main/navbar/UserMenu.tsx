@@ -112,7 +112,10 @@ export default function UserMenu({ user, onLogout }: Props) {
         </button>
 
         <button
-          onClick={() => setIsOpen(false)}
+          onClick={() => {
+            router.push("/dashboard/settings");
+            setIsOpen(false);
+          }}
           className="w-full px-4 py-2.5 text-left text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors cursor-pointer flex items-center space-x-3"
         >
           <svg
