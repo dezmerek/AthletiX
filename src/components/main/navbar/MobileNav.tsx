@@ -343,7 +343,7 @@ export default function MobileNav({
                   handleAuth("login");
                   setIsMenuOpen(false);
                 }}
-                className="flex items-center justify-center w-full px-4 py-2 text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                className="flex items-center justify-center w-full px-4 py-2 text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors cursor-pointer"
               >
                 {t("signIn")}
               </button>
@@ -353,7 +353,7 @@ export default function MobileNav({
                   handleAuth("register");
                   setIsMenuOpen(false);
                 }}
-                className="flex items-center justify-center w-full px-4 py-2 text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-lg transition-colors"
+                className="flex items-center justify-center w-full px-4 py-2 text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-lg transition-colors cursor-pointer"
               >
                 <span>{t("getStarted")}</span>
                 <svg

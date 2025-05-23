@@ -26,7 +26,7 @@ export default function AuthButtons({ handleAuth, user, onLogout }: Props) {
       </button>
       <button
         onClick={() => handleAuth("register")}
-        className="inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium hover:from-emerald-600 hover:to-teal-600 transition-all whitespace-nowrap cursor-pointer"
+        className="inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium hover:from-emerald-600 hover:to-teal-600 whitespace-nowrap cursor-pointer"
       >
         {t("getStarted")}
         <svg
