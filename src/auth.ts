@@ -1,12 +1,56 @@
 import NextAuth from "next-auth";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
-import client from "./lib/mongodb";
+import GoogleProvider from "next-auth/providers/google";
+import clientPromise from "./lib/mongodb";
 import bcrypt from "bcryptjs";
-import type { NextAuthConfig } from "next-auth";
+import {
+  type NextAuthConfig,
+  type Session,
+  type DefaultSession,
+} from "next-auth";
+import { type DefaultJWT } from "next-auth/jwt";
+
+declare module "next-auth" {
+  interface Session extends DefaultSession {
+    user: {
+      id: string;
+      email: string;
+      name: string | null;
+      image: string | null;
+      emailVerified: Date | null;
+      createdAt: Date | null;
+      updatedAt: Date | null;
+      role?: "user" | "admin" | "trainer" | "nutritionist";
+    };
+  }
+
+  interface User {
+    id: string;
+    email: string;
+    name: string | null;
+    image: string | null;
+    emailVerified: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
+    role?: "user" | "admin" | "trainer" | "nutritionist";
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT extends DefaultJWT {
+    id: string;
+    name: string | null;
+    image: string | null;
+    emailVerified: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
+    role?: "user" | "admin" | "trainer" | "nutritionist";
+  }
+}
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
-  adapter: MongoDBAdapter(client),
+  adapter: MongoDBAdapter(clientPromise),
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -16,18 +60,81 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     error: "/auth/error",
   },
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === "google") {
+        try {
+          const client = await clientPromise;
+          const db = client.db();
+          const now = new Date();
+
+          const existingUser = await db
+            .collection("users")
+            .findOne({ email: user.email?.toLowerCase() });
+
+          if (existingUser) {
+            // Update Google account data
+            await db.collection("users").updateOne(
+              { _id: existingUser._id },
+              {
+                $set: {
+                  name: user.name,
+                  image: user.image,
+                  emailVerified: now,
+                  updatedAt: now,
+                  ...(existingUser.role ? {} : { role: "user" }),
+                },
+              }
+            );
+          } else {
+            // Create new user for Google account
+            await db.collection("users").insertOne({
+              email: user.email?.toLowerCase(),
+              name: user.name,
+              image: user.image,
+              emailVerified: now,
+              role: "user",
+              createdAt: now,
+              updatedAt: now,
+            });
+          }
+          return true;
+        } catch (error) {
+          console.error("Error during Google sign in:", error);
+          return false;
+        }
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
+        token.name = user.name ?? null;
+        token.image = user.image ?? null;
+        token.emailVerified = user.emailVerified ?? null;
+        token.createdAt = user.createdAt;
+        token.updatedAt = user.updatedAt;
+        token.role = user.role;
       }
       return token;
     },
-    async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id as string;
-        session.user.email = token.email as string;
-      }
+    async session({ session, token }): Promise<Session> {
+      session.user = {
+        ...(session.user ?? {}),
+        id: token.id as string,
+        email: token.email as string,
+        name: token.name as string | null,
+        image: token.image as string | null,
+        emailVerified: token.emailVerified as Date | null,
+        createdAt: token.createdAt as Date,
+        updatedAt: token.updatedAt as Date,
+        role: token.role as
+          | "user"
+          | "admin"
+          | "trainer"
+          | "nutritionist"
+          | undefined,
+      };
       return session;
     },
     authorized({ auth, request: { nextUrl } }) {
@@ -48,6 +155,23 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
   },
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      allowDangerousEmailAccountLinking: true,
+      profile(profile) {
+        const now = new Date();
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+          emailVerified: now,
+          createdAt: now,
+          updatedAt: now,
+        };
+      },
+    }),
     CredentialsProvider({
       credentials: {
         email: { label: "Email", type: "email" },
@@ -59,7 +183,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         }
 
         try {
-          await client.connect();
+          const client = await clientPromise;
           const db = client.db();
           const user = await db
             .collection("users")
@@ -78,6 +202,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             id: user._id.toString(),
             email: user.email,
             name: user.name,
+            image: user.image,
+            emailVerified: user.emailVerified,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+            role: user.role,
           };
         } catch (error) {
           console.error("Authentication error:", error);

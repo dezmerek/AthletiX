@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import client from "@/lib/mongodb";
+import clientPromise from "@/lib/mongodb";
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await client.connect();
+    const client = await clientPromise;
     const db = client.db();
 
     // Check if user already exists
@@ -48,15 +48,23 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     // Create user
-    const result = await db.collection("users").insertOne({
+    const now = new Date();
+    await db.collection("users").insertOne({
+      name: email.split("@")[0],
       email: email.toLowerCase(),
       password: hashedPassword,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      emailVerified: null,
+      role: "user",
+      image: null,
+      createdAt: now,
+      updatedAt: now,
     });
 
     return NextResponse.json(
-      { message: "User registered successfully" },
+      {
+        message: "User registered successfully",
+        success: true,
+      },
       { status: 201 }
     );
   } catch (error) {
@@ -65,7 +73,5 @@ export async function POST(request: NextRequest) {
       { error: "Internal server error" },
       { status: 500 }
     );
-  } finally {
-    await client.close();
   }
 }

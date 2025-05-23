@@ -13,23 +13,25 @@ const options = {
   },
 };
 
-let client: MongoClient;
+// In development mode, use a global variable so that the value
+// is preserved across module reloads caused by HMR (Hot Module Replacement).
+let clientPromise: Promise<MongoClient>;
 
 if (process.env.NODE_ENV === "development") {
-  // In development mode, use a global variable so that the value
-  // is preserved across module reloads caused by HMR (Hot Module Replacement).
   let globalWithMongo = global as typeof globalThis & {
-    _mongoClient?: MongoClient;
+    _mongoClientPromise?: Promise<MongoClient>;
   };
 
-  if (!globalWithMongo._mongoClient) {
-    globalWithMongo._mongoClient = new MongoClient(uri, options);
+  if (!globalWithMongo._mongoClientPromise) {
+    const client = new MongoClient(uri, options);
+    globalWithMongo._mongoClientPromise = client.connect();
   }
-  client = globalWithMongo._mongoClient;
+  clientPromise = globalWithMongo._mongoClientPromise;
 } else {
   // In production mode, it's best to not use a global variable.
-  client = new MongoClient(uri, options);
+  const client = new MongoClient(uri, options);
+  clientPromise = client.connect();
 }
 
-// Export a module-scoped MongoClient
-export default client;
+// Export a module-scoped MongoClient promise - will be shared across requests
+export default clientPromise;

@@ -3,13 +3,15 @@ import bcrypt from "bcryptjs";
 
 export interface IUser extends mongoose.Document {
   email: string;
-  password: string;
+  password?: string;
   name?: string;
   image?: string;
   emailVerified?: Date;
   role?: "user" | "admin" | "trainer" | "nutritionist";
   specialization?: string;
-  comparePassword(candidatePassword: string): Promise<boolean>;
+  createdAt: Date;
+  updatedAt: Date;
+  comparePassword?(candidatePassword: string): Promise<boolean>;
 }
 
 const userSchema = new mongoose.Schema<IUser>(
@@ -23,7 +25,7 @@ const userSchema = new mongoose.Schema<IUser>(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
+      required: false, // Nie wymagane dla kont Google
       minlength: [8, "Password must be at least 8 characters long"],
     },
     name: String,
@@ -43,7 +45,7 @@ const userSchema = new mongoose.Schema<IUser>(
 
 // Hash password before saving
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+  if (!this.isModified("password") || !this.password) return next();
 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
