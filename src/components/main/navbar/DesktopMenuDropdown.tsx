@@ -32,7 +32,7 @@ export default function DesktopMenuDropdown({ handleNavigation }: Props) {
           <div className="rounded-xl bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-lg border border-slate-100 dark:border-slate-700">
             <button
               onClick={() => handleNavigation("for-clients")}
-              className="w-full px-4 py-2.5 text-left rounded-t-lg text-sm text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 hover:text-emerald-500 dark:hover:text-emerald-400 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
+              className="w-full px-4 py-2.5 text-left rounded-t-lg text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-emerald-500 dark:hover:text-emerald-400 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
             >
               <svg
                 className="w-5 h-5"
@@ -51,7 +51,7 @@ export default function DesktopMenuDropdown({ handleNavigation }: Props) {
             </button>
             <button
               onClick={() => handleNavigation("for-professionals")}
-              className="w-full px-4 py-2.5 text-left text-sm text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 hover:text-emerald-500 dark:hover:text-emerald-400 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
+              className="w-full px-4 py-2.5 text-left text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-emerald-500 dark:hover:text-emerald-400 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
             >
               <svg
                 className="w-5 h-5"
@@ -70,7 +70,7 @@ export default function DesktopMenuDropdown({ handleNavigation }: Props) {
             </button>
             <button
               onClick={() => handleNavigation("for-business")}
-              className="w-full px-4 py-2.5 rounded-b-lg text-left text-sm text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 hover:text-emerald-500 dark:hover:text-emerald-400 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
+              className="w-full px-4 py-2.5 rounded-b-lg text-left text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-emerald-500 dark:hover:text-emerald-400 transition-all whitespace-nowrap cursor-pointer flex items-center space-x-2"
             >
               <svg
                 className="w-5 h-5"

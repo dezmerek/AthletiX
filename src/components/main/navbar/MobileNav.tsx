@@ -54,7 +54,7 @@ export default function MobileNav({
               handleNavigation("start");
               setIsMenuOpen(false);
             }}
-            className="flex items-center w-full px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg transition-colors text-base"
+            className="flex items-center w-full px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg transition-colors text-base cursor-pointer"
           >
             <svg
               className="w-5 h-5 mr-3"
@@ -99,7 +99,7 @@ export default function MobileNav({
                 handleNavigation("for-clients");
                 setIsMenuOpen(false);
               }}
-              className="flex items-center w-full px-3 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg transition-colors"
+              className="flex items-center w-full px-3 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg transition-colors cursor-pointer"
             >
               <svg
                 className="w-5 h-5 mr-3"
@@ -122,7 +122,7 @@ export default function MobileNav({
                 handleNavigation("for-professionals");
                 setIsMenuOpen(false);
               }}
-              className="flex items-center w-full px-3 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg transition-colors"
+              className="flex items-center w-full px-3 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg transition-colors cursor-pointer"
             >
               <svg
                 className="w-5 h-5 mr-3"
@@ -145,7 +145,7 @@ export default function MobileNav({
                 handleNavigation("for-business");
                 setIsMenuOpen(false);
               }}
-              className="flex items-center w-full px-3 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg transition-colors"
+              className="flex items-center w-full px-3 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg transition-colors cursor-pointer"
             >
               <svg
                 className="w-5 h-5 mr-3"
@@ -171,7 +171,7 @@ export default function MobileNav({
               handleNavigation("pricing");
               setIsMenuOpen(false);
             }}
-            className="flex items-center w-full px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg transition-colors text-base"
+            className="flex items-center w-full px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg transition-colors text-base cursor-pointer"
           >
             <svg
               className="w-5 h-5 mr-3"
@@ -216,7 +216,7 @@ export default function MobileNav({
                 changeLanguage("en");
                 setIsMenuOpen(false);
               }}
-              className={`flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
+              className={`flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-colors ${
                 locale === "en"
                   ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                   : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
@@ -237,7 +237,7 @@ export default function MobileNav({
                 changeLanguage("pl");
                 setIsMenuOpen(false);
               }}
-              className={`flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
+              className={`flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-colors ${
                 locale === "pl"
                   ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                   : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
@@ -266,7 +266,7 @@ export default function MobileNav({
                   handleNavigation("dashboard");
                   setIsMenuOpen(false);
                 }}
-                className="flex items-center w-full px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                className="flex items-center w-full px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
               >
                 <svg
                   className="w-5 h-5 mr-3"
@@ -288,7 +288,7 @@ export default function MobileNav({
                   // TODO: Add settings navigation
                   setIsMenuOpen(false);
                 }}
-                className="flex items-center w-full px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                className="flex items-center w-full px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
               >
                 <svg
                   className="w-5 h-5 mr-3"
@@ -318,7 +318,7 @@ export default function MobileNav({
                     setIsMenuOpen(false);
                   }
                 }}
-                className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
+                className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
               >
                 <svg
                   className="w-5 h-5 mr-3"
