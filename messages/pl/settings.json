@@ -1,0 +1,28 @@
+{
+  "title": "Ustawienia",
+  "description": "Zarządzaj ustawieniami i preferencjami swojego konta",
+  "profile": {
+    "title": "Ustawienia profilu",
+    "displayName": "Nazwa wyświetlana",
+    "email": "Email",
+    "updateButton": "Aktualizuj profil"
+  },
+  "password": {
+    "title": "Hasło",
+    "description": "Ustawienie hasła pozwoli Ci logować się również przez email",
+    "currentPassword": "Aktualne hasło",
+    "newPassword": "Nowe hasło",
+    "confirmPassword": "Potwierdź hasło",
+    "setButton": "Ustaw hasło"
+  },
+  "connectedAccounts": {
+    "title": "Połączone konta",
+    "connected": "Połączone",
+    "disconnect": "Rozłącz"
+  },
+  "deleteAccount": {
+    "title": "Usuń konto",
+    "description": "Po usunięciu konta, wszystkie Twoje dane zostaną trwale usunięte",
+    "button": "Usuń konto"
+  }
+}

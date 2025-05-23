@@ -1,0 +1,28 @@
+{
+  "title": "Settings",
+  "description": "Manage your account settings and preferences",
+  "profile": {
+    "title": "Profile Settings",
+    "displayName": "Display Name",
+    "email": "Email",
+    "updateButton": "Update Profile"
+  },
+  "password": {
+    "title": "Password",
+    "description": "Setting a password will allow you to also log in with email",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "setButton": "Set Password"
+  },
+  "connectedAccounts": {
+    "title": "Connected Accounts",
+    "connected": "Connected",
+    "disconnect": "Disconnect"
+  },
+  "deleteAccount": {
+    "title": "Delete Account",
+    "description": "Once you delete your account, all of your data will be permanently removed",
+    "button": "Delete Account"
+  }
+}

@@ -61,6 +61,7 @@ export default getRequestConfig(async () => {
     ).default,
     faq: (await import(`../../messages/${locale}/faq.json`)).default,
     auth: (await import(`../../messages/${locale}/auth.json`)).default,
+    settings: (await import(`../../messages/${locale}/settings.json`)).default,
   };
 
   return {
