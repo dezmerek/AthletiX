@@ -1,9 +1,94 @@
 "use client";
 
+import { useState, useTransition, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
   const t = useTranslations("settings");
+  const { data: session, update } = useSession();
+  const router = useRouter();
+  const [name, setName] = useState(session?.user?.name || "");
+  const [isUpdating, startTransition] = useTransition();
+  const [updateStatus, setUpdateStatus] = useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({ type: null, message: "" });
+
+  // Aktualizuj lokalny state gdy zmieni się sesja
+  useEffect(() => {
+    if (session?.user?.name) {
+      setName(session.user.name);
+    }
+  }, [session?.user?.name]);
+
+  const handleNameUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setUpdateStatus({ type: null, message: "" });
+
+    if (!name.trim()) {
+      setUpdateStatus({
+        type: "error",
+        message: t("profile.errors.nameRequired"),
+      });
+      return;
+    }
+
+    if (name.trim() === session?.user?.name) {
+      setUpdateStatus({
+        type: "error",
+        message: t("profile.errors.nameUnchanged"),
+      });
+      return;
+    }
+
+    startTransition(async () => {
+      try {
+        const response = await fetch("/api/user/update-name", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name: name.trim() }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to update name");
+        }
+
+        console.log("Name updated successfully, new name:", data.name);
+
+        // Aktualizacja sesji z nową nazwą - przekazujemy nową nazwę bezpośrednio
+        const updateResult = await update({
+          user: {
+            name: data.name,
+          },
+        });
+
+        console.log("Session update result:", updateResult);
+
+        // Wymuszenie odświeżenia routera, żeby navbar się zaktualizował
+        router.refresh();
+
+        setUpdateStatus({
+          type: "success",
+          message: t("profile.success.nameUpdated"),
+        });
+      } catch (error) {
+        console.error("Error updating name:", error);
+        setUpdateStatus({
+          type: "error",
+          message:
+            error instanceof Error
+              ? error.message
+              : t("profile.errors.updateFailed"),
+        });
+      }
+    });
+  };
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-white to-slate-100 dark:from-slate-900 dark:to-slate-800">
@@ -41,7 +126,21 @@ export default function SettingsPage() {
               </h2>
             </div>
 
-            <form className="space-y-6 flex-1 flex flex-col">
+            <form
+              onSubmit={handleNameUpdate}
+              className="space-y-6 flex-1 flex flex-col"
+            >
+              {updateStatus.type && (
+                <div
+                  className={`p-4 rounded-xl text-sm font-medium ${
+                    updateStatus.type === "success"
+                      ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800"
+                      : "bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800"
+                  }`}
+                >
+                  {updateStatus.message}
+                </div>
+              )}
               <div>
                 <label
                   htmlFor="name"
@@ -53,7 +152,9 @@ export default function SettingsPage() {
                   type="text"
                   id="name"
                   name="name"
-                  defaultValue="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={session?.user?.name || ""}
                   className="mt-1 block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white transition-colors duration-200"
                 />
               </div>
@@ -68,7 +169,7 @@ export default function SettingsPage() {
                   type="email"
                   id="email"
                   name="email"
-                  defaultValue="mail@gmail.com"
+                  value={session?.user?.email || ""}
                   disabled
                   className="mt-1 block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                 />
@@ -76,9 +177,16 @@ export default function SettingsPage() {
               <div className="mt-auto">
                 <button
                   type="submit"
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 cursor-pointer"
+                  disabled={
+                    isUpdating ||
+                    !name.trim() ||
+                    name.trim() === session?.user?.name
+                  }
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
-                  {t("profile.updateButton")}
+                  {isUpdating
+                    ? t("profile.updating")
+                    : t("profile.updateButton")}
                 </button>
               </div>
             </form>

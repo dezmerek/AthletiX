@@ -105,7 +105,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       }
       return true;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session: sessionParam }) {
+      // Podczas pierwszego logowania
       if (user) {
         token.id = user.id;
         token.email = user.email;
@@ -116,6 +117,15 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         token.updatedAt = user.updatedAt;
         token.role = user.role;
       }
+
+      // Gdy update() jest wywołane z frontendu
+      if (trigger === "update" && sessionParam?.user) {
+        console.log("JWT callback - update trigger:", sessionParam.user);
+        token.name = sessionParam.user.name ?? token.name;
+        token.image = sessionParam.user.image ?? token.image;
+        console.log("JWT callback - updated token name:", token.name);
+      }
+
       return token;
     },
     async session({ session, token }): Promise<Session> {

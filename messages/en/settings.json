@@ -5,7 +5,16 @@
     "title": "Profile Settings",
     "displayName": "Display Name",
     "email": "Email",
-    "updateButton": "Update Profile"
+    "updateButton": "Update Profile",
+    "updating": "Updating...",
+    "success": {
+      "nameUpdated": "Name has been successfully updated"
+    },
+    "errors": {
+      "nameRequired": "Name is required",
+      "nameUnchanged": "New name is the same as current name",
+      "updateFailed": "Failed to update name"
+    }
   },
   "password": {
     "title": "Password",

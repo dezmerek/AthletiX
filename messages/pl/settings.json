@@ -5,7 +5,16 @@
     "title": "Ustawienia profilu",
     "displayName": "Nazwa wyświetlana",
     "email": "Email",
-    "updateButton": "Aktualizuj profil"
+    "updateButton": "Aktualizuj profil",
+    "updating": "Aktualizowanie...",
+    "success": {
+      "nameUpdated": "Nazwa została pomyślnie zaktualizowana"
+    },
+    "errors": {
+      "nameRequired": "Nazwa jest wymagana",
+      "nameUnchanged": "Nowa nazwa jest taka sama jak obecna",
+      "updateFailed": "Nie udało się zaktualizować nazwy"
+    }
   },
   "password": {
     "title": "Hasło",
