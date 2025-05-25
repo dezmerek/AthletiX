@@ -32,6 +32,13 @@
   "deleteAccount": {
     "title": "Usuń konto",
     "description": "Po usunięciu konta, wszystkie Twoje dane zostaną trwale usunięte",
-    "button": "Usuń konto"
+    "button": "Usuń konto",
+    "confirmTitle": "Potwierdź usunięcie konta",
+    "confirmMessage": "Czy na pewno chcesz usunąć swoje konto? Ta akcja nie może zostać cofnięta.",
+    "confirmButton": "Tak, usuń konto",
+    "cancelButton": "Anuluj",
+    "deleting": "Usuwanie...",
+    "success": "Konto zostało pomyślnie usunięte",
+    "error": "Nie udało się usunąć konta"
   }
 }

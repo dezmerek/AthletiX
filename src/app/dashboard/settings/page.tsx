@@ -4,6 +4,7 @@ import { useState, useTransition, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 export default function SettingsPage() {
   const t = useTranslations("settings");
@@ -15,6 +16,8 @@ export default function SettingsPage() {
     type: "success" | "error" | null;
     message: string;
   }>({ type: null, message: "" });
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Aktualizuj lokalny state gdy zmieni się sesja
   useEffect(() => {
@@ -88,6 +91,43 @@ export default function SettingsPage() {
         });
       }
     });
+  };
+
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    setUpdateStatus({ type: null, message: "" });
+
+    try {
+      const response = await fetch("/api/user/delete-account", {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to delete account");
+      }
+
+      setUpdateStatus({
+        type: "success",
+        message: t("deleteAccount.success"),
+      });
+
+      // Wyloguj użytkownika i przekieruj na stronę główną
+      setTimeout(async () => {
+        await signOut({ callbackUrl: "/" });
+      }, 2000);
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      setUpdateStatus({
+        type: "error",
+        message:
+          error instanceof Error ? error.message : t("deleteAccount.error"),
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
   };
 
   return (
@@ -362,12 +402,46 @@ export default function SettingsPage() {
             </div>
 
             <div className="mt-auto">
-              <button
-                type="button"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 cursor-pointer"
-              >
-                {t("deleteAccount.button")}
-              </button>
+              {!showDeleteConfirm ? (
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 cursor-pointer"
+                >
+                  {t("deleteAccount.button")}
+                </button>
+              ) : (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800">
+                    <h3 className="text-sm font-semibold text-red-800 dark:text-red-400 mb-2">
+                      {t("deleteAccount.confirmTitle")}
+                    </h3>
+                    <p className="text-sm text-red-700 dark:text-red-300">
+                      {t("deleteAccount.confirmMessage")}
+                    </p>
+                  </div>
+                  <div className="flex space-x-3">
+                    <button
+                      type="button"
+                      onClick={handleDeleteAccount}
+                      disabled={isDeleting}
+                      className="flex-1 flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isDeleting
+                        ? t("deleteAccount.deleting")
+                        : t("deleteAccount.confirmButton")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowDeleteConfirm(false)}
+                      disabled={isDeleting}
+                      className="flex-1 flex justify-center py-3 px-4 border border-slate-300 dark:border-slate-600 rounded-xl shadow-sm text-sm font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {t("deleteAccount.cancelButton")}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

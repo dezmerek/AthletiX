@@ -32,6 +32,13 @@
   "deleteAccount": {
     "title": "Delete Account",
     "description": "Once you delete your account, all of your data will be permanently removed",
-    "button": "Delete Account"
+    "button": "Delete Account",
+    "confirmTitle": "Confirm Account Deletion",
+    "confirmMessage": "Are you sure you want to delete your account? This action cannot be undone.",
+    "confirmButton": "Yes, Delete Account",
+    "cancelButton": "Cancel",
+    "deleting": "Deleting...",
+    "success": "Account has been successfully deleted",
+    "error": "Failed to delete account"
   }
 }
