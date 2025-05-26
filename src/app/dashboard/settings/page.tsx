@@ -19,12 +19,43 @@ export default function SettingsPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Password state
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [hasPassword, setHasPassword] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const [passwordStatus, setPasswordStatus] = useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({ type: null, message: "" });
+
   // Aktualizuj lokalny state gdy zmieni się sesja
   useEffect(() => {
     if (session?.user?.name) {
       setName(session.user.name);
     }
   }, [session?.user?.name]);
+
+  // Check if user has a password on component mount
+  useEffect(() => {
+    const checkPasswordStatus = async () => {
+      try {
+        const response = await fetch("/api/user/password-status");
+        const data = await response.json();
+
+        if (response.ok) {
+          setHasPassword(data.hasPassword);
+        }
+      } catch (error) {
+        console.error("Error checking password status:", error);
+      }
+    };
+
+    if (session?.user) {
+      checkPasswordStatus();
+    }
+  }, [session?.user]);
 
   const handleNameUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,6 +158,129 @@ export default function SettingsPage() {
     } finally {
       setIsDeleting(false);
       setShowDeleteConfirm(false);
+    }
+  };
+
+  const handlePasswordUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordStatus({ type: null, message: "" });
+
+    // Validation for setting new password
+    if (!hasPassword) {
+      if (!newPassword.trim()) {
+        setPasswordStatus({
+          type: "error",
+          message: t("password.errors.newPasswordRequired"),
+        });
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        setPasswordStatus({
+          type: "error",
+          message: t("password.errors.passwordTooShort"),
+        });
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        setPasswordStatus({
+          type: "error",
+          message: t("password.errors.passwordsNotMatch"),
+        });
+        return;
+      }
+    } else {
+      // Validation for changing existing password
+      if (!currentPassword.trim()) {
+        setPasswordStatus({
+          type: "error",
+          message: t("password.errors.currentPasswordRequired"),
+        });
+        return;
+      }
+
+      if (!newPassword.trim()) {
+        setPasswordStatus({
+          type: "error",
+          message: t("password.errors.newPasswordRequired"),
+        });
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        setPasswordStatus({
+          type: "error",
+          message: t("password.errors.passwordTooShort"),
+        });
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        setPasswordStatus({
+          type: "error",
+          message: t("password.errors.passwordsNotMatch"),
+        });
+        return;
+      }
+    }
+
+    setIsUpdatingPassword(true);
+
+    try {
+      const response = await fetch("/api/user/change-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          currentPassword: hasPassword ? currentPassword : undefined,
+          newPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        let errorMessage = t("password.errors.updateFailed");
+
+        // Handle specific error codes
+        if (data.code === "CURRENT_PASSWORD_REQUIRED") {
+          errorMessage = t("password.errors.currentPasswordRequired");
+        } else if (data.code === "CURRENT_PASSWORD_INCORRECT") {
+          errorMessage = t("password.errors.currentPasswordIncorrect");
+        } else if (data.code === "PASSWORD_TOO_SHORT") {
+          errorMessage = t("password.errors.passwordTooShort");
+        } else if (data.error) {
+          errorMessage = data.error;
+        }
+
+        throw new Error(errorMessage);
+      }
+
+      // Clear form fields
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setHasPassword(true); // User now has a password
+
+      setPasswordStatus({
+        type: "success",
+        message: hasPassword
+          ? t("password.success.changed")
+          : t("password.success.set"),
+      });
+    } catch (error) {
+      console.error("Error updating password:", error);
+      setPasswordStatus({
+        type: "error",
+        message:
+          error instanceof Error
+            ? error.message
+            : t("password.errors.updateFailed"),
+      });
+    } finally {
+      setIsUpdatingPassword(false);
     }
   };
 
@@ -252,29 +406,51 @@ export default function SettingsPage() {
               </div>
               <div>
                 <h2 className="text-xl font-semibold text-slate-900 dark:text-white ml-4">
-                  {t("password.title")}
+                  {hasPassword
+                    ? t("password.changeTitle")
+                    : t("password.setTitle")}
                 </h2>
                 <p className="ml-4 text-sm text-slate-600 dark:text-slate-400">
-                  {t("password.description")}
+                  {hasPassword
+                    ? t("password.changeDescription")
+                    : t("password.setDescription")}
                 </p>
               </div>
             </div>
 
-            <form className="flex-1 flex flex-col">
-              <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="currentPassword"
-                    className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
-                  >
-                    {t("password.currentPassword")}
-                  </label>
-                  <input
-                    type="password"
-                    id="currentPassword"
-                    className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors duration-200"
-                  />
+            <form
+              onSubmit={handlePasswordUpdate}
+              className="flex-1 flex flex-col"
+            >
+              {passwordStatus.type && (
+                <div
+                  className={`mb-4 p-4 rounded-xl text-sm font-medium ${
+                    passwordStatus.type === "success"
+                      ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800"
+                      : "bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800"
+                  }`}
+                >
+                  {passwordStatus.message}
                 </div>
+              )}
+              <div className="space-y-4">
+                {hasPassword && (
+                  <div>
+                    <label
+                      htmlFor="currentPassword"
+                      className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                    >
+                      {t("password.currentPassword")}
+                    </label>
+                    <input
+                      type="password"
+                      id="currentPassword"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors duration-200"
+                    />
+                  </div>
+                )}
                 <div>
                   <label
                     htmlFor="newPassword"
@@ -285,6 +461,8 @@ export default function SettingsPage() {
                   <input
                     type="password"
                     id="newPassword"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
                     className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors duration-200"
                   />
                 </div>
@@ -298,6 +476,8 @@ export default function SettingsPage() {
                   <input
                     type="password"
                     id="confirmPassword"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors duration-200"
                   />
                 </div>
@@ -305,9 +485,19 @@ export default function SettingsPage() {
               <div className="mt-auto pt-8">
                 <button
                   type="submit"
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 cursor-pointer"
+                  disabled={
+                    isUpdatingPassword ||
+                    !newPassword.trim() ||
+                    !confirmPassword.trim() ||
+                    (hasPassword && !currentPassword.trim())
+                  }
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
-                  {t("password.setButton")}
+                  {isUpdatingPassword
+                    ? t("password.updating")
+                    : hasPassword
+                    ? t("password.changeButton")
+                    : t("password.setButton")}
                 </button>
               </div>
             </form>

@@ -19,10 +19,29 @@
   "password": {
     "title": "Hasło",
     "description": "Ustawienie hasła pozwoli Ci logować się również przez email",
+    "setTitle": "Ustaw hasło",
+    "setDescription": "Ustawienie hasła pozwoli Ci logować się również przez email",
+    "changeTitle": "Zmień hasło",
+    "changeDescription": "Zaktualizuj swoje obecne hasło",
     "currentPassword": "Aktualne hasło",
     "newPassword": "Nowe hasło",
     "confirmPassword": "Potwierdź hasło",
-    "setButton": "Ustaw hasło"
+    "setButton": "Ustaw hasło",
+    "changeButton": "Zmień hasło",
+    "updating": "Aktualizowanie...",
+    "success": {
+      "set": "Hasło zostało pomyślnie ustawione",
+      "changed": "Hasło zostało pomyślnie zmienione"
+    },
+    "errors": {
+      "currentPasswordRequired": "Aktualne hasło jest wymagane",
+      "currentPasswordIncorrect": "Aktualne hasło jest nieprawidłowe",
+      "newPasswordRequired": "Nowe hasło jest wymagane",
+      "passwordTooShort": "Hasło musi mieć co najmniej 6 znaków",
+      "passwordsNotMatch": "Hasła się nie zgadzają",
+      "allFieldsRequired": "Wszystkie pola są wymagane",
+      "updateFailed": "Nie udało się zaktualizować hasła"
+    }
   },
   "connectedAccounts": {
     "title": "Połączone konta",

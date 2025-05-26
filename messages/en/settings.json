@@ -19,10 +19,29 @@
   "password": {
     "title": "Password",
     "description": "Setting a password will allow you to also log in with email",
+    "setTitle": "Set Password",
+    "setDescription": "Setting a password will allow you to also log in with email",
+    "changeTitle": "Change Password",
+    "changeDescription": "Update your current password",
     "currentPassword": "Current Password",
     "newPassword": "New Password",
     "confirmPassword": "Confirm Password",
-    "setButton": "Set Password"
+    "setButton": "Set Password",
+    "changeButton": "Change Password",
+    "updating": "Updating...",
+    "success": {
+      "set": "Password has been successfully set",
+      "changed": "Password has been successfully changed"
+    },
+    "errors": {
+      "currentPasswordRequired": "Current password is required",
+      "currentPasswordIncorrect": "Current password is incorrect",
+      "newPasswordRequired": "New password is required",
+      "passwordTooShort": "Password must be at least 6 characters long",
+      "passwordsNotMatch": "Passwords do not match",
+      "allFieldsRequired": "All fields are required",
+      "updateFailed": "Failed to update password"
+    }
   },
   "connectedAccounts": {
     "title": "Connected Accounts",
