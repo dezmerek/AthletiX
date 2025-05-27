@@ -46,7 +46,13 @@
   "connectedAccounts": {
     "title": "Connected Accounts",
     "connected": "Connected",
-    "disconnect": "Disconnect"
+    "notConnected": "Not connected",
+    "connect": "Connect with Google",
+    "disconnect": "Disconnect",
+    "disconnected": "Account disconnected successfully",
+    "disconnectError": "Failed to disconnect account",
+    "passwordRequiredError": "Please set a password before disconnecting your Google account",
+    "accountAlreadyConnected": "This Google account is already connected to another user account"
   },
   "deleteAccount": {
     "title": "Delete Account",

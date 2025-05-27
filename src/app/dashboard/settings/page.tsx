@@ -3,13 +3,14 @@
 import { useState, useTransition, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signOut, signIn } from "next-auth/react";
 
 export default function SettingsPage() {
   const t = useTranslations("settings");
   const { data: session, update } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [name, setName] = useState(session?.user?.name || "");
   const [isUpdating, startTransition] = useTransition();
   const [updateStatus, setUpdateStatus] = useState<{
@@ -26,6 +27,14 @@ export default function SettingsPage() {
   const [hasPassword, setHasPassword] = useState(false);
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const [passwordStatus, setPasswordStatus] = useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({ type: null, message: "" });
+
+  // Google account state
+  const [isGoogleConnected, setIsGoogleConnected] = useState(false);
+  const [isLoadingGoogleStatus, setIsLoadingGoogleStatus] = useState(true);
+  const [googleStatus, setGoogleStatus] = useState<{
     type: "success" | "error" | null;
     message: string;
   }>({ type: null, message: "" });
@@ -52,10 +61,45 @@ export default function SettingsPage() {
       }
     };
 
+    const checkGoogleStatus = async () => {
+      try {
+        console.log("Checking Google status...");
+        const response = await fetch("/api/user/google-status");
+        const data = await response.json();
+
+        console.log("Google status response:", response.status, data);
+
+        if (response.ok) {
+          console.log("Setting Google connected to:", data.isConnected);
+          setIsGoogleConnected(data.isConnected);
+        } else {
+          console.error("Error response from Google status:", data);
+        }
+      } catch (error) {
+        console.error("Error checking Google status:", error);
+      } finally {
+        setIsLoadingGoogleStatus(false);
+      }
+    };
+
     if (session?.user) {
       checkPasswordStatus();
+      checkGoogleStatus();
     }
   }, [session?.user]);
+
+  // Check for authentication errors in URL parameters
+  useEffect(() => {
+    const error = searchParams.get("error");
+    if (error === "OAuthAccountNotLinked") {
+      setGoogleStatus({
+        type: "error",
+        message: t("connectedAccounts.accountAlreadyConnected"),
+      });
+      // Clear the error from URL
+      router.replace("/dashboard/settings", { scroll: false });
+    }
+  }, [searchParams, router, t]);
 
   const handleNameUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -281,6 +325,65 @@ export default function SettingsPage() {
       });
     } finally {
       setIsUpdatingPassword(false);
+    }
+  };
+
+  const handleConnectGoogle = async () => {
+    setGoogleStatus({ type: null, message: "" });
+
+    try {
+      await signIn("google", {
+        callbackUrl: "/dashboard/settings",
+        redirect: true,
+      });
+    } catch (error) {
+      console.error("Error connecting Google:", error);
+      setGoogleStatus({
+        type: "error",
+        message: t("connectedAccounts.disconnectError"),
+      });
+    }
+  };
+
+  const handleDisconnectGoogle = async () => {
+    setGoogleStatus({ type: null, message: "" });
+
+    try {
+      const response = await fetch("/api/user/disconnect-provider", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ provider: "google" }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data.code === "PASSWORD_REQUIRED") {
+          setGoogleStatus({
+            type: "error",
+            message: t("connectedAccounts.passwordRequiredError"),
+          });
+          return;
+        }
+        throw new Error(data.error || "Failed to disconnect Google account");
+      }
+
+      setIsGoogleConnected(false);
+      setGoogleStatus({
+        type: "success",
+        message: t("connectedAccounts.disconnected"),
+      });
+    } catch (error) {
+      console.error("Error disconnecting Google:", error);
+      setGoogleStatus({
+        type: "error",
+        message:
+          error instanceof Error
+            ? error.message
+            : t("connectedAccounts.disconnectError"),
+      });
     }
   };
 
@@ -527,6 +630,18 @@ export default function SettingsPage() {
             </div>
 
             <div className="space-y-4">
+              {googleStatus.type && (
+                <div
+                  className={`p-4 rounded-xl text-sm font-medium ${
+                    googleStatus.type === "success"
+                      ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800"
+                      : "bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800"
+                  }`}
+                >
+                  {googleStatus.message}
+                </div>
+              )}
+
               <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm">
                 <div className="flex items-center space-x-3">
                   <svg className="h-6 w-6" viewBox="0 0 24 24">
@@ -552,13 +667,33 @@ export default function SettingsPage() {
                       Google
                     </div>
                     <div className="text-sm text-slate-600 dark:text-slate-400">
-                      {t("connectedAccounts.connected")}
+                      {isLoadingGoogleStatus
+                        ? "Loading..."
+                        : isGoogleConnected
+                        ? t("connectedAccounts.connected")
+                        : t("connectedAccounts.notConnected")}
                     </div>
                   </div>
                 </div>
-                <button className="text-sm font-medium text-red-500 hover:text-red-400 transition-colors cursor-pointer">
-                  {t("connectedAccounts.disconnect")}
-                </button>
+                {!isLoadingGoogleStatus && (
+                  <>
+                    {isGoogleConnected ? (
+                      <button
+                        onClick={handleDisconnectGoogle}
+                        className="text-sm font-medium text-red-500 hover:text-red-400 transition-colors cursor-pointer"
+                      >
+                        {t("connectedAccounts.disconnect")}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleConnectGoogle}
+                        className="text-sm font-medium text-emerald-500 hover:text-emerald-400 transition-colors cursor-pointer"
+                      >
+                        {t("connectedAccounts.connect")}
+                      </button>
+                    )}
+                  </>
+                )}
               </div>
             </div>
           </div>

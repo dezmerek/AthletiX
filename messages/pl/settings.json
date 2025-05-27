@@ -46,7 +46,13 @@
   "connectedAccounts": {
     "title": "Połączone konta",
     "connected": "Połączone",
-    "disconnect": "Rozłącz"
+    "notConnected": "Niepołączone",
+    "connect": "Połącz z Google",
+    "disconnect": "Rozłącz",
+    "disconnected": "Konto zostało pomyślnie rozłączone",
+    "disconnectError": "Nie udało się rozłączyć konta",
+    "passwordRequiredError": "Ustaw hasło przed rozłączeniem konta Google",
+    "accountAlreadyConnected": "To konto Google jest już połączone z innym użytkownikiem"
   },
   "deleteAccount": {
     "title": "Usuń konto",

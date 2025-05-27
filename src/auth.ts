@@ -67,6 +67,34 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           const db = client.db();
           const now = new Date();
 
+          // Sprawdź czy to konto Google nie jest już połączone z innym użytkownikiem
+          if (account.providerAccountId) {
+            const existingGoogleAccount = await db
+              .collection("accounts")
+              .findOne({
+                provider: "google",
+                providerAccountId: account.providerAccountId,
+              });
+
+            if (existingGoogleAccount) {
+              // Sprawdź czy to konto Google jest połączone z innym użytkownikiem
+              const existingUser = await db.collection("users").findOne({
+                _id: existingGoogleAccount.userId,
+              });
+
+              if (
+                existingUser &&
+                existingUser.email?.toLowerCase() !== user.email?.toLowerCase()
+              ) {
+                console.error(
+                  "Google account already connected to different user"
+                );
+                // Zamiast zwracać false, przekieruj do ustawień z błędem
+                throw new Error("OAuthAccountNotLinked");
+              }
+            }
+          }
+
           const existingUser = await db
             .collection("users")
             .findOne({ email: user.email?.toLowerCase() });
@@ -146,6 +174,18 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           | undefined,
       };
       return session;
+    },
+    async redirect({ url, baseUrl }) {
+      // Jeśli URL zawiera błąd OAuthAccountNotLinked, przekieruj do ustawień z błędem
+      if (url.includes("error=OAuthAccountNotLinked")) {
+        return `${baseUrl}/dashboard/settings?error=OAuthAccountNotLinked`;
+      }
+
+      // Jeśli to callback URL, użyj go
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      else if (new URL(url).origin === baseUrl) return url;
+
+      return baseUrl;
     },
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
