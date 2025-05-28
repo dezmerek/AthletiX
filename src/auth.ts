@@ -89,7 +89,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                 console.error(
                   "Google account already connected to different user"
                 );
-                // Zamiast zwracać false, przekieruj do ustawień z błędem
+                // Rzuć błąd OAuthAccountNotLinked
                 throw new Error("OAuthAccountNotLinked");
               }
             }
@@ -128,6 +128,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           return true;
         } catch (error) {
           console.error("Error during Google sign in:", error);
+          // Jeśli to błąd OAuthAccountNotLinked, przepuść go dalej
+          if (error instanceof Error && error.message === "OAuthAccountNotLinked") {
+            throw error;
+          }
           return false;
         }
       }
@@ -176,9 +180,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // Jeśli URL zawiera błąd OAuthAccountNotLinked, przekieruj do ustawień z błędem
+      console.log("Redirect callback - url:", url, "baseUrl:", baseUrl);
+      
+      // Jeśli URL zawiera błąd OAuthAccountNotLinked, przekieruj do strony błędów
       if (url.includes("error=OAuthAccountNotLinked")) {
-        return `${baseUrl}/dashboard/settings?error=OAuthAccountNotLinked`;
+        return `${baseUrl}/auth/error?error=OAuthAccountNotLinked`;
       }
 
       // Jeśli to callback URL, użyj go

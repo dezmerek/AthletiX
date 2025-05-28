@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 
 export default function LoginPage() {
@@ -12,7 +12,17 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { data: session } = useSession();
   const t = useTranslations("auth.login");
+
+  // Sprawdź czy użytkownik jest zalogowany i wystąpił błąd OAuthAccountNotLinked
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (session?.user && errorParam === "OAuthAccountNotLinked") {
+      router.replace("/dashboard/settings?error=OAuthAccountNotLinked");
+    }
+  }, [session, searchParams, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -105,8 +105,12 @@ export default function SettingsPage() {
         type: "error",
         message: t("connectedAccounts.accountAlreadyConnected"),
       });
-      // Clear the error from URL
-      router.replace("/dashboard/settings", { scroll: false });
+      // Clear the error from URL after a short delay to allow the message to be shown
+      const timer = setTimeout(() => {
+        router.replace("/dashboard/settings", { scroll: false });
+      }, 100);
+      
+      return () => clearTimeout(timer);
     }
   }, [searchParams, router, t]);
 

@@ -4,6 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 export default {
   pages: {
     signIn: "/auth/login",
+    error: "/auth/error",
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
