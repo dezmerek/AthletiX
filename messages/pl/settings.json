@@ -16,6 +16,29 @@
       "updateFailed": "Nie udało się zaktualizować nazwy"
     }
   },
+  "email": {
+    "title": "Zmień adres email",
+    "description": "Aktualizuj swój adres email",
+    "passwordRequiredTitle": "Hasło wymagane",
+    "passwordRequiredDescription": "Aby zmienić adres email, musisz najpierw ustawić hasło. To zapewni Ci dodatkowy sposób logowania.",
+    "passwordRequiredAction": "Ustaw hasło poniżej, aby odblokować zmianę emaila",
+    "currentEmail": "Obecny email",
+    "newEmail": "Nowy email",
+    "confirmEmail": "Potwierdź nowy email",
+    "updateButton": "Zmień email",
+    "updating": "Aktualizowanie...",
+    "success": {
+      "updated": "Adres email został pomyślnie zaktualizowany"
+    },
+    "errors": {
+      "emailRequired": "Nowy email jest wymagany",
+      "emailInvalid": "Podaj prawidłowy adres email",
+      "emailUnchanged": "Nowy email jest taki sam jak obecny",
+      "emailsNotMatch": "Adresy email się nie zgadzają",
+      "emailTaken": "Ten adres email jest już używany przez inne konto",
+      "updateFailed": "Nie udało się zaktualizować adresu email"
+    }
+  },
   "password": {
     "title": "Hasło",
     "description": "Ustawienie hasła pozwoli Ci logować się również przez email",

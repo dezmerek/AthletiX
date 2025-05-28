@@ -144,14 +144,14 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         token.createdAt = user.createdAt;
         token.updatedAt = user.updatedAt;
         token.role = user.role;
-      }
-
-      // Gdy update() jest wywołane z frontendu
+      } // Gdy update() jest wywołane z frontendu
       if (trigger === "update" && sessionParam?.user) {
         console.log("JWT callback - update trigger:", sessionParam.user);
         token.name = sessionParam.user.name ?? token.name;
+        token.email = sessionParam.user.email ?? token.email;
         token.image = sessionParam.user.image ?? token.image;
         console.log("JWT callback - updated token name:", token.name);
+        console.log("JWT callback - updated token email:", token.email);
       }
 
       return token;

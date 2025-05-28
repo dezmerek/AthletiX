@@ -16,6 +16,29 @@
       "updateFailed": "Failed to update name"
     }
   },
+  "email": {
+    "title": "Change Email Address",
+    "description": "Update your email address",
+    "passwordRequiredTitle": "Password Required",
+    "passwordRequiredDescription": "To change your email address, you must first set a password. This will provide you with an additional way to log in.",
+    "passwordRequiredAction": "Set a password below to unlock email change",
+    "currentEmail": "Current Email",
+    "newEmail": "New Email",
+    "confirmEmail": "Confirm New Email",
+    "updateButton": "Change Email",
+    "updating": "Updating...",
+    "success": {
+      "updated": "Email address has been successfully updated"
+    },
+    "errors": {
+      "emailRequired": "New email is required",
+      "emailInvalid": "Please enter a valid email address",
+      "emailUnchanged": "New email is the same as current email",
+      "emailsNotMatch": "Email addresses do not match",
+      "emailTaken": "This email address is already used by another account",
+      "updateFailed": "Failed to update email address"
+    }
+  },
   "password": {
     "title": "Password",
     "description": "Setting a password will allow you to also log in with email",

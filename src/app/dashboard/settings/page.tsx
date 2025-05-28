@@ -20,6 +20,15 @@ export default function SettingsPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Email state
+  const [newEmail, setNewEmail] = useState("");
+  const [confirmEmail, setConfirmEmail] = useState("");
+  const [isUpdatingEmail, setIsUpdatingEmail] = useState(false);
+  const [emailStatus, setEmailStatus] = useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({ type: null, message: "" });
+
   // Password state
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -166,6 +175,111 @@ export default function SettingsPage() {
         });
       }
     });
+  };
+
+  const handleEmailUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailStatus({ type: null, message: "" });
+
+    // Walidacja
+    if (!newEmail.trim()) {
+      setEmailStatus({
+        type: "error",
+        message: t("email.errors.emailRequired"),
+      });
+      return;
+    }
+
+    // Walidacja formatu emaila
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+      setEmailStatus({
+        type: "error",
+        message: t("email.errors.emailInvalid"),
+      });
+      return;
+    }
+
+    if (newEmail.trim().toLowerCase() === session?.user?.email?.toLowerCase()) {
+      setEmailStatus({
+        type: "error",
+        message: t("email.errors.emailUnchanged"),
+      });
+      return;
+    }
+
+    if (newEmail !== confirmEmail) {
+      setEmailStatus({
+        type: "error",
+        message: t("email.errors.emailsNotMatch"),
+      });
+      return;
+    }
+
+    setIsUpdatingEmail(true);
+
+    try {
+      const response = await fetch("/api/user/update-email", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: newEmail.trim() }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        let errorMessage = t("email.errors.updateFailed");
+
+        if (data.code === "PASSWORD_REQUIRED_FOR_GOOGLE_ACCOUNT") {
+          errorMessage = t("email.passwordRequiredDescription");
+        } else if (data.error?.includes("already used")) {
+          errorMessage = t("email.errors.emailTaken");
+        } else if (data.error?.includes("same as current")) {
+          errorMessage = t("email.errors.emailUnchanged");
+        } else if (data.error?.includes("valid email")) {
+          errorMessage = t("email.errors.emailInvalid");
+        } else if (data.error) {
+          errorMessage = data.error;
+        }
+
+        throw new Error(errorMessage);
+      }
+
+      console.log("Email updated successfully, new email:", data.email);
+
+      // Aktualizacja sesji z nowym emailem
+      const updateResult = await update({
+        user: {
+          email: data.email,
+        },
+      });
+
+      console.log("Session update result:", updateResult);
+
+      // Wymuszenie odświeżenia routera
+      router.refresh();
+
+      // Wyczyść pola formularza
+      setNewEmail("");
+      setConfirmEmail("");
+
+      setEmailStatus({
+        type: "success",
+        message: t("email.success.updated"),
+      });
+    } catch (error) {
+      console.error("Error updating email:", error);
+      setEmailStatus({
+        type: "error",
+        message:
+          error instanceof Error
+            ? error.message
+            : t("email.errors.updateFailed"),
+      });
+    } finally {
+      setIsUpdatingEmail(false);
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -397,9 +511,13 @@ export default function SettingsPage() {
           </h1>
           <p className="mt-2 text-lg text-slate-600 dark:text-slate-400">
             {t("description")}
-          </p>
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          </p>{" "}
+        </div>{" "}
+        <div
+          className={`grid grid-cols-1 lg:grid-cols-2 ${
+            hasPassword ? "xl:grid-cols-3" : "xl:grid-cols-2"
+          } gap-8`}
+        >
           {/* Profile settings */}
           <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
             <div className="flex items-center mb-8">
@@ -487,8 +605,148 @@ export default function SettingsPage() {
                 </button>
               </div>
             </form>
-          </div>
-
+          </div>{" "}
+          {/* Email settings */}
+          {hasPassword && (
+            <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
+              <div className="flex items-center mb-8">
+                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+                  <svg
+                    className="w-7 h-7 text-emerald-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 8l7.89 4.05a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-slate-900 dark:text-white ml-4">
+                    {t("email.title")}
+                  </h2>
+                  <p className="ml-4 text-sm text-slate-600 dark:text-slate-400">
+                    {t("email.description")}
+                  </p>
+                </div>
+              </div>{" "}
+              <form
+                onSubmit={handleEmailUpdate}
+                className="flex-1 flex flex-col"
+              >
+                {emailStatus.type && (
+                  <div
+                    className={`mb-4 p-4 rounded-xl text-sm font-medium ${
+                      emailStatus.type === "success"
+                        ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800"
+                        : "bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800"
+                    }`}
+                  >
+                    {emailStatus.message}
+                  </div>
+                )}
+                {!hasPassword ? (
+                  <div className="flex-1 flex flex-col justify-center">
+                    <div className="text-center p-8 bg-amber-50 dark:bg-amber-950/20 rounded-xl border border-amber-200 dark:border-amber-800">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center">
+                        <svg
+                          className="w-8 h-8 text-amber-600 dark:text-amber-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                          />
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-semibold text-amber-800 dark:text-amber-200 mb-2">
+                        {t("email.passwordRequiredTitle")}
+                      </h3>
+                      <p className="text-amber-700 dark:text-amber-300 mb-4">
+                        {t("email.passwordRequiredDescription")}
+                      </p>
+                      <p className="text-sm text-amber-600 dark:text-amber-400">
+                        {t("email.passwordRequiredAction")}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="space-y-4">
+                      <div>
+                        <label
+                          htmlFor="currentEmailDisplay"
+                          className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                        >
+                          {t("email.currentEmail")}
+                        </label>
+                        <input
+                          type="email"
+                          id="currentEmailDisplay"
+                          value={session?.user?.email || ""}
+                          disabled
+                          className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm text-slate-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="newEmail"
+                          className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                        >
+                          {t("email.newEmail")}
+                        </label>
+                        <input
+                          type="email"
+                          id="newEmail"
+                          value={newEmail}
+                          onChange={(e) => setNewEmail(e.target.value)}
+                          className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors duration-200"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="confirmEmail"
+                          className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                        >
+                          {t("email.confirmEmail")}
+                        </label>
+                        <input
+                          type="email"
+                          id="confirmEmail"
+                          value={confirmEmail}
+                          onChange={(e) => setConfirmEmail(e.target.value)}
+                          className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors duration-200"
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-auto pt-8">
+                      <button
+                        type="submit"
+                        disabled={
+                          isUpdatingEmail ||
+                          !newEmail.trim() ||
+                          !confirmEmail.trim()
+                        }
+                        className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                      >
+                        {isUpdatingEmail
+                          ? t("email.updating")
+                          : t("email.updateButton")}
+                      </button>
+                    </div>
+                  </>
+                )}{" "}
+              </form>
+            </div>
+          )}
           {/* Password */}
           <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
             <div className="flex items-center mb-8">
@@ -605,7 +863,6 @@ export default function SettingsPage() {
               </div>
             </form>
           </div>
-
           {/* Connected accounts */}
           <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
             <div className="flex items-center mb-8">
@@ -697,7 +954,6 @@ export default function SettingsPage() {
               </div>
             </div>
           </div>
-
           {/* Delete account */}
           <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
             <div className="flex items-center mb-8">
