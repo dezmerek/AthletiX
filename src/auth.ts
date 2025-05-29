@@ -129,7 +129,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         } catch (error) {
           console.error("Error during Google sign in:", error);
           // Jeśli to błąd OAuthAccountNotLinked, przepuść go dalej
-          if (error instanceof Error && error.message === "OAuthAccountNotLinked") {
+          if (
+            error instanceof Error &&
+            error.message === "OAuthAccountNotLinked"
+          ) {
             throw error;
           }
           return false;
@@ -180,8 +183,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       return session;
     },
     async redirect({ url, baseUrl }) {
-      console.log("Redirect callback - url:", url, "baseUrl:", baseUrl);
-      
       // Jeśli URL zawiera błąd OAuthAccountNotLinked, przekieruj do strony błędów
       if (url.includes("error=OAuthAccountNotLinked")) {
         return `${baseUrl}/auth/error?error=OAuthAccountNotLinked`;
