@@ -1,13 +1,4 @@
-import { auth } from "@/auth";
-import { redirect } from "next/navigation";
-
 export default async function DashboardPage() {
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect("/auth/login");
-  }
-
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-7xl mx-auto">
