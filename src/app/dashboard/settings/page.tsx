@@ -109,7 +109,7 @@ export default function SettingsPage() {
       const timer = setTimeout(() => {
         router.replace("/dashboard/settings", { scroll: false });
       }, 100);
-      
+
       return () => clearTimeout(timer);
     }
   }, [searchParams, router, t]);
@@ -301,15 +301,8 @@ export default function SettingsPage() {
         throw new Error(data.error || "Failed to delete account");
       }
 
-      setUpdateStatus({
-        type: "success",
-        message: t("deleteAccount.success"),
-      });
-
-      // Wyloguj użytkownika i przekieruj na stronę główną
-      setTimeout(async () => {
-        await signOut({ callbackUrl: "/" });
-      }, 2000);
+      // Wyloguj użytkownika i przekieruj na stronę główną natychmiast
+      await signOut({ callbackUrl: "/" });
     } catch (error) {
       console.error("Error deleting account:", error);
       setUpdateStatus({
