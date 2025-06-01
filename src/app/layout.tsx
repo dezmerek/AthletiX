@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/main/navbar";
-import Footer from "@/components/main/footer";
+import ConditionalLayout from "@/components/layout/ConditionalLayout";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import ThemeProvider from "@/theme/ThemeProvider";
@@ -42,9 +41,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <NextIntlClientProvider locale={locale} messages={messages}>
-              <Navbar />
-              {children}
-              <Footer />
+              <ConditionalLayout>{children}</ConditionalLayout>
             </NextIntlClientProvider>
           </ThemeProvider>
         </AuthProvider>

@@ -24,6 +24,8 @@ export default getRequestConfig(async () => {
       .default,
     Footer: (await import(`../../messages/${locale}/components/footer.json`))
       .default,
+    sidebar: (await import(`../../messages/${locale}/components/sidebar.json`))
+      .default,
 
     // Containers
     HeroSection: (await import(`../../messages/${locale}/containers/hero.json`))
