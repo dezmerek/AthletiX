@@ -5,6 +5,9 @@
   "progress": "Progress",
   "calendar": "Calendar",
   "community": "Community",
+  "settings": "Settings",
   "collapse": "Collapse sidebar",
-  "expand": "Expand sidebar"
+  "expand": "Expand sidebar",
+  "user": "User",
+  "admin": "Administrator"
 }

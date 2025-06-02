@@ -1,33 +1,13 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import ThemeToggle from "@/theme/ThemeToggle";
 import LanguageSelector from "@/components/main/navbar/LanguageSelector";
-import UserMenu from "@/components/main/navbar/UserMenu";
-import type { IUser as User } from "@/models/User";
 
 export default function DashboardTopBar() {
-  const { data: session } = useSession();
   const locale = useLocale();
   const router = useRouter();
-
-  // Create user object similar to main navbar
-  const user = session?.user?.id
-    ? ({
-        _id: session.user.id,
-        name: session.user.name || session.user.email?.split("@")[0] || "User",
-        email: session.user.email || "",
-        image: session.user.image || "",
-        role: "user" as const,
-      } as User)
-    : undefined;
-
-  const handleLogout = async () => {
-    await signOut({ redirect: false });
-    router.push("/");
-  };
 
   const changeLanguage = (newLocale: string) => {
     if (newLocale === locale) return;
@@ -70,9 +50,6 @@ export default function DashboardTopBar() {
             changeLanguage={changeLanguage}
             setIsMenuOpen={() => {}}
           />
-
-          {/* User Menu - Use the same component as main navbar */}
-          {user && <UserMenu user={user} onLogout={handleLogout} />}
         </div>
       </div>
     </div>

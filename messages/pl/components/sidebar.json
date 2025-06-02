@@ -5,6 +5,9 @@
   "progress": "Postępy",
   "calendar": "Kalendarz",
   "community": "Społeczność",
+  "settings": "Ustawienia",
   "collapse": "Zwiń pasek boczny",
-  "expand": "Rozwiń pasek boczny"
+  "expand": "Rozwiń pasek boczny",
+  "user": "Użytkownik",
+  "admin": "Administrator"
 }
