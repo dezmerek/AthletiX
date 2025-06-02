@@ -9,5 +9,6 @@
   "collapse": "Collapse sidebar",
   "expand": "Expand sidebar",
   "user": "User",
-  "admin": "Administrator"
+  "admin": "Administrator",
+  "logout": "Logout"
 }

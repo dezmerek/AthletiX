@@ -9,5 +9,6 @@
   "collapse": "Zwiń pasek boczny",
   "expand": "Rozwiń pasek boczny",
   "user": "Użytkownik",
-  "admin": "Administrator"
+  "admin": "Administrator",
+  "logout": "Wyloguj"
 }
