@@ -200,10 +200,7 @@ export default function DashboardSidebar() {
         }`}
       >
         {!isCollapsed && (
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">A</span>
-            </div>
+          <Link href="/" className="flex items-center">
             <span className="font-bold text-xl bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
               AthletiX
             </span>
