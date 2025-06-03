@@ -11,6 +11,13 @@ interface UserProfile {
   gender: "male" | "female";
   goal: "lose_weight" | "gain_muscle" | "maintain_weight";
   activityLevel: "sedentary" | "light" | "moderate" | "active" | "very_active";
+  // New calorie goal settings
+  calorieGoal: {
+    type: "lose_weight" | "gain_weight" | "maintain_weight";
+    weeklyGoal: number; // kg per week (0.25, 0.5, 0.75, 1.0, or custom value)
+    customWeeklyGoal?: number; // custom kg per week value
+    customCalories?: number; // optional custom calorie target
+  };
   macros: {
     protein: number;
     carbs: number;
@@ -28,6 +35,13 @@ export default function ProfilePage() {
     gender: "male",
     goal: "maintain_weight",
     activityLevel: "moderate",
+    // New calorie goal settings
+    calorieGoal: {
+      type: "maintain_weight",
+      weeklyGoal: 0.5, // 0.5 kg per week default
+      customWeeklyGoal: undefined,
+      customCalories: undefined,
+    },
     macros: {
       protein: 30,
       carbs: 40,
@@ -60,19 +74,37 @@ export default function ProfilePage() {
 
   // Calculate target calories based on goal
   type Goal = UserProfile["goal"];
-  function calculateTargetCalories(goal: Goal) {
+
+  // Calculate calories based on weekly weight goal (FitAtu/Yazio style)
+  const calculateCaloriesFromWeeklyGoal = () => {
     const tdee = calculateTDEE();
-    switch (goal) {
+    const { type, weeklyGoal, customWeeklyGoal, customCalories } =
+      profile.calorieGoal;
+
+    // If custom calories are set, use them
+    if (customCalories && customCalories > 0) {
+      return customCalories;
+    }
+
+    // Use custom weekly goal if set, otherwise use regular weeklyGoal
+    const actualWeeklyGoal =
+      customWeeklyGoal && customWeeklyGoal > 0 ? customWeeklyGoal : weeklyGoal;
+
+    // 1 kg of fat = approximately 7700 calories
+    // So daily calorie deficit/surplus needed = (weeklyGoal * 7700) / 7
+    const dailyCalorieAdjustment = (actualWeeklyGoal * 7700) / 7;
+
+    switch (type) {
       case "lose_weight":
-        return tdee - 500;
-      case "gain_muscle":
-        return tdee + 300;
+        return Math.max(1200, tdee - dailyCalorieAdjustment); // Minimum 1200 calories
+      case "gain_weight":
+        return tdee + dailyCalorieAdjustment;
       case "maintain_weight":
         return tdee;
       default:
         return tdee;
     }
-  }
+  };
 
   // Funkcja pomocnicza do wyliczania bezpiecznego procentu białka
   function getSafeProteinPercent(
@@ -89,12 +121,12 @@ export default function ProfilePage() {
     console.log("Saving profile:", profile);
   };
 
-  // Add useEffect that reacts to weight change
+  // Add useEffect that reacts to weight change and calorie goal changes
   useEffect(() => {
     if (profile.weight > 0) {
-      const calories = Math.round(calculateTargetCalories(profile.goal));
+      const calories = Math.round(calculateCaloriesFromWeeklyGoal());
       let macros;
-      switch (profile.goal) {
+      switch (profile.calorieGoal.type) {
         case "lose_weight": {
           const protein = getSafeProteinPercent(35, calories, profile.weight);
           macros = { protein, fats: 25, carbs: 100 - protein - 25 };
@@ -105,7 +137,7 @@ export default function ProfilePage() {
           macros = { protein, fats: 30, carbs: 100 - protein - 30 };
           break;
         }
-        case "gain_muscle": {
+        case "gain_weight": {
           const protein = getSafeProteinPercent(32, calories, profile.weight);
           macros = { protein, fats: 23, carbs: 100 - protein - 23 };
           break;
@@ -118,7 +150,13 @@ export default function ProfilePage() {
       setProfile((prev) => ({ ...prev, macros }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile.weight]);
+  }, [
+    profile.weight,
+    profile.calorieGoal.type,
+    profile.calorieGoal.weeklyGoal,
+    profile.calorieGoal.customWeeklyGoal,
+    profile.calorieGoal.customCalories,
+  ]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
@@ -309,67 +347,21 @@ export default function ProfilePage() {
                         type="button"
                         onClick={() => {
                           const newGoal = goal.value as Goal;
-                          const calories = Math.round(
-                            calculateTargetCalories(newGoal)
-                          );
-                          let macros;
-                          switch (newGoal) {
-                            case "lose_weight": {
-                              const protein = getSafeProteinPercent(
-                                35,
-                                calories,
-                                profile.weight
-                              );
-                              macros = {
-                                protein,
-                                fats: 25,
-                                carbs: 100 - protein - 25,
-                              };
-                              break;
-                            }
-                            case "maintain_weight": {
-                              const protein = getSafeProteinPercent(
-                                30,
-                                calories,
-                                profile.weight
-                              );
-                              macros = {
-                                protein,
-                                fats: 30,
-                                carbs: 100 - protein - 30,
-                              };
-                              break;
-                            }
-                            case "gain_muscle": {
-                              const protein = getSafeProteinPercent(
-                                32,
-                                calories,
-                                profile.weight
-                              );
-                              macros = {
-                                protein,
-                                fats: 23,
-                                carbs: 100 - protein - 23,
-                              };
-                              break;
-                            }
-                            default: {
-                              const protein = getSafeProteinPercent(
-                                30,
-                                calories,
-                                profile.weight
-                              );
-                              macros = {
-                                protein,
-                                fats: 30,
-                                carbs: 100 - protein - 30,
-                              };
-                            }
-                          }
+                          // Update both old goal and new calorie goal for consistency
+                          const newCalorieGoalType =
+                            newGoal === "gain_muscle"
+                              ? "gain_weight"
+                              : newGoal === "lose_weight"
+                              ? "lose_weight"
+                              : "maintain_weight";
+
                           setProfile((prev) => ({
                             ...prev,
                             goal: newGoal,
-                            macros,
+                            calorieGoal: {
+                              ...prev.calorieGoal,
+                              type: newCalorieGoalType,
+                            },
                           }));
                         }}
                         className={`p-4 rounded-xl border-2 transition-all text-center ${
@@ -416,7 +408,287 @@ export default function ProfilePage() {
                   </select>
                 </div>
               </div>
-            </div>{" "}
+            </div>
+            {/* Calorie Goal Section (FitAtu/Yazio style) */}
+            <div className="bg-white/90 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
+                <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center mr-3">
+                  <svg
+                    className="w-6 h-6 text-orange-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                    />
+                  </svg>
+                </div>
+                {t("calorieGoal.title")}
+              </h2>
+
+              <p className="text-slate-600 dark:text-slate-400 mb-6">
+                {t("calorieGoal.description")}
+              </p>
+
+              <div className="space-y-6">
+                {/* Goal Type Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                    {t("calorieGoal.goalType")}
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {[
+                      {
+                        value: "lose_weight",
+                        icon: "🔥",
+                        color:
+                          "bg-red-50 border-red-200 text-red-700 dark:bg-red-950/50 dark:border-red-800 dark:text-red-400",
+                        hover: "hover:border-red-400",
+                      },
+                      {
+                        value: "maintain_weight",
+                        icon: "⚖️",
+                        color:
+                          "bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-950/50 dark:border-blue-800 dark:text-blue-400",
+                        hover: "hover:border-blue-400",
+                      },
+                      {
+                        value: "gain_weight",
+                        icon: "📈",
+                        color:
+                          "bg-green-50 border-green-200 text-green-700 dark:bg-green-950/50 dark:border-green-800 dark:text-green-400",
+                        hover: "hover:border-green-400",
+                      },
+                    ].map((goalType) => (
+                      <button
+                        key={goalType.value}
+                        type="button"
+                        onClick={() => {
+                          const newType = goalType.value as
+                            | "lose_weight"
+                            | "gain_weight"
+                            | "maintain_weight";
+                          setProfile((prev) => ({
+                            ...prev,
+                            calorieGoal: {
+                              ...prev.calorieGoal,
+                              type: newType,
+                              // Reset custom values when switching to maintain_weight
+                              weeklyGoal:
+                                newType === "maintain_weight"
+                                  ? 0.5
+                                  : prev.calorieGoal.weeklyGoal,
+                              customWeeklyGoal:
+                                newType === "maintain_weight"
+                                  ? undefined
+                                  : prev.calorieGoal.customWeeklyGoal,
+                            },
+                          }));
+                        }}
+                        className={`p-4 rounded-xl border-2 transition-all text-center ${
+                          profile.calorieGoal.type === goalType.value
+                            ? goalType.color
+                            : `bg-white cursor-pointer dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 ${goalType.hover}`
+                        }`}
+                      >
+                        <div className="text-2xl mb-2">{goalType.icon}</div>
+                        <div className="font-medium">
+                          {t(`calorieGoal.types.${goalType.value}`)}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Weekly Goal - only show for lose_weight and gain_weight */}
+                {profile.calorieGoal.type !== "maintain_weight" && (
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                      {t("calorieGoal.weeklyGoal")}
+                    </label>
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                      {[0.25, 0.5, 0.75, 1.0, "custom"].map((goal) => (
+                        <button
+                          key={goal}
+                          type="button"
+                          onClick={() => {
+                            if (goal === "custom") {
+                              setProfile((prev) => ({
+                                ...prev,
+                                calorieGoal: {
+                                  ...prev.calorieGoal,
+                                  weeklyGoal: -1, // Use -1 to indicate custom mode
+                                  customWeeklyGoal: 0.5, // Default custom value
+                                },
+                              }));
+                            } else {
+                              setProfile((prev) => ({
+                                ...prev,
+                                calorieGoal: {
+                                  ...prev.calorieGoal,
+                                  weeklyGoal: goal as number,
+                                  customWeeklyGoal: undefined,
+                                },
+                              }));
+                            }
+                          }}
+                          className={`p-3 rounded-xl border-2 transition-all text-center text-sm ${
+                            (goal === "custom" &&
+                              profile.calorieGoal.weeklyGoal === -1) ||
+                            (goal !== "custom" &&
+                              profile.calorieGoal.weeklyGoal === goal)
+                              ? "bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-400"
+                              : "bg-white cursor-pointer dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-emerald-400"
+                          }`}
+                        >
+                          {goal === "custom" ? (
+                            <>
+                              <div className="font-medium">Własne</div>
+                              <div className="text-xs opacity-75 mt-1">
+                                {profile.calorieGoal.customWeeklyGoal &&
+                                profile.calorieGoal.weeklyGoal === -1
+                                  ? `(${profile.calorieGoal.customWeeklyGoal} kg)`
+                                  : "(wpisz wartość)"}
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              {goal} kg/
+                              {t("calorieGoal.weeklyGoal").toLowerCase()}
+                              <div className="text-xs opacity-75 mt-1">
+                                {goal === 0.25 && "(powoli)"}
+                                {goal === 0.5 && "(zalecane)"}
+                                {goal === 0.75 && "(umiarkowanie)"}
+                                {goal === 1.0 && "(szybko)"}
+                              </div>
+                            </>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Custom Weekly Goal Input */}
+                    {profile.calorieGoal.weeklyGoal === -1 && (
+                      <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600">
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                          Wprowadź własną wartość (kg/tydzień)
+                        </label>
+                        <input
+                          type="number"
+                          min="0.1"
+                          max="1.0"
+                          step="0.1"
+                          value={profile.calorieGoal.customWeeklyGoal || ""}
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value);
+                            // Walidacja: wartość musi być między 0.1 a 1.0
+                            if (isNaN(value) || value <= 0) {
+                              setProfile((prev) => ({
+                                ...prev,
+                                calorieGoal: {
+                                  ...prev.calorieGoal,
+                                  customWeeklyGoal: undefined,
+                                },
+                              }));
+                            } else {
+                              const clampedValue = Math.min(
+                                Math.max(value, 0.1),
+                                1.0
+                              );
+                              setProfile((prev) => ({
+                                ...prev,
+                                calorieGoal: {
+                                  ...prev.calorieGoal,
+                                  customWeeklyGoal: clampedValue,
+                                },
+                              }));
+                            }
+                          }}
+                          placeholder="np. 0.6"
+                          className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                        />
+                        <div className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                          <strong>Zalecane wartości:</strong>
+                          <br />
+                          • Schudnąć: 0,25-0,75 kg/tydzień
+                          <br />• Przytyć: 0,25-0,5 kg/tydzień
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Calculated Calories Display */}
+                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 rounded-xl p-6 border border-emerald-200 dark:border-emerald-800/50">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                      {t("calorieGoal.calculatedCalories")}
+                    </h3>
+                    <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+                      {Math.round(calculateCaloriesFromWeeklyGoal())}
+                    </div>
+                  </div>
+                  <div className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
+                    <div>
+                      Twoje TDEE (kalorie utrzymania):{" "}
+                      {Math.round(calculateTDEE())} kcal/dzień
+                    </div>
+                    {profile.calorieGoal.type !== "maintain_weight" && (
+                      <>
+                        <div>
+                          {profile.calorieGoal.type === "lose_weight"
+                            ? "Deficyt"
+                            : "Nadwyżka"}
+                          :{" "}
+                          {Math.abs(
+                            Math.round(
+                              calculateCaloriesFromWeeklyGoal() -
+                                calculateTDEE()
+                            )
+                          )}{" "}
+                          kcal/dzień
+                        </div>
+                        <div>
+                          Cel:{" "}
+                          {profile.calorieGoal.type === "lose_weight"
+                            ? "schudnąć"
+                            : "przytyć"}{" "}
+                          {profile.calorieGoal.customWeeklyGoal &&
+                          profile.calorieGoal.customWeeklyGoal > 0
+                            ? profile.calorieGoal.customWeeklyGoal
+                            : profile.calorieGoal.weeklyGoal > 0
+                            ? profile.calorieGoal.weeklyGoal
+                            : "0.5"}{" "}
+                          kg/tydzień
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Additional Info */}
+                <div className="bg-blue-50 dark:bg-blue-950/30 rounded-xl p-4 border border-blue-200 dark:border-blue-800/50">
+                  <div className="flex items-start space-x-3">
+                    <div className="text-blue-500 mt-0.5">💡</div>
+                    <div className="text-sm text-blue-700 dark:text-blue-300">
+                      <div className="font-medium mb-1">Wskazówka:</div>
+                      <div>
+                        {profile.calorieGoal.type === "lose_weight" &&
+                          "Bezpieczne tempo odchudzania to 0,5-0,75 kg na tydzień. Zbyt duży deficyt może prowadzić do utraty masy mięśniowej."}
+                        {profile.calorieGoal.type === "gain_weight" &&
+                          "Optymalne tempo przyrostu masy to 0,25-0,5 kg na tydzień. Pozwala to na budowę mięśni przy minimalnym przyroście tkanki tłuszczowej."}
+                        {profile.calorieGoal.type === "maintain_weight" &&
+                          "Utrzymywanie wagi pozwala na rekomponowanie sylwetki - budowę mięśni przy jednoczesnej redukcji tkanki tłuszczowej."}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             {/* Macros */}
             <div className="bg-white/90 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700">
               <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between">
@@ -442,10 +714,10 @@ export default function ProfilePage() {
                   type="button"
                   onClick={() => {
                     const calories = Math.round(
-                      calculateTargetCalories(profile.goal)
+                      calculateCaloriesFromWeeklyGoal()
                     );
                     let macros;
-                    switch (profile.goal) {
+                    switch (profile.calorieGoal.type) {
                       case "lose_weight": {
                         const protein = getSafeProteinPercent(
                           35,
@@ -472,7 +744,7 @@ export default function ProfilePage() {
                         };
                         break;
                       }
-                      case "gain_muscle": {
+                      case "gain_weight": {
                         const protein = getSafeProteinPercent(
                           32,
                           calories,
@@ -549,15 +821,13 @@ export default function ProfilePage() {
                         type="number"
                         min="0"
                         value={Math.round(
-                          (calculateTargetCalories(profile.goal) *
+                          (calculateCaloriesFromWeeklyGoal() *
                             (profile.macros.protein / 100)) /
                             4
                         )}
                         onChange={(e) => {
                           const grams = parseInt(e.target.value) || 0;
-                          const calories = calculateTargetCalories(
-                            profile.goal
-                          );
+                          const calories = calculateCaloriesFromWeeklyGoal();
                           let percent =
                             calories === 0
                               ? 0
@@ -602,15 +872,13 @@ export default function ProfilePage() {
                         type="number"
                         min="0"
                         value={Math.round(
-                          (calculateTargetCalories(profile.goal) *
+                          (calculateCaloriesFromWeeklyGoal() *
                             (profile.macros.carbs / 100)) /
                             4
                         )}
                         onChange={(e) => {
                           const grams = parseInt(e.target.value) || 0;
-                          const calories = calculateTargetCalories(
-                            profile.goal
-                          );
+                          const calories = calculateCaloriesFromWeeklyGoal();
                           let percent =
                             calories === 0
                               ? 0
@@ -655,15 +923,13 @@ export default function ProfilePage() {
                         type="number"
                         min="0"
                         value={Math.round(
-                          (calculateTargetCalories(profile.goal) *
+                          (calculateCaloriesFromWeeklyGoal() *
                             (profile.macros.fats / 100)) /
                             9
                         )}
                         onChange={(e) => {
                           const grams = parseInt(e.target.value) || 0;
-                          const calories = calculateTargetCalories(
-                            profile.goal
-                          );
+                          const calories = calculateCaloriesFromWeeklyGoal();
                           let percent =
                             calories === 0
                               ? 0
@@ -862,7 +1128,7 @@ export default function ProfilePage() {
                       {t("calories.target")}
                     </span>
                     <span className="font-bold text-xl text-emerald-600 dark:text-emerald-400">
-                      {Math.round(calculateTargetCalories(profile.goal))}
+                      {Math.round(calculateCaloriesFromWeeklyGoal())}
                     </span>
                   </div>
                 </div>

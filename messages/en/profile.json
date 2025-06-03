@@ -28,6 +28,35 @@
       "veryActive": "Very Active (very hard exercise, physical job)"
     }
   },
+  "calorieGoal": {
+    "title": "Calorie Goal",
+    "description": "Set your daily calorie target based on your weight goal",
+    "goalType": "What's your goal?",
+    "types": {
+      "lose_weight": "Lose Weight",
+      "maintain_weight": "Maintain Weight",
+      "gain_weight": "Gain Weight"
+    },
+    "weeklyGoal": "week",
+    "weekly": {
+      "0.25": "0.25 kg/week (slow)",
+      "0.5": "0.5 kg/week (recommended)",
+      "0.75": "0.75 kg/week (moderate)",
+      "1.0": "1.0 kg/week (aggressive)"
+    },
+    "customCalories": "Custom Daily Calories",
+    "customCaloriesHint": "Leave empty for automatic calculation",
+    "calculatedCalories": "Your daily calorie goal",
+    "useCustom": "Use Custom Calories",
+    "tips": {
+      "title": "Tip:",
+      "loseWeight": "Safe weight loss rate is 0.5-0.75 kg per week. Too large deficit may lead to muscle mass loss.",
+      "gainWeight": "Optimal mass gain rate is 0.25-0.5 kg per week. This allows muscle building with minimal fat gain.",
+      "maintain": "Maintaining weight allows body recomposition - building muscle while reducing fat tissue.",
+      "healthyLoss": "Combine diet with strength training to preserve muscle mass.",
+      "healthyGain": "Regular strength training will help build muscle instead of fat tissue."
+    }
+  },
   "macros": {
     "title": "Macronutrient Distribution",
     "protein": "Protein",

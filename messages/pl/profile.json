@@ -28,6 +28,35 @@
       "veryActive": "Bardzo Aktywny (bardzo intensywne ćwiczenia, praca fizyczna)"
     }
   },
+  "calorieGoal": {
+    "title": "Cel Kaloryczny",
+    "description": "Ustaw swój dzienny cel kaloryczny na podstawie celu wagowego",
+    "goalType": "Jaki jest Twój cel?",
+    "types": {
+      "lose_weight": "Schudnąć",
+      "maintain_weight": "Utrzymać Wagę",
+      "gain_weight": "Przytyć"
+    },
+    "weeklyGoal": "tydzień",
+    "weekly": {
+      "0.25": "0,25 kg/tydzień (powoli)",
+      "0.5": "0,5 kg/tydzień (zalecane)",
+      "0.75": "0,75 kg/tydzień (umiarkowanie)",
+      "1.0": "1,0 kg/tydzień (agresywnie)"
+    },
+    "customCalories": "Własne Dzienne Kalorie",
+    "customCaloriesHint": "Zostaw puste dla automatycznego obliczenia",
+    "calculatedCalories": "Twój dzienny cel kaloryczny",
+    "useCustom": "Użyj Własnych Kalorii",
+    "tips": {
+      "title": "Wskazówka:",
+      "loseWeight": "Bezpieczne tempo odchudzania to 0,5-0,75 kg na tydzień. Zbyt duży deficyt może prowadzić do utraty masy mięśniowej.",
+      "gainWeight": "Optymalne tempo przyrostu masy to 0,25-0,5 kg na tydzień. Pozwala to na budowę mięśni przy minimalnym przyroście tkanki tłuszczowej.",
+      "maintain": "Utrzymywanie wagi pozwala na rekomponowanie sylwetki - budowę mięśni przy jednoczesnej redukcji tkanki tłuszczowej.",
+      "healthyLoss": "Kombinuj dietę z treningiem siłowym, aby zachować masę mięśniową.",
+      "healthyGain": "Regularny trening siłowy pomoże w budowie mięśni zamiast tkanki tłuszczowej."
+    }
+  },
   "macros": {
     "title": "Rozkład Makroskładników",
     "protein": "Białko",
