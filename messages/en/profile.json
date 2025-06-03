@@ -39,10 +39,10 @@
     },
     "weeklyGoal": "week",
     "weekly": {
-      "0.25": "0.25 kg/week (slow)",
-      "0.5": "0.5 kg/week (recommended)",
-      "0.75": "0.75 kg/week (moderate)",
-      "1.0": "1.0 kg/week (aggressive)"
+      "0_25": "0.25 kg/week (slow)",
+      "0_5": "0.5 kg/week (recommended)",
+      "0_75": "0.75 kg/week (moderate)",
+      "1_0": "1.0 kg/week (aggressive)"
     },
     "customCalories": "Custom Daily Calories",
     "customCaloriesHint": "Leave empty for automatic calculation",
@@ -83,7 +83,29 @@
     "title": "Calorie Summary",
     "bmr": "BMR",
     "tdee": "TDEE",
-    "target": "Target Calories"
+    "target": "Target Calories",
+    "tdeeDescription": "Your TDEE (maintenance calories)",
+    "deficit": "Deficit",
+    "surplus": "Surplus",
+    "perDay": "kcal/day",
+    "goal": "Goal",
+    "loseWeight": "lose weight",
+    "gainWeight": "gain weight",
+    "perWeek": "kg/week"
+  },
+  "customGoal": {
+    "title": "Custom",
+    "placeholder": "enter value",
+    "inputLabel": "Enter custom value (kg/week)",
+    "recommendedValues": "Recommended values",
+    "loseWeightRange": "Lose weight: 0.25-0.75 kg/week",
+    "gainWeightRange": "Gain weight: 0.25-0.5 kg/week"
+  },
+  "tips": {
+    "title": "Tip:",
+    "loseWeightSafe": "Safe weight loss rate is 0.5-0.75 kg per week. Too large deficit may lead to muscle mass loss.",
+    "gainWeightOptimal": "Optimal mass gain rate is 0.25-0.5 kg per week. This allows muscle building with minimal fat gain.",
+    "maintainWeight": "Maintaining weight allows body recomposition - building muscle while reducing fat tissue."
   },
   "saveProfile": "Save Profile"
 }

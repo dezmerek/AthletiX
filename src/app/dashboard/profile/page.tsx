@@ -547,12 +547,14 @@ export default function ProfilePage() {
                         >
                           {goal === "custom" ? (
                             <>
-                              <div className="font-medium">Własne</div>
+                              <div className="font-medium">
+                                {t("customGoal.title")}
+                              </div>
                               <div className="text-xs opacity-75 mt-1">
                                 {profile.calorieGoal.customWeeklyGoal &&
                                 profile.calorieGoal.weeklyGoal === -1
                                   ? `(${profile.calorieGoal.customWeeklyGoal} kg)`
-                                  : "(wpisz wartość)"}
+                                  : `(${t("customGoal.placeholder")})`}
                               </div>
                             </>
                           ) : (
@@ -560,10 +562,30 @@ export default function ProfilePage() {
                               {goal} kg/
                               {t("calorieGoal.weeklyGoal").toLowerCase()}
                               <div className="text-xs opacity-75 mt-1">
-                                {goal === 0.25 && "(powoli)"}
-                                {goal === 0.5 && "(zalecane)"}
-                                {goal === 0.75 && "(umiarkowanie)"}
-                                {goal === 1.0 && "(szybko)"}
+                                {goal === 0.25 &&
+                                  `(${
+                                    t("calorieGoal.weekly.0_25")
+                                      .split("(")[1]
+                                      ?.split(")")[0] || "powoli"
+                                  })`}
+                                {goal === 0.5 &&
+                                  `(${
+                                    t("calorieGoal.weekly.0_5")
+                                      .split("(")[1]
+                                      ?.split(")")[0] || "zalecane"
+                                  })`}
+                                {goal === 0.75 &&
+                                  `(${
+                                    t("calorieGoal.weekly.0_75")
+                                      .split("(")[1]
+                                      ?.split(")")[0] || "umiarkowanie"
+                                  })`}
+                                {goal === 1.0 &&
+                                  `(${
+                                    t("calorieGoal.weekly.1_0")
+                                      .split("(")[1]
+                                      ?.split(")")[0] || "szybko"
+                                  })`}
                               </div>
                             </>
                           )}
@@ -575,7 +597,7 @@ export default function ProfilePage() {
                     {profile.calorieGoal.weeklyGoal === -1 && (
                       <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600">
                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                          Wprowadź własną wartość (kg/tydzień)
+                          {t("customGoal.inputLabel")}
                         </label>
                         <input
                           type="number"
@@ -612,10 +634,9 @@ export default function ProfilePage() {
                           className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                         />
                         <div className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                          <strong>Zalecane wartości:</strong>
-                          <br />
-                          • Schudnąć: 0,25-0,75 kg/tydzień
-                          <br />• Przytyć: 0,25-0,5 kg/tydzień
+                          <strong>{t("customGoal.recommendedValues")}:</strong>
+                          <br />• {t("customGoal.loseWeightRange")}
+                          <br />• {t("customGoal.gainWeightRange")}
                         </div>
                       </div>
                     )}
@@ -634,15 +655,15 @@ export default function ProfilePage() {
                   </div>
                   <div className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
                     <div>
-                      Twoje TDEE (kalorie utrzymania):{" "}
-                      {Math.round(calculateTDEE())} kcal/dzień
+                      {t("calories.tdeeDescription")}:{" "}
+                      {Math.round(calculateTDEE())} {t("calories.perDay")}
                     </div>
                     {profile.calorieGoal.type !== "maintain_weight" && (
                       <>
                         <div>
                           {profile.calorieGoal.type === "lose_weight"
-                            ? "Deficyt"
-                            : "Nadwyżka"}
+                            ? t("calories.deficit")
+                            : t("calories.surplus")}
                           :{" "}
                           {Math.abs(
                             Math.round(
@@ -650,20 +671,20 @@ export default function ProfilePage() {
                                 calculateTDEE()
                             )
                           )}{" "}
-                          kcal/dzień
+                          {t("calories.perDay")}
                         </div>
                         <div>
-                          Cel:{" "}
+                          {t("calories.goal")}:{" "}
                           {profile.calorieGoal.type === "lose_weight"
-                            ? "schudnąć"
-                            : "przytyć"}{" "}
+                            ? t("calories.loseWeight")
+                            : t("calories.gainWeight")}{" "}
                           {profile.calorieGoal.customWeeklyGoal &&
                           profile.calorieGoal.customWeeklyGoal > 0
                             ? profile.calorieGoal.customWeeklyGoal
                             : profile.calorieGoal.weeklyGoal > 0
                             ? profile.calorieGoal.weeklyGoal
                             : "0.5"}{" "}
-                          kg/tydzień
+                          {t("calories.perWeek")}
                         </div>
                       </>
                     )}
@@ -675,14 +696,14 @@ export default function ProfilePage() {
                   <div className="flex items-start space-x-3">
                     <div className="text-blue-500 mt-0.5">💡</div>
                     <div className="text-sm text-blue-700 dark:text-blue-300">
-                      <div className="font-medium mb-1">Wskazówka:</div>
+                      <div className="font-medium mb-1">{t("tips.title")}</div>
                       <div>
                         {profile.calorieGoal.type === "lose_weight" &&
-                          "Bezpieczne tempo odchudzania to 0,5-0,75 kg na tydzień. Zbyt duży deficyt może prowadzić do utraty masy mięśniowej."}
+                          t("tips.loseWeightSafe")}
                         {profile.calorieGoal.type === "gain_weight" &&
-                          "Optymalne tempo przyrostu masy to 0,25-0,5 kg na tydzień. Pozwala to na budowę mięśni przy minimalnym przyroście tkanki tłuszczowej."}
+                          t("tips.gainWeightOptimal")}
                         {profile.calorieGoal.type === "maintain_weight" &&
-                          "Utrzymywanie wagi pozwala na rekomponowanie sylwetki - budowę mięśni przy jednoczesnej redukcji tkanki tłuszczowej."}
+                          t("tips.maintainWeight")}
                       </div>
                     </div>
                   </div>

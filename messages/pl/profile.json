@@ -39,10 +39,10 @@
     },
     "weeklyGoal": "tydzień",
     "weekly": {
-      "0.25": "0,25 kg/tydzień (powoli)",
-      "0.5": "0,5 kg/tydzień (zalecane)",
-      "0.75": "0,75 kg/tydzień (umiarkowanie)",
-      "1.0": "1,0 kg/tydzień (agresywnie)"
+      "0_25": "0,25 kg/tydzień (powoli)",
+      "0_5": "0,5 kg/tydzień (zalecane)",
+      "0_75": "0,75 kg/tydzień (umiarkowanie)",
+      "1_0": "1,0 kg/tydzień (agresywnie)"
     },
     "customCalories": "Własne Dzienne Kalorie",
     "customCaloriesHint": "Zostaw puste dla automatycznego obliczenia",
@@ -83,7 +83,29 @@
     "title": "Podsumowanie Kalorii",
     "bmr": "PPM",
     "tdee": "CPM",
-    "target": "Docelowe Kalorie"
+    "target": "Docelowe Kalorie",
+    "tdeeDescription": "Twoje TDEE (kalorie utrzymania)",
+    "deficit": "Deficyt",
+    "surplus": "Nadwyżka",
+    "perDay": "kcal/dzień",
+    "goal": "Cel",
+    "loseWeight": "schudnąć",
+    "gainWeight": "przytyć",
+    "perWeek": "kg/tydzień"
+  },
+  "customGoal": {
+    "title": "Własne",
+    "placeholder": "wpisz wartość",
+    "inputLabel": "Wprowadź własną wartość (kg/tydzień)",
+    "recommendedValues": "Zalecane wartości",
+    "loseWeightRange": "Schudnąć: 0,25-0,75 kg/tydzień",
+    "gainWeightRange": "Przytyć: 0,25-0,5 kg/tydzień"
+  },
+  "tips": {
+    "title": "Wskazówka:",
+    "loseWeightSafe": "Bezpieczne tempo odchudzania to 0,5-0,75 kg na tydzień. Zbyt duży deficyt może prowadzić do utraty masy mięśniowej.",
+    "gainWeightOptimal": "Optymalne tempo przyrostu masy to 0,25-0,5 kg na tydzień. Pozwala to na budowę mięśni przy minimalnym przyroście tkanki tłuszczowej.",
+    "maintainWeight": "Utrzymywanie wagi pozwala na rekomponowanie sylwetki - budowę mięśni przy jednoczesnej redukcji tkanki tłuszczowej."
   },
   "saveProfile": "Zapisz Profil"
 }
