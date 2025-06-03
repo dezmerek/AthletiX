@@ -12,20 +12,22 @@
     "height": "Height"
   },
   "goals": {
-    "title": "Goals & Activity",
-    "fitnessGoal": "Fitness Goal",
-    "options": {
-      "lose_weight": "Lose Weight",
-      "maintain_weight": "Maintain Weight",
-      "gain_muscle": "Gain Muscle"
-    },
+    "activityTitle": "Activity Level",
+    "activityDescription": "Select your average daily activity level to calculate accurate calorie needs.",
     "activityLevel": "Activity Level",
     "activity": {
-      "sedentary": "Sedentary (little/no exercise)",
-      "light": "Light (light exercise 1-3 days/week)",
-      "moderate": "Moderate (moderate exercise 3-5 days/week)",
-      "active": "Active (hard exercise 6-7 days/week)",
-      "veryActive": "Very Active (very hard exercise, physical job)"
+      "sedentary": "Sedentary",
+      "light": "Light",
+      "moderate": "Moderate",
+      "active": "Active",
+      "very_active": "Very Active"
+    },
+    "activityDescriptions": {
+      "sedentary": "Little or no exercise",
+      "light": "Light exercise 1-3 days/week",
+      "moderate": "Moderate exercise 3-5 days/week",
+      "active": "Hard exercise 6-7 days/week",
+      "very_active": "Very hard exercise or physical job"
     }
   },
   "calorieGoal": {

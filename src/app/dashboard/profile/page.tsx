@@ -9,7 +9,6 @@ interface UserProfile {
   targetWeight: number;
   height: number;
   gender: "male" | "female";
-  goal: "lose_weight" | "gain_muscle" | "maintain_weight";
   activityLevel: "sedentary" | "light" | "moderate" | "active" | "very_active";
   // New calorie goal settings
   calorieGoal: {
@@ -33,7 +32,6 @@ export default function ProfilePage() {
     targetWeight: 70,
     height: 175,
     gender: "male",
-    goal: "maintain_weight",
     activityLevel: "moderate",
     // New calorie goal settings
     calorieGoal: {
@@ -71,9 +69,6 @@ export default function ProfilePage() {
     };
     return bmr * multipliers[profile.activityLevel];
   };
-
-  // Calculate target calories based on goal
-  type Goal = UserProfile["goal"];
 
   // Calculate calories based on weekly weight goal (FitAtu/Yazio style)
   const calculateCaloriesFromWeeklyGoal = () => {
@@ -159,27 +154,27 @@ export default function ProfilePage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
-      <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-6">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-4">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
             {t("title")}
           </h1>
-          <p className="text-lg text-slate-700 dark:text-slate-400 max-w-2xl mx-auto">
+          <p className="text-slate-600 dark:text-slate-400">
             {t("description")}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Basic Info */}{" "}
-          <div className="lg:col-span-2 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Basic Info */}
+          <div className="lg:col-span-2 space-y-6">
             {/* Personal Details */}
-            <div className="bg-white/90 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mr-3">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center">
+                <div className="w-8 h-8 rounded-lg dark:bg-emerald-900/30 flex items-center justify-center mr-3">
                   <svg
-                    className="w-6 h-6 text-emerald-500"
+                    className="w-5 h-5 text-emerald-600 dark:text-emerald-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -195,9 +190,9 @@ export default function ProfilePage() {
                 {t("personalDetails.title")}
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
                     {t("personalDetails.age")}
                   </label>
                   <input
@@ -211,31 +206,55 @@ export default function ProfilePage() {
                         age: parseInt(e.target.value) || 0,
                       }))
                     }
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
                     {t("personalDetails.gender")}
                   </label>
-                  <select
-                    value={profile.gender}
-                    onChange={(e) =>
-                      setProfile((prev) => ({
-                        ...prev,
-                        gender: e.target.value as "male" | "female",
-                      }))
-                    }
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                  >
-                    <option value="male">{t("personalDetails.male")}</option>
-                    <option value="female">
-                      {t("personalDetails.female")}
-                    </option>
-                  </select>
-                </div>{" "}
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      {
+                        value: "male",
+                        icon: "👨",
+                        color:
+                          "bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-950/50 dark:border-blue-800 dark:text-blue-400",
+                        hover: "hover:border-blue-400",
+                      },
+                      {
+                        value: "female",
+                        icon: "👩",
+                        color:
+                          "bg-red-50 border-red-200 text-red-700 dark:bg-red-950/50 dark:border-red-800 dark:text-red-400",
+                        hover: "hover:border-red-400",
+                      },
+                    ].map((genderOption) => (
+                      <button
+                        key={genderOption.value}
+                        type="button"
+                        onClick={() =>
+                          setProfile((prev) => ({
+                            ...prev,
+                            gender: genderOption.value as "male" | "female",
+                          }))
+                        }
+                        className={`px-3 py-2 rounded-lg border transition-all text-center flex items-center justify-center space-x-2 ${
+                          profile.gender === genderOption.value
+                            ? genderOption.color
+                            : `bg-white cursor-pointer dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 ${genderOption.hover}`
+                        }`}
+                      >
+                        <span className="text-lg">{genderOption.icon}</span>
+                        <span className="font-medium text-sm">
+                          {t(`personalDetails.${genderOption.value}`)}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
                     {t("personalDetails.weight")} (kg)
                   </label>
                   <input
@@ -250,11 +269,11 @@ export default function ProfilePage() {
                         weight: parseFloat(e.target.value) || 0,
                       }))
                     }
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
                     {t("personalDetails.targetWeight")} (kg)
                   </label>
                   <input
@@ -269,11 +288,11 @@ export default function ProfilePage() {
                         targetWeight: parseFloat(e.target.value) || 0,
                       }))
                     }
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
                     {t("personalDetails.height")} (cm)
                   </label>
                   <input
@@ -287,17 +306,17 @@ export default function ProfilePage() {
                         height: parseInt(e.target.value) || 0,
                       }))
                     }
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   />
                 </div>
               </div>
-            </div>{" "}
-            {/* Goals & Activity */}
-            <div className="bg-white/90 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
-                <div className="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center mr-3">
+            </div>
+            {/* Activity Level */}
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center">
+                <div className="w-8 h-8 rounded-lg bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center mr-3">
                   <svg
-                    className="w-6 h-6 text-teal-500"
+                    className="w-5 h-5 text-teal-600 dark:text-teal-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -306,115 +325,93 @@ export default function ProfilePage() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
                     />
                   </svg>
                 </div>
-                {t("goals.title")}
+                {t("goals.activityTitle")}
               </h2>
 
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                    {t("goals.fitnessGoal")}
-                  </label>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {[
-                      {
-                        value: "lose_weight",
-                        icon: "📉",
-                        color:
-                          "bg-red-50 border-red-200 text-red-700 dark:bg-red-950/50 dark:border-red-800 dark:text-red-400",
-                        hover: "hover:border-red-400",
-                      },
-                      {
-                        value: "maintain_weight",
-                        icon: "⚖️",
-                        color:
-                          "bg-yellow-50 border-yellow-200 text-yellow-700 dark:bg-yellow-950/50 dark:border-yellow-800 dark:text-yellow-400",
-                        hover: "hover:border-yellow-400",
-                      },
-                      {
-                        value: "gain_muscle",
-                        icon: "💪",
-                        color:
-                          "bg-green-50 border-green-200 text-green-700 dark:bg-green-950/50 dark:border-green-800 dark:text-green-400",
-                        hover: "hover:border-green-400",
-                      },
-                    ].map((goal) => (
-                      <button
-                        key={goal.value}
-                        type="button"
-                        onClick={() => {
-                          const newGoal = goal.value as Goal;
-                          // Update both old goal and new calorie goal for consistency
-                          const newCalorieGoalType =
-                            newGoal === "gain_muscle"
-                              ? "gain_weight"
-                              : newGoal === "lose_weight"
-                              ? "lose_weight"
-                              : "maintain_weight";
+              <p className="text-slate-500 dark:text-slate-400 mb-4 text-sm">
+                {t("goals.activityDescription")}
+              </p>
 
-                          setProfile((prev) => ({
-                            ...prev,
-                            goal: newGoal,
-                            calorieGoal: {
-                              ...prev.calorieGoal,
-                              type: newCalorieGoalType,
-                            },
-                          }));
-                        }}
-                        className={`p-4 rounded-xl border-2 transition-all text-center ${
-                          profile.goal === goal.value
-                            ? goal.color
-                            : `bg-white cursor-pointer dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 ${goal.hover}`
-                        }`}
-                      >
-                        <div className="text-2xl mb-2">{goal.icon}</div>
-                        <div className="font-medium">
-                          {t(`goals.options.${goal.value}`)}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                    {t("goals.activityLevel")}
-                  </label>
-                  <select
-                    value={profile.activityLevel}
-                    onChange={(e) =>
-                      setProfile((prev) => ({
-                        ...prev,
-                        activityLevel: e.target
-                          .value as UserProfile["activityLevel"],
-                      }))
-                    }
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                  >
-                    <option value="sedentary">
-                      {t("goals.activity.sedentary")}
-                    </option>
-                    <option value="light">{t("goals.activity.light")}</option>
-                    <option value="moderate">
-                      {t("goals.activity.moderate")}
-                    </option>
-                    <option value="active">{t("goals.activity.active")}</option>
-                    <option value="very_active">
-                      {t("goals.activity.veryActive")}
-                    </option>
-                  </select>
+              <div>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
+                  {t("goals.activityLevel")}
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+                  {[
+                    {
+                      value: "sedentary",
+                      icon: "🛋️",
+                      color:
+                        "bg-gray-50 border-gray-200 text-gray-700 dark:bg-gray-950/50 dark:border-gray-800 dark:text-gray-400",
+                      hover: "hover:border-gray-400",
+                    },
+                    {
+                      value: "light",
+                      icon: "🚶",
+                      color:
+                        "bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-950/50 dark:border-blue-800 dark:text-blue-400",
+                      hover: "hover:border-blue-400",
+                    },
+                    {
+                      value: "moderate",
+                      icon: "🏃",
+                      color:
+                        "bg-green-50 border-green-200 text-green-700 dark:bg-green-950/50 dark:border-green-800 dark:text-green-400",
+                      hover: "hover:border-green-400",
+                    },
+                    {
+                      value: "active",
+                      icon: "🏋️",
+                      color:
+                        "bg-orange-50 border-orange-200 text-orange-700 dark:bg-orange-950/50 dark:border-orange-800 dark:text-orange-400",
+                      hover: "hover:border-orange-400",
+                    },
+                    {
+                      value: "very_active",
+                      icon: "🚴",
+                      color:
+                        "bg-red-50 border-red-200 text-red-700 dark:bg-red-950/50 dark:border-red-800 dark:text-red-400",
+                      hover: "hover:border-red-400",
+                    },
+                  ].map((activityType) => (
+                    <button
+                      key={activityType.value}
+                      type="button"
+                      onClick={() =>
+                        setProfile((prev) => ({
+                          ...prev,
+                          activityLevel:
+                            activityType.value as UserProfile["activityLevel"],
+                        }))
+                      }
+                      className={`p-3 rounded-lg border-2 transition-all text-center ${
+                        profile.activityLevel === activityType.value
+                          ? activityType.color
+                          : `bg-white cursor-pointer dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 ${activityType.hover}`
+                      }`}
+                    >
+                      <div className="text-xl mb-2">{activityType.icon}</div>
+                      <div className="font-medium text-sm leading-tight mb-1">
+                        {t(`goals.activity.${activityType.value}`)}
+                      </div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 leading-tight">
+                        {t(`goals.activityDescriptions.${activityType.value}`)}
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
-            {/* Calorie Goal Section (FitAtu/Yazio style) */}
-            <div className="bg-white/90 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
-                <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center mr-3">
+            {/* Calorie Goal Section */}
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mr-3 text-emerald-600 dark:text-emerald-400">
                   <svg
-                    className="w-6 h-6 text-orange-500"
+                    className="w-5 h-5 text-orange-600 dark:text-orange-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -430,14 +427,14 @@ export default function ProfilePage() {
                 {t("calorieGoal.title")}
               </h2>
 
-              <p className="text-slate-600 dark:text-slate-400 mb-6">
+              <p className="text-slate-500 dark:text-slate-400 mb-4 text-sm">
                 {t("calorieGoal.description")}
               </p>
 
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {/* Goal Type Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                  <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
                     {t("calorieGoal.goalType")}
                   </label>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -489,14 +486,14 @@ export default function ProfilePage() {
                             },
                           }));
                         }}
-                        className={`p-4 rounded-xl border-2 transition-all text-center ${
+                        className={`p-3 rounded-lg border-2 transition-all text-center ${
                           profile.calorieGoal.type === goalType.value
                             ? goalType.color
                             : `bg-white cursor-pointer dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 ${goalType.hover}`
                         }`}
                       >
-                        <div className="text-2xl mb-2">{goalType.icon}</div>
-                        <div className="font-medium">
+                        <div className="text-xl mb-1">{goalType.icon}</div>
+                        <div className="font-medium text-sm">
                           {t(`calorieGoal.types.${goalType.value}`)}
                         </div>
                       </button>
@@ -507,10 +504,10 @@ export default function ProfilePage() {
                 {/* Weekly Goal - only show for lose_weight and gain_weight */}
                 {profile.calorieGoal.type !== "maintain_weight" && (
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
                       {t("calorieGoal.weeklyGoal")}
                     </label>
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
                       {[0.25, 0.5, 0.75, 1.0, "custom"].map((goal) => (
                         <button
                           key={goal}
@@ -536,13 +533,13 @@ export default function ProfilePage() {
                               }));
                             }
                           }}
-                          className={`p-3 rounded-xl border-2 transition-all text-center text-sm ${
+                          className={`p-2 rounded-lg border-2 transition-all text-center text-sm ${
                             (goal === "custom" &&
                               profile.calorieGoal.weeklyGoal === -1) ||
                             (goal !== "custom" &&
                               profile.calorieGoal.weeklyGoal === goal)
-                              ? "bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-400"
-                              : "bg-white cursor-pointer dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-emerald-400"
+                              ? "bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-950/50 dark:border-blue-800 dark:text-blue-400"
+                              : "bg-white cursor-pointer dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-blue-400"
                           }`}
                         >
                           {goal === "custom" ? (
@@ -595,8 +592,8 @@ export default function ProfilePage() {
 
                     {/* Custom Weekly Goal Input */}
                     {profile.calorieGoal.weeklyGoal === -1 && (
-                      <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600">
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600">
+                        <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
                           {t("customGoal.inputLabel")}
                         </label>
                         <input
@@ -607,7 +604,6 @@ export default function ProfilePage() {
                           value={profile.calorieGoal.customWeeklyGoal || ""}
                           onChange={(e) => {
                             const value = parseFloat(e.target.value);
-                            // Walidacja: wartość musi być między 0.1 a 1.0
                             if (isNaN(value) || value <= 0) {
                               setProfile((prev) => ({
                                 ...prev,
@@ -631,7 +627,7 @@ export default function ProfilePage() {
                             }
                           }}
                           placeholder="np. 0.6"
-                          className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                          className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                         />
                         <div className="mt-2 text-xs text-slate-500 dark:text-slate-400">
                           <strong>{t("customGoal.recommendedValues")}:</strong>
@@ -644,12 +640,12 @@ export default function ProfilePage() {
                 )}
 
                 {/* Calculated Calories Display */}
-                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 rounded-xl p-6 border border-emerald-200 dark:border-emerald-800/50">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-4 border border-blue-200 dark:border-blue-800/50">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-base font-semibold text-slate-900 dark:text-white">
                       {t("calorieGoal.calculatedCalories")}
                     </h3>
-                    <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+                    <div className="text-2xl font-bold text-teal-600 dark:text-teal-400">
                       {Math.round(calculateCaloriesFromWeeklyGoal())}
                     </div>
                   </div>
@@ -692,10 +688,12 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Additional Info */}
-                <div className="bg-blue-50 dark:bg-blue-950/30 rounded-xl p-4 border border-blue-200 dark:border-blue-800/50">
-                  <div className="flex items-start space-x-3">
-                    <div className="text-blue-500 mt-0.5">💡</div>
-                    <div className="text-sm text-blue-700 dark:text-blue-300">
+                <div className="bg-yellow-50 dark:bg-yellow-950/30 rounded-lg p-3 border border-yellow-200 dark:border-yellow-800/50">
+                  <div className="flex items-start space-x-2">
+                    <div className="text-yellow-600 dark:text-yellow-400 mt-0.5 text-sm">
+                      💡
+                    </div>
+                    <div className="text-sm text-yellow-700 dark:text-yellow-300">
                       <div className="font-medium mb-1">{t("tips.title")}</div>
                       <div>
                         {profile.calorieGoal.type === "lose_weight" &&
@@ -711,12 +709,12 @@ export default function ProfilePage() {
               </div>
             </div>
             {/* Macros */}
-            <div className="bg-white/90 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700">
-              <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between">
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center mb-4 md:mb-0">
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center mr-3">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
+              <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center mb-3 md:mb-0">
+                  <div className="text-emerald-600 dark:text-emerald-400 w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mr-3">
                     <svg
-                      className="w-6 h-6 text-blue-500"
+                      className="w-5 h-5 text-blue-600 dark:text-blue-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -793,7 +791,7 @@ export default function ProfilePage() {
                     }
                     setProfile((prev) => ({ ...prev, macros }));
                   }}
-                  className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-colors font-medium shadow disabled:opacity-50 cursor-pointer"
+                  className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium text-sm"
                 >
                   {t("macros.reset")}
                 </button>
@@ -1009,14 +1007,13 @@ export default function ProfilePage() {
             </div>
           </div>{" "}
           {/* Right Sidebar - Summary & BMI */}
-          <div className="space-y-8">
-            {" "}
+          <div className="space-y-6">
             {/* BMI Calculator */}
-            <div className="bg-white/90 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-slate-200 dark:border-slate-700">
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center mr-2">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center">
+                <div className="w-8 h-8 rounded-lg  dark:bg-emerald-900/30 flex items-center justify-center mr-3">
                   <svg
-                    className="w-5 h-5 text-emerald-500"
+                    className="w-5 h-5 text-emerald-600 dark:text-emerald-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -1090,7 +1087,7 @@ export default function ProfilePage() {
                         {bmiRanges.map((r, i) => (
                           <div
                             key={i}
-                            className={`flex justify-between rounded-lg px-2 py-1 ${
+                            className={`flex justify-between rounded-lg px-2 py-2 ${
                               r.active
                                 ? `${r.color} font-bold ${r.bg}`
                                 : "text-slate-700 dark:text-slate-400"
@@ -1106,11 +1103,11 @@ export default function ProfilePage() {
                 })()}
             </div>{" "}
             {/* Calorie Summary */}
-            <div className="bg-white/90 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-slate-200 dark:border-slate-700">
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center">
-                <div className="w-8 h-8 rounded-lg bg-teal-500/10 flex items-center justify-center mr-2">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center">
+                <div className="w-8 h-8 rounded-lg bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center mr-3">
                   <svg
-                    className="w-5 h-5 text-teal-500"
+                    className="w-5 h-5 text-teal-600 dark:text-teal-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -1128,27 +1125,27 @@ export default function ProfilePage() {
 
               {profile.age > 0 && profile.weight > 0 && profile.height > 0 && (
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-                    <span className="text-sm font-medium text-slate-700 dark:text-slate-400">
+                  <div className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                    <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
                       {t("calories.bmr")}
                     </span>
                     <span className="font-bold text-emerald-600 dark:text-emerald-400">
                       {Math.round(calculateBMR())}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-                    <span className="text-sm font-medium text-slate-700 dark:text-slate-400">
+                  <div className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                    <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
                       {t("calories.tdee")}
                     </span>
                     <span className="font-bold text-teal-600 dark:text-teal-400">
                       {Math.round(calculateTDEE())}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center p-3 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-lg border border-emerald-200 dark:border-emerald-800">
-                    <span className="text-sm font-medium text-slate-900 dark:text-emerald-300">
+                  <div className="flex justify-between items-center p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <span className="text-sm font-medium text-slate-900 dark:text-blue-300">
                       {t("calories.target")}
                     </span>
-                    <span className="font-bold text-xl text-emerald-600 dark:text-emerald-400">
+                    <span className="font-bold text-lg text-teal-600 dark:text-teal-400">
                       {Math.round(calculateCaloriesFromWeeklyGoal())}
                     </span>
                   </div>

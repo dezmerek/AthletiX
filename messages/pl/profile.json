@@ -12,20 +12,22 @@
     "height": "Wzrost"
   },
   "goals": {
-    "title": "Cele i Aktywność",
-    "fitnessGoal": "Cel Fitness",
-    "options": {
-      "lose_weight": "Schudnąć",
-      "maintain_weight": "Utrzymać Wagę",
-      "gain_muscle": "Naryśować Mięśnie"
-    },
+    "activityTitle": "Poziom Aktywności",
+    "activityDescription": "Wybierz swój średni dzienny poziom aktywności, aby obliczyć dokładne zapotrzebowanie kaloryczne.",
     "activityLevel": "Poziom Aktywności",
     "activity": {
-      "sedentary": "Siedzący (brak/małe ćwiczenia)",
-      "light": "Lekki (lekkie ćwiczenia 1-3 dni/tydzień)",
-      "moderate": "Umiarkowany (umiarkowane ćwiczenia 3-5 dni/tydzień)",
-      "active": "Aktywny (intensywne ćwiczenia 6-7 dni/tydzień)",
-      "veryActive": "Bardzo Aktywny (bardzo intensywne ćwiczenia, praca fizyczna)"
+      "sedentary": "Siedzący",
+      "light": "Lekki",
+      "moderate": "Umiarkowany",
+      "active": "Aktywny",
+      "very_active": "Bardzo Aktywny"
+    },
+    "activityDescriptions": {
+      "sedentary": "Brak lub minimalna aktywność fizyczna",
+      "light": "Lekkie ćwiczenia 1-3 dni/tydzień",
+      "moderate": "Umiarkowane ćwiczenia 3-5 dni/tydzień",
+      "active": "Intensywne ćwiczenia 6-7 dni/tydzień",
+      "very_active": "Bardzo intensywne ćwiczenia lub praca fizyczna"
     }
   },
   "calorieGoal": {
