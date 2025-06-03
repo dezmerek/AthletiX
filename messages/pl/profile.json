@@ -1,0 +1,60 @@
+{
+  "title": "Profil",
+  "description": "Zarządzaj swoimi danymi osobowymi i preferencjami fitness",
+  "personalDetails": {
+    "title": "Dane Osobowe",
+    "age": "Wiek",
+    "gender": "Płeć",
+    "male": "Mężczyzna",
+    "female": "Kobieta",
+    "weight": "Aktualna Waga",
+    "targetWeight": "Docelowa Waga",
+    "height": "Wzrost"
+  },
+  "goals": {
+    "title": "Cele i Aktywność",
+    "fitnessGoal": "Cel Fitness",
+    "options": {
+      "lose_weight": "Schudnąć",
+      "maintain_weight": "Utrzymać Wagę",
+      "gain_muscle": "Naryśować Mięśnie"
+    },
+    "activityLevel": "Poziom Aktywności",
+    "activity": {
+      "sedentary": "Siedzący (brak/małe ćwiczenia)",
+      "light": "Lekki (lekkie ćwiczenia 1-3 dni/tydzień)",
+      "moderate": "Umiarkowany (umiarkowane ćwiczenia 3-5 dni/tydzień)",
+      "active": "Aktywny (intensywne ćwiczenia 6-7 dni/tydzień)",
+      "veryActive": "Bardzo Aktywny (bardzo intensywne ćwiczenia, praca fizyczna)"
+    }
+  },
+  "macros": {
+    "title": "Rozkład Makroskładników",
+    "protein": "Białko",
+    "carbs": "Węglowodany",
+    "fats": "Tłuszcze",
+    "distribution": "Rozkład Makroskładników",
+    "total": "Razem",
+    "autoCalculate": "Oblicz Automatycznie",
+    "calculating": "Obliczanie...",
+    "reset": "Zresetuj makro"
+  },
+  "bmi": {
+    "underweight": "Niedowaga",
+    "normal": "Prawidłowe",
+    "overweight": "Nadwaga",
+    "obese": "Otyłość"
+  },
+  "weightProgress": {
+    "title": "Postęp Wagi",
+    "current": "Aktualna",
+    "target": "Docelowa"
+  },
+  "calories": {
+    "title": "Podsumowanie Kalorii",
+    "bmr": "PPM",
+    "tdee": "CPM",
+    "target": "Docelowe Kalorie"
+  },
+  "saveProfile": "Zapisz Profil"
+}

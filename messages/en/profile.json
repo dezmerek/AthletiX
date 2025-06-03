@@ -1,0 +1,60 @@
+{
+  "title": "Profile",
+  "description": "Manage your personal information and fitness preferences",
+  "personalDetails": {
+    "title": "Personal Details",
+    "age": "Age",
+    "gender": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "weight": "Current Weight",
+    "targetWeight": "Target Weight",
+    "height": "Height"
+  },
+  "goals": {
+    "title": "Goals & Activity",
+    "fitnessGoal": "Fitness Goal",
+    "options": {
+      "lose_weight": "Lose Weight",
+      "maintain_weight": "Maintain Weight",
+      "gain_muscle": "Gain Muscle"
+    },
+    "activityLevel": "Activity Level",
+    "activity": {
+      "sedentary": "Sedentary (little/no exercise)",
+      "light": "Light (light exercise 1-3 days/week)",
+      "moderate": "Moderate (moderate exercise 3-5 days/week)",
+      "active": "Active (hard exercise 6-7 days/week)",
+      "veryActive": "Very Active (very hard exercise, physical job)"
+    }
+  },
+  "macros": {
+    "title": "Macronutrient Distribution",
+    "protein": "Protein",
+    "carbs": "Carbohydrates",
+    "fats": "Fats",
+    "distribution": "Macro Distribution",
+    "total": "Total",
+    "autoCalculate": "Auto Calculate",
+    "calculating": "Calculating...",
+    "reset": "Reset macros"
+  },
+  "bmi": {
+    "underweight": "Underweight",
+    "normal": "Normal",
+    "overweight": "Overweight",
+    "obese": "Obese"
+  },
+  "weightProgress": {
+    "title": "Weight Progress",
+    "current": "Current",
+    "target": "Target"
+  },
+  "calories": {
+    "title": "Calorie Summary",
+    "bmr": "BMR",
+    "tdee": "TDEE",
+    "target": "Target Calories"
+  },
+  "saveProfile": "Save Profile"
+}
