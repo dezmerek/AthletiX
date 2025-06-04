@@ -1,0 +1,62 @@
+{
+  "title": "Progress",
+  "subtitle": "Track your achievements and progress over time",
+  "overview": {
+    "title": "Overview",
+    "currentWeight": "Current Weight",
+    "targetWeight": "Target Weight",
+    "weightChange": "Weight Change",
+    "lastWeek": "Last Week",
+    "thisMonth": "This Month",
+    "totalProgress": "Total Progress"
+  },
+  "weightTracking": {
+    "title": "Weight Tracking",
+    "addEntry": "Add Entry",
+    "date": "Date",
+    "weight": "Weight",
+    "notes": "Notes",
+    "save": "Save",
+    "cancel": "Cancel",
+    "noEntries": "No weight entries",
+    "addFirstEntry": "Add your first weight measurement",
+    "lastEntry": "Last entry"
+  },
+  "measurements": {
+    "title": "Body Measurements",
+    "chest": "Chest",
+    "waist": "Waist",
+    "hips": "Hips",
+    "arms": "Arms",
+    "thighs": "Thighs",
+    "addMeasurement": "Add Measurement",
+    "noMeasurements": "No measurements",
+    "addFirstMeasurement": "Add your first body measurement"
+  },
+  "goals": {
+    "title": "Goals",
+    "weightGoal": "Weight Goal",
+    "calorieGoal": "Calorie Goal",
+    "workoutGoal": "Workout Goal",
+    "achieved": "Achieved",
+    "inProgress": "In Progress",
+    "notStarted": "Not Started"
+  },
+  "charts": {
+    "title": "Charts",
+    "weightProgress": "Weight Progress",
+    "calorieIntake": "Calorie Intake",
+    "workoutFrequency": "Workout Frequency",
+    "last30Days": "Last 30 Days",
+    "last90Days": "Last 90 Days",
+    "lastYear": "Last Year"
+  },
+  "stats": {
+    "title": "Statistics",
+    "totalWorkouts": "Total Workouts",
+    "totalCalories": "Total Calories",
+    "avgWeightChange": "Avg Weight Change",
+    "longestStreak": "Longest Streak",
+    "daysActive": "Days Active"
+  }
+}

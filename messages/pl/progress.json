@@ -1,0 +1,62 @@
+{
+  "title": "Postępy",
+  "subtitle": "Śledź swoje osiągnięcia i postępy w czasie",
+  "overview": {
+    "title": "Przegląd",
+    "currentWeight": "Aktualna waga",
+    "targetWeight": "Waga docelowa",
+    "weightChange": "Zmiana wagi",
+    "lastWeek": "Ostatni tydzień",
+    "thisMonth": "Ten miesiąc",
+    "totalProgress": "Łączny postęp"
+  },
+  "weightTracking": {
+    "title": "Śledzenie wagi",
+    "addEntry": "Dodaj pomiar",
+    "date": "Data",
+    "weight": "Waga",
+    "notes": "Notatki",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "noEntries": "Brak wpisów wagi",
+    "addFirstEntry": "Dodaj swój pierwszy pomiar wagi",
+    "lastEntry": "Ostatni wpis"
+  },
+  "measurements": {
+    "title": "Pomiary ciała",
+    "chest": "Klatka piersiowa",
+    "waist": "Talia",
+    "hips": "Biodra",
+    "arms": "Ramiona",
+    "thighs": "Uda",
+    "addMeasurement": "Dodaj pomiar",
+    "noMeasurements": "Brak pomiarów",
+    "addFirstMeasurement": "Dodaj swój pierwszy pomiar ciała"
+  },
+  "goals": {
+    "title": "Cele",
+    "weightGoal": "Cel wagowy",
+    "calorieGoal": "Cel kaloryczny",
+    "workoutGoal": "Cel treningowy",
+    "achieved": "Osiągnięty",
+    "inProgress": "W trakcie",
+    "notStarted": "Nie rozpoczęty"
+  },
+  "charts": {
+    "title": "Wykresy",
+    "weightProgress": "Postęp wagi",
+    "calorieIntake": "Spożycie kalorii",
+    "workoutFrequency": "Częstotliwość treningów",
+    "last30Days": "Ostatnie 30 dni",
+    "last90Days": "Ostatnie 90 dni",
+    "lastYear": "Ostatni rok"
+  },
+  "stats": {
+    "title": "Statystyki",
+    "totalWorkouts": "Łącznie treningów",
+    "totalCalories": "Łącznie kalorii",
+    "avgWeightChange": "Średnia zmiana wagi",
+    "longestStreak": "Najdłuższa seria",
+    "daysActive": "Dni aktywności"
+  }
+}
