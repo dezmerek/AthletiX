@@ -1,0 +1,53 @@
+{
+  "title": "Treningi",
+  "description": "Planuj, śledź i analizuj swoje treningi",
+  "statistics": {
+    "weeklyWorkouts": "Treningi w tym tygodniu",
+    "totalTime": "Łączny czas",
+    "averageDuration": "Średni czas treningu",
+    "plannedWorkouts": "Zaplanowane",
+    "workouts": "treningi",
+    "total": "łącznie",
+    "perWorkout": "na trening",
+    "hours": "h",
+    "minutes": "m"
+  },
+  "actions": {
+    "startWorkout": "Rozpocznij trening",
+    "planWorkout": "Zaplanuj trening",
+    "useTemplate": "Użyj szablonu",
+    "start": "Rozpocznij",
+    "cancel": "Anuluj"
+  },
+  "tabs": {
+    "recent": "Ostatnie",
+    "planned": "Zaplanowane",
+    "templates": "Szablony"
+  },
+  "sections": {
+    "recentWorkouts": "Ostatnie treningi",
+    "plannedWorkouts": "Zaplanowane treningi",
+    "workoutTemplates": "Szablony treningów"
+  },
+  "workout": {
+    "exercises": "ćwiczeń",
+    "sets": "serie",
+    "reps": "powtórzeń",
+    "weight": "kg",
+    "duration": "min",
+    "restTime": "przerwa",
+    "plannedFor": "Zaplanowany na",
+    "moreExercises": "więcej ćwiczeń",
+    "estimatedDuration": "szacowany czas"
+  },
+  "types": {
+    "strength": "Siłowy",
+    "cardio": "Cardio",
+    "flexibility": "Rozciąganie",
+    "mixed": "Mieszany"
+  },
+  "modals": {
+    "selectTemplate": "Wybierz szablon treningu",
+    "templateInfo": "ćwiczeń • ~{duration}min"
+  }
+}

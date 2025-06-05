@@ -1,0 +1,53 @@
+{
+  "title": "Workouts",
+  "description": "Plan, track and analyze your workouts",
+  "statistics": {
+    "weeklyWorkouts": "Workouts this week",
+    "totalTime": "Total time",
+    "averageDuration": "Average workout time",
+    "plannedWorkouts": "Planned",
+    "workouts": "workouts",
+    "total": "total",
+    "perWorkout": "per workout",
+    "hours": "h",
+    "minutes": "m"
+  },
+  "actions": {
+    "startWorkout": "Start workout",
+    "planWorkout": "Plan workout",
+    "useTemplate": "Use template",
+    "start": "Start",
+    "cancel": "Cancel"
+  },
+  "tabs": {
+    "recent": "Recent",
+    "planned": "Planned",
+    "templates": "Templates"
+  },
+  "sections": {
+    "recentWorkouts": "Recent workouts",
+    "plannedWorkouts": "Planned workouts",
+    "workoutTemplates": "Workout templates"
+  },
+  "workout": {
+    "exercises": "exercises",
+    "sets": "sets",
+    "reps": "reps",
+    "weight": "kg",
+    "duration": "min",
+    "restTime": "rest",
+    "plannedFor": "Planned for",
+    "moreExercises": "more exercises",
+    "estimatedDuration": "estimated time"
+  },
+  "types": {
+    "strength": "Strength",
+    "cardio": "Cardio",
+    "flexibility": "Flexibility",
+    "mixed": "Mixed"
+  },
+  "modals": {
+    "selectTemplate": "Select workout template",
+    "templateInfo": "exercises • ~{duration}min"
+  }
+}
