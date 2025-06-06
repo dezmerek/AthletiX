@@ -64,9 +64,9 @@ export default getRequestConfig(async () => {
     faq: (await import(`../../messages/${locale}/faq.json`)).default,
     auth: (await import(`../../messages/${locale}/auth.json`)).default,
     settings: (await import(`../../messages/${locale}/settings.json`)).default,
-    Profile: (await import(`../../messages/${locale}/profile.json`)).default,
-    Progress: (await import(`../../messages/${locale}/progress.json`)).default,
+    Profile: (await import(`../../messages/${locale}/profile.json`)).default,    Progress: (await import(`../../messages/${locale}/progress.json`)).default,
     workouts: (await import(`../../messages/${locale}/workouts.json`)).default,
+    Calendar: (await import(`../../messages/${locale}/calendar.json`)).default,
   };
 
   return {

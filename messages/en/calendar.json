@@ -1,0 +1,54 @@
+{
+  "title": "Calendar",
+  "description": "Manage your training sessions, appointments, and nutrition schedule.",
+  "views": {
+    "month": "Month",
+    "week": "Week",
+    "day": "Day"
+  },
+  "actions": {
+    "today": "Today",
+    "addEvent": "Add Event",
+    "editEvent": "Edit Event",
+    "add": "Add",
+    "update": "Update",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "complete": "Complete"
+  },
+  "events": {
+    "todaysEvents": "Today's Events",
+    "noEvents": "No events scheduled for this day",
+    "moreEvents": "more"
+  },
+  "eventTypes": {
+    "workout": "Workout",
+    "meal": "Meal",
+    "appointment": "Appointment",
+    "other": "Other"
+  },
+  "form": {
+    "title": "Title",
+    "titlePlaceholder": "Event title",
+    "type": "Type",
+    "date": "Date",
+    "time": "Time",
+    "duration": "Duration",
+    "minutes": "minutes",
+    "description": "Description",
+    "descriptionPlaceholder": "Optional description",
+    "color": "Color"
+  },
+  "dayNames": {
+    "sunday": "Sun",
+    "monday": "Mon",
+    "tuesday": "Tue",
+    "wednesday": "Wed",
+    "thursday": "Thu",
+    "friday": "Fri",
+    "saturday": "Sat"
+  },
+  "time": {
+    "time": "Time"
+  }
+}

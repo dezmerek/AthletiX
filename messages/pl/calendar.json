@@ -1,0 +1,54 @@
+{
+  "title": "Kalendarz",
+  "description": "Zarządzaj sesjami treningowymi, wizytami i harmonogramem żywienia.",
+  "views": {
+    "month": "Miesiąc",
+    "week": "Tydzień",
+    "day": "Dzień"
+  },
+  "actions": {
+    "today": "Dzisiaj",
+    "addEvent": "Dodaj wydarzenie",
+    "editEvent": "Edytuj wydarzenie",
+    "add": "Dodaj",
+    "update": "Aktualizuj",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "complete": "Zakończ"
+  },
+  "events": {
+    "todaysEvents": "Dzisiejsze wydarzenia",
+    "noEvents": "Brak wydarzeń na ten dzień",
+    "moreEvents": "więcej"
+  },
+  "eventTypes": {
+    "workout": "Trening",
+    "meal": "Posiłek",
+    "appointment": "Wizyta",
+    "other": "Inne"
+  },
+  "form": {
+    "title": "Tytuł",
+    "titlePlaceholder": "Tytuł wydarzenia",
+    "type": "Typ",
+    "date": "Data",
+    "time": "Czas",
+    "duration": "Czas trwania",
+    "minutes": "minut",
+    "description": "Opis",
+    "descriptionPlaceholder": "Opcjonalny opis",
+    "color": "Kolor"
+  },
+  "dayNames": {
+    "sunday": "Ndz",
+    "monday": "Pon",
+    "tuesday": "Wt",
+    "wednesday": "Śr",
+    "thursday": "Czw",
+    "friday": "Pt",
+    "saturday": "Sob"
+  },
+  "time": {
+    "time": "Czas"
+  }
+}
