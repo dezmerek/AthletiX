@@ -1,0 +1,56 @@
+{
+  "title": "Community",
+  "description": "Join the AthletiX community and share your fitness journey with others",
+  "tabs": {
+    "feed": "Feed",
+    "members": "Members",
+    "groups": "Groups"
+  },
+  "createPost": {
+    "title": "Share with the community",
+    "placeholder": "What's on your mind? Share your thoughts, achievements, or ask a question...",
+    "publish": "Publish"
+  },
+  "postTypes": {
+    "motivation": "Motivation",
+    "workout": "Workout",
+    "nutrition": "Nutrition",
+    "question": "Question",
+    "achievement": "Achievement"
+  },
+  "roles": {
+    "user": "User",
+    "trainer": "Trainer",
+    "nutritionist": "Nutritionist",
+    "admin": "Administrator"
+  },
+  "actions": {
+    "like": "Like",
+    "comment": "Comment",
+    "share": "Share"
+  },
+  "members": {
+    "followers": "followers",
+    "follow": "Follow",
+    "unfollow": "Unfollow",
+    "comingSoon": "Members coming soon!",
+    "description": "The member list will be available in the next update."
+  },
+  "groups": {
+    "comingSoon": "Groups coming soon!",
+    "description": "The ability to create and join topic-based groups will be available in the next update."
+  },
+  "stats": {
+    "title": "Community stats",
+    "totalMembers": "Total members",
+    "activeToday": "Active today",
+    "postsToday": "Posts today",
+    "trainers": "Trainers"
+  },
+  "topics": {
+    "title": "Popular topics"
+  },
+  "featured": {
+    "title": "Featured professionals"
+  }
+}

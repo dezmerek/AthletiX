@@ -70,6 +70,8 @@ export default getRequestConfig(async () => {
     nutrition: (await import(`../../messages/${locale}/nutrition.json`))
       .default,
     Calendar: (await import(`../../messages/${locale}/calendar.json`)).default,
+    community: (await import(`../../messages/${locale}/community.json`))
+      .default,
   };
 
   return {

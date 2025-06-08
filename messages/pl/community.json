@@ -1,0 +1,56 @@
+{
+  "title": "Społeczność",
+  "description": "Dołącz do społeczności AthletiX i dziel się swoją podróżą fitness z innymi",
+  "tabs": {
+    "feed": "Aktualności",
+    "members": "Członkowie",
+    "groups": "Grupy"
+  },
+  "createPost": {
+    "title": "Podziel się ze społecznością",
+    "placeholder": "Co masz na myśli? Podziel się swoimi myślami, osiągnięciami lub zadaj pytanie...",
+    "publish": "Opublikuj"
+  },
+  "postTypes": {
+    "motivation": "Motywacja",
+    "workout": "Trening",
+    "nutrition": "Odżywianie",
+    "question": "Pytanie",
+    "achievement": "Osiągnięcie"
+  },
+  "roles": {
+    "user": "Użytkownik",
+    "trainer": "Trener",
+    "nutritionist": "Dietetyk",
+    "admin": "Administrator"
+  },
+  "actions": {
+    "like": "Polub",
+    "comment": "Komentarz",
+    "share": "Udostępnij"
+  },
+  "members": {
+    "followers": "obserwujących",
+    "follow": "Obserwuj",
+    "unfollow": "Przestań obserwować",
+    "comingSoon": "Członkowie już wkrótce!",
+    "description": "Lista członków społeczności będzie dostępna w najbliższej aktualizacji."
+  },
+  "groups": {
+    "comingSoon": "Grupy już wkrótce!",
+    "description": "Możliwość tworzenia i dołączania do grup tematycznych będzie dostępna w najbliższej aktualizacji."
+  },
+  "stats": {
+    "title": "Statystyki społeczności",
+    "totalMembers": "Wszyscy członkowie",
+    "activeToday": "Aktywni dziś",
+    "postsToday": "Posty dziś",
+    "trainers": "Trenerzy"
+  },
+  "topics": {
+    "title": "Popularne tematy"
+  },
+  "featured": {
+    "title": "Polecani specjaliści"
+  }
+}
