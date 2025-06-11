@@ -13,6 +13,20 @@ interface CommunityPost {
   timestamp: Date;
   likes: number;
   isLiked: boolean;
+  comments: Comment[];
+  showComments: boolean;
+}
+
+interface Comment {
+  id: string;
+  author: {
+    name: string;
+    role: "user" | "trainer" | "nutritionist";
+  };
+  content: string;
+  timestamp: Date;
+  likes: number;
+  isLiked: boolean;
 }
 
 interface OnlineUser {
@@ -26,6 +40,7 @@ interface OnlineUser {
 export default function CommunityPage() {
   const t = useTranslations("community");
   const [newPost, setNewPost] = useState("");
+  const [newComments, setNewComments] = useState<Record<string, string>>({});
 
   // Przykładowi użytkownicy online
   const [onlineUsers] = useState<OnlineUser[]>([
@@ -65,7 +80,6 @@ export default function CommunityPage() {
       isOnline: false,
     },
   ]);
-
   // Podstawowe przykładowe posty
   const [posts, setPosts] = useState<CommunityPost[]>([
     {
@@ -79,6 +93,26 @@ export default function CommunityPage() {
       timestamp: new Date("2025-06-16T08:30:00"),
       likes: 24,
       isLiked: false,
+      showComments: false,
+      comments: [
+        {
+          id: "c1",
+          author: { name: "Michał Nowak", role: "user" },
+          content: "Dzięki za motywację! Właśnie wracam z treningu 🔥",
+          timestamp: new Date("2025-06-16T09:15:00"),
+          likes: 5,
+          isLiked: false,
+        },
+        {
+          id: "c2",
+          author: { name: "Dr. Maria Zielińska", role: "nutritionist" },
+          content:
+            "Świetne podejście! Pamiętaj też o odpowiedniej regeneracji 😊",
+          timestamp: new Date("2025-06-16T10:00:00"),
+          likes: 3,
+          isLiked: true,
+        },
+      ],
     },
     {
       id: "2",
@@ -91,6 +125,17 @@ export default function CommunityPage() {
       timestamp: new Date("2025-06-16T07:15:00"),
       likes: 45,
       isLiked: true,
+      showComments: false,
+      comments: [
+        {
+          id: "c3",
+          author: { name: "Anna Kowalska", role: "trainer" },
+          content: "Gratulacje! Świetny wynik! 👏",
+          timestamp: new Date("2025-06-16T07:30:00"),
+          likes: 8,
+          isLiked: false,
+        },
+      ],
     },
     {
       id: "3",
@@ -103,9 +148,10 @@ export default function CommunityPage() {
       timestamp: new Date("2025-06-15T19:45:00"),
       likes: 18,
       isLiked: false,
+      showComments: false,
+      comments: [],
     },
   ]);
-
   const handleLike = (postId: string) => {
     setPosts((prev) =>
       prev.map((post) =>
@@ -114,6 +160,70 @@ export default function CommunityPage() {
               ...post,
               isLiked: !post.isLiked,
               likes: post.isLiked ? post.likes - 1 : post.likes + 1,
+            }
+          : post
+      )
+    );
+  };
+
+  const handleCommentLike = (postId: string, commentId: string) => {
+    setPosts((prev) =>
+      prev.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              comments: post.comments.map((comment) =>
+                comment.id === commentId
+                  ? {
+                      ...comment,
+                      isLiked: !comment.isLiked,
+                      likes: comment.isLiked
+                        ? comment.likes - 1
+                        : comment.likes + 1,
+                    }
+                  : comment
+              ),
+            }
+          : post
+      )
+    );
+  };
+
+  const toggleComments = (postId: string) => {
+    setPosts((prev) =>
+      prev.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              showComments: !post.showComments,
+            }
+          : post
+      )
+    );
+  };
+
+  const addComment = (postId: string, content: string) => {
+    if (!content.trim()) return;
+
+    const newComment: Comment = {
+      id: Date.now().toString(),
+      author: {
+        name: "Użytkownik",
+        role: "user",
+      },
+      content: content.trim(),
+      timestamp: new Date(),
+      likes: 0,
+      isLiked: false,
+    };
+
+    setPosts((prev) =>
+      prev.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              comments: [...post.comments, newComment],
+              showComments: true,
             }
           : post
       )
@@ -132,6 +242,8 @@ export default function CommunityPage() {
       timestamp: new Date(),
       likes: 0,
       isLiked: false,
+      comments: [],
+      showComments: false,
     };
 
     setPosts((prev) => [post, ...prev]);
@@ -276,8 +388,11 @@ export default function CommunityPage() {
                         />
                       </svg>
                       <span className="text-sm font-medium">{post.likes}</span>
-                    </button>
-                    <button className="flex items-center space-x-2 text-gray-500 dark:text-gray-400 hover:text-blue-500 transition-colors">
+                    </button>{" "}
+                    <button
+                      onClick={() => toggleComments(post.id)}
+                      className="flex items-center space-x-2 text-gray-500 dark:text-gray-400 hover:text-blue-500 transition-colors"
+                    >
                       <svg
                         className="w-5 h-5"
                         fill="none"
@@ -290,12 +405,127 @@ export default function CommunityPage() {
                           strokeWidth={2}
                           d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                         />
-                      </svg>
+                      </svg>{" "}
                       <span className="text-sm font-medium">
-                        {t("actions.comment")}
+                        {post.comments.length > 0
+                          ? `${post.comments.length} ${t("actions.comment")}${
+                              post.comments.length > 1 ? "y" : ""
+                            }`
+                          : t("actions.comment")}
                       </span>
                     </button>
                   </div>
+
+                  {/* Comments Section */}
+                  {post.showComments && (
+                    <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                      {/* Existing Comments */}
+                      {post.comments.length > 0 && (
+                        <div className="space-y-3 mb-4">
+                          {post.comments.map((comment) => (
+                            <div key={comment.id} className="flex space-x-3">
+                              <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center flex-shrink-0">
+                                <span className="text-blue-600 dark:text-blue-400 font-semibold text-xs">
+                                  {comment.author.name.charAt(0)}
+                                </span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
+                                  <div className="flex items-center space-x-2 mb-1">
+                                    <h5 className="text-sm font-medium text-gray-900 dark:text-white">
+                                      {comment.author.name}
+                                    </h5>
+                                    <span
+                                      className={`px-1.5 py-0.5 rounded text-xs font-medium ${getRoleBadgeColor(
+                                        comment.author.role
+                                      )}`}
+                                    >
+                                      {getRoleIcon(comment.author.role)}
+                                    </span>
+                                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                                      {formatTimestamp(comment.timestamp)}
+                                    </span>
+                                  </div>
+                                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                                    {comment.content}
+                                  </p>
+                                </div>
+                                <div className="flex items-center space-x-4 mt-2">
+                                  <button
+                                    onClick={() =>
+                                      handleCommentLike(post.id, comment.id)
+                                    }
+                                    className={`flex items-center space-x-1 text-xs transition-colors ${
+                                      comment.isLiked
+                                        ? "text-red-500"
+                                        : "text-gray-500 dark:text-gray-400 hover:text-red-500"
+                                    }`}
+                                  >
+                                    <svg
+                                      className="w-3 h-3"
+                                      fill={
+                                        comment.isLiked
+                                          ? "currentColor"
+                                          : "none"
+                                      }
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                      />
+                                    </svg>
+                                    <span>{comment.likes}</span>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Add Comment Form */}
+                      <div className="flex space-x-3">
+                        <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center flex-shrink-0">
+                          <span className="text-blue-600 dark:text-blue-400 font-semibold text-xs">
+                            U
+                          </span>
+                        </div>
+                        <div className="flex-1">
+                          <textarea
+                            value={newComments[post.id] || ""}
+                            onChange={(e) =>
+                              setNewComments((prev) => ({
+                                ...prev,
+                                [post.id]: e.target.value,
+                              }))
+                            }
+                            placeholder="Napisz komentarz..."
+                            className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+                            rows={2}
+                          />
+                          <div className="mt-2 flex justify-end">
+                            <button
+                              onClick={() => {
+                                addComment(post.id, newComments[post.id] || "");
+                                setNewComments((prev) => ({
+                                  ...prev,
+                                  [post.id]: "",
+                                }));
+                              }}
+                              disabled={!newComments[post.id]?.trim()}
+                              className="px-4 py-1.5 text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                              Dodaj komentarz
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
