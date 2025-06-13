@@ -151,7 +151,24 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         token.createdAt = user.createdAt;
         token.updatedAt = user.updatedAt;
         token.role = user.role;
-      } // Gdy update() jest wywołane z frontendu
+      } else {
+        // Przy każdym refresh tokena, pobierz aktualną rolę z bazy danych
+        try {
+          const client = await clientPromise;
+          const db = client.db();
+          const dbUser = await db.collection("users").findOne({
+            email: token.email?.toLowerCase(),
+          });
+
+          if (dbUser) {
+            token.role = dbUser.role || "user";
+          }
+        } catch (error) {
+          console.error("Error fetching user role from DB:", error);
+        }
+      }
+
+      // Gdy update() jest wywołane z frontendu
       if (trigger === "update" && sessionParam?.user) {
         console.log("JWT callback - update trigger:", sessionParam.user);
         token.name = sessionParam.user.name ?? token.name;

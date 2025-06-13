@@ -11,5 +11,7 @@
   "expand": "Rozwiń pasek boczny",
   "user": "Użytkownik",
   "admin": "Administrator",
+  "trainer": "Trener",
+  "nutritionist": "Dietetyk",
   "logout": "Wyloguj"
 }

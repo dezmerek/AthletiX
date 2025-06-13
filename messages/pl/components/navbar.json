@@ -18,5 +18,7 @@
   "settings": "Ustawienia",
   "logout": "Wyloguj się",
   "user": "Użytkownik",
-  "admin": "Administrator"
+  "admin": "Administrator",
+  "trainer": "Trener",
+  "nutritionist": "Dietetyk"
 }

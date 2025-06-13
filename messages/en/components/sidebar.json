@@ -11,5 +11,7 @@
   "expand": "Expand sidebar",
   "user": "User",
   "admin": "Administrator",
+  "trainer": "Trainer",
+  "nutritionist": "Nutritionist",
   "logout": "Logout"
 }

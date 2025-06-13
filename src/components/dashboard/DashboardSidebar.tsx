@@ -23,7 +23,6 @@ export default function DashboardSidebar() {
   const { data: session } = useSession();
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
-
   // Create user object
   const user = session?.user?.id
     ? ({
@@ -31,7 +30,7 @@ export default function DashboardSidebar() {
         name: session.user.name || session.user.email?.split("@")[0] || "User",
         email: session.user.email || "",
         image: session.user.image || "",
-        role: "user" as const,
+        role: session.user.role || "user",
       } as User)
     : undefined;
 
