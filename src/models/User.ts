@@ -7,7 +7,14 @@ export interface IUser extends mongoose.Document {
   name?: string;
   image?: string;
   emailVerified?: Date;
-  role?: "user" | "admin" | "trainer" | "nutritionist";
+  role?:
+    | "user"
+    | "user_premium"
+    | "trainer"
+    | "trainer_premium"
+    | "nutritionist"
+    | "nutritionist_premium"
+    | "admin";
   specialization?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -33,7 +40,15 @@ const userSchema = new mongoose.Schema<IUser>(
     emailVerified: Date,
     role: {
       type: String,
-      enum: ["user", "admin", "trainer", "nutritionist"],
+      enum: [
+        "user",
+        "user_premium",
+        "trainer",
+        "trainer_premium",
+        "nutritionist",
+        "nutritionist_premium",
+        "admin",
+      ],
       default: "user",
     },
     specialization: String,

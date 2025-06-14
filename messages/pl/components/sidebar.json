@@ -10,8 +10,11 @@
   "collapse": "Zwiń pasek boczny",
   "expand": "Rozwiń pasek boczny",
   "user": "Użytkownik",
+  "user_premium": "Użytkownik ⭐",
   "admin": "Administrator",
   "trainer": "Trener",
+  "trainer_premium": "Trener ⭐",
   "nutritionist": "Dietetyk",
+  "nutritionist_premium": "Dietetyk ⭐",
   "logout": "Wyloguj"
 }

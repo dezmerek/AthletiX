@@ -18,7 +18,10 @@
   "settings": "Settings",
   "logout": "Sign Out",
   "user": "User",
+  "user_premium": "User ⭐",
   "admin": "Administrator",
   "trainer": "Trainer",
-  "nutritionist": "Nutritionist"
+  "trainer_premium": "Trainer ⭐",
+  "nutritionist": "Nutritionist",
+  "nutritionist_premium": "Nutritionist ⭐"
 }

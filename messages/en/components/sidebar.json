@@ -10,8 +10,11 @@
   "collapse": "Collapse sidebar",
   "expand": "Expand sidebar",
   "user": "User",
+  "user_premium": "User ⭐",
   "admin": "Administrator",
   "trainer": "Trainer",
+  "trainer_premium": "Trainer ⭐",
   "nutritionist": "Nutritionist",
+  "nutritionist_premium": "Nutritionist ⭐",
   "logout": "Logout"
 }

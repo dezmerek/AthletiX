@@ -21,7 +21,14 @@ declare module "next-auth" {
       emailVerified: Date | null;
       createdAt: Date | null;
       updatedAt: Date | null;
-      role?: "user" | "admin" | "trainer" | "nutritionist";
+      role?:
+        | "user"
+        | "user_premium"
+        | "trainer"
+        | "trainer_premium"
+        | "nutritionist"
+        | "nutritionist_premium"
+        | "admin";
     };
   }
 
@@ -33,7 +40,14 @@ declare module "next-auth" {
     emailVerified: Date | null;
     createdAt: Date;
     updatedAt: Date;
-    role?: "user" | "admin" | "trainer" | "nutritionist";
+    role?:
+      | "user"
+      | "user_premium"
+      | "trainer"
+      | "trainer_premium"
+      | "nutritionist"
+      | "nutritionist_premium"
+      | "admin";
   }
 }
 
@@ -45,7 +59,14 @@ declare module "next-auth/jwt" {
     emailVerified: Date | null;
     createdAt: Date;
     updatedAt: Date;
-    role?: "user" | "admin" | "trainer" | "nutritionist";
+    role?:
+      | "user"
+      | "user_premium"
+      | "trainer"
+      | "trainer_premium"
+      | "nutritionist"
+      | "nutritionist_premium"
+      | "admin";
   }
 }
 
