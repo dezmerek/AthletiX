@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import type { IUser as User } from "@/models/User";
+import ContextSwitcherModal from "./ContextSwitcherModal";
 
 interface SidebarItem {
   href: string;
@@ -16,9 +17,9 @@ interface SidebarItem {
 }
 
 export default function DashboardSidebar() {
-  const pathname = usePathname();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const pathname = usePathname();  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isContextModalOpen, setIsContextModalOpen] = useState(false);
   const t = useTranslations("sidebar");
   const { data: session } = useSession();
   const router = useRouter();
@@ -320,13 +321,13 @@ export default function DashboardSidebar() {
                 </div>
               </div>
               {!isCollapsed && (
-                <>
-                  <div className="text-left flex-1 min-w-0">
+                <>                  <div className="text-left flex-1 min-w-0">
                     <div className="text-sm font-semibold truncate">
                       {user.name}
                     </div>
-                    <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                      {t(user.role || "user")}
+                    <div className="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center space-x-1">
+                      <span>🏠</span>
+                      <span>Klient PRO</span>
                     </div>
                   </div>
                   <svg
@@ -359,12 +360,34 @@ export default function DashboardSidebar() {
                   ? "opacity-100 visible translate-y-0"
                   : "opacity-0 invisible -translate-y-2"
               }`}
-            >
-              <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700/70">
+            >              <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700/70">
                 <div className="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">
                   {user.email}
                 </div>
               </div>
+
+              <button
+                onClick={() => {
+                  setIsDropdownOpen(false);
+                  setIsContextModalOpen(true);
+                }}
+                className="w-full px-4 py-2.5 text-left text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors cursor-pointer flex items-center space-x-3"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4-4m-4 4l4 4"
+                  />
+                </svg>
+                <span>Przełącz tryb</span>
+              </button>
 
               <button
                 onClick={() => {
@@ -419,10 +442,18 @@ export default function DashboardSidebar() {
                 </svg>
                 <span>{t("logout")}</span>
               </button>
-            </div>
-          </div>
+            </div>          </div>
         </div>
       )}
+
+      {/* Context Switcher Modal */}
+      <ContextSwitcherModal
+        isOpen={isContextModalOpen}
+        onClose={() => setIsContextModalOpen(false)}
+        onContextChange={(contextId) => {
+          console.log("Switched to context:", contextId);
+        }}
+      />
     </div>
   );
 }
