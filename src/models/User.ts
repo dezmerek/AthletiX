@@ -8,14 +8,17 @@ export interface IUser extends mongoose.Document {
   image?: string;
   emailVerified?: Date;
   role?:
+    | ("user" | "professional" | "admin")[]
     | "user"
-    | "user_premium"
-    | "trainer"
-    | "trainer_premium"
-    | "nutritionist"
-    | "nutritionist_premium"
+    | "professional"
     | "admin";
+  isPremiumPersonal?: boolean; // Premium dla trybu osobistego
+  isPremiumProfessional?: boolean; // Premium dla trybu profesjonalnego
   specialization?: string;
+
+  // Simple context switching
+  activeContext?: "user" | "professional";
+
   createdAt: Date;
   updatedAt: Date;
   comparePassword?(candidatePassword: string): Promise<boolean>;
@@ -39,19 +42,26 @@ const userSchema = new mongoose.Schema<IUser>(
     image: String,
     emailVerified: Date,
     role: {
-      type: String,
-      enum: [
-        "user",
-        "user_premium",
-        "trainer",
-        "trainer_premium",
-        "nutritionist",
-        "nutritionist_premium",
-        "admin",
-      ],
-      default: "user",
+      type: [String],
+      enum: ["user", "professional", "admin"],
+      default: ["user"],
+    },
+    isPremiumPersonal: {
+      type: Boolean,
+      default: false,
+    },
+    isPremiumProfessional: {
+      type: Boolean,
+      default: false,
     },
     specialization: String,
+
+    // Simple context switching
+    activeContext: {
+      type: String,
+      enum: ["user", "professional"],
+      default: "user",
+    },
   },
   {
     timestamps: true,
@@ -72,6 +82,26 @@ userSchema.methods.comparePassword = async function (
   candidatePassword: string
 ): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password);
+};
+
+// Simple context switching method
+userSchema.methods.switchContext = function (
+  context: "user" | "professional"
+): boolean {
+  this.activeContext = context;
+  return true;
+};
+
+// Check if user can act as professional
+userSchema.methods.canActAsProfessional = function (): boolean {
+  const roles = Array.isArray(this.role) ? this.role : [this.role];
+  return roles.includes("professional") || roles.includes("admin");
+};
+
+// Check if user can have premium
+userSchema.methods.canHavePremium = function (): boolean {
+  const roles = Array.isArray(this.role) ? this.role : [this.role];
+  return roles.includes("user") || roles.includes("professional");
 };
 
 const User = mongoose.models.User || mongoose.model<IUser>("User", userSchema);

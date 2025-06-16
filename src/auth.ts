@@ -22,13 +22,13 @@ declare module "next-auth" {
       createdAt: Date | null;
       updatedAt: Date | null;
       role?:
+        | ("user" | "professional" | "admin")[]
         | "user"
-        | "user_premium"
-        | "trainer"
-        | "trainer_premium"
-        | "nutritionist"
-        | "nutritionist_premium"
+        | "professional"
         | "admin";
+      isPremiumPersonal?: boolean;
+      isPremiumProfessional?: boolean;
+      activeContext?: "user" | "professional";
     };
   }
 
@@ -41,13 +41,13 @@ declare module "next-auth" {
     createdAt: Date;
     updatedAt: Date;
     role?:
+      | ("user" | "professional" | "admin")[]
       | "user"
-      | "user_premium"
-      | "trainer"
-      | "trainer_premium"
-      | "nutritionist"
-      | "nutritionist_premium"
+      | "professional"
       | "admin";
+    isPremiumPersonal?: boolean;
+    isPremiumProfessional?: boolean;
+    activeContext?: "user" | "professional";
   }
 }
 
@@ -60,13 +60,13 @@ declare module "next-auth/jwt" {
     createdAt: Date;
     updatedAt: Date;
     role?:
+      | ("user" | "professional" | "admin")[]
       | "user"
-      | "user_premium"
-      | "trainer"
-      | "trainer_premium"
-      | "nutritionist"
-      | "nutritionist_premium"
+      | "professional"
       | "admin";
+    isPremiumPersonal?: boolean;
+    isPremiumProfessional?: boolean;
+    activeContext?: "user" | "professional";
   }
 }
 
@@ -141,7 +141,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
               name: user.name,
               image: user.image,
               emailVerified: now,
-              role: "user",
+              role: ["user"],
+              isPremiumPersonal: false,
+              isPremiumProfessional: false,
+              activeContext: "user",
               createdAt: now,
               updatedAt: now,
             });
@@ -172,6 +175,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         token.createdAt = user.createdAt;
         token.updatedAt = user.updatedAt;
         token.role = user.role;
+        token.isPremiumPersonal = user.isPremiumPersonal;
+        token.isPremiumProfessional = user.isPremiumProfessional;
+        token.activeContext = user.activeContext;
       } else {
         // Przy każdym refresh tokena, pobierz aktualną rolę z bazy danych
         try {
@@ -182,7 +188,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           });
 
           if (dbUser) {
-            token.role = dbUser.role || "user";
+            token.role = dbUser.role || ["user"];
+            token.isPremiumPersonal = dbUser.isPremiumPersonal || false;
+            token.isPremiumProfessional = dbUser.isPremiumProfessional || false;
+            token.activeContext = dbUser.activeContext || "user";
           }
         } catch (error) {
           console.error("Error fetching user role from DB:", error);
@@ -212,10 +221,18 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         createdAt: token.createdAt as Date,
         updatedAt: token.updatedAt as Date,
         role: token.role as
+          | ("user" | "professional" | "admin")[]
           | "user"
+          | "professional"
           | "admin"
-          | "trainer"
-          | "nutritionist"
+          | undefined,
+        isPremiumPersonal: token.isPremiumPersonal as boolean | undefined,
+        isPremiumProfessional: token.isPremiumProfessional as
+          | boolean
+          | undefined,
+        activeContext: token.activeContext as
+          | "user"
+          | "professional"
           | undefined,
       };
       return session;
@@ -302,6 +319,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
             role: user.role,
+            isPremiumPersonal: user.isPremiumPersonal,
+            isPremiumProfessional: user.isPremiumProfessional,
+            activeContext: user.activeContext,
           };
         } catch (error) {
           console.error("Authentication error:", error);

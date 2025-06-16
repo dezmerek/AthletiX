@@ -3,52 +3,63 @@
 import { useState, useRef, useEffect } from "react";
 
 interface Context {
-  id: string;
-  type: "personal" | "professional" | "organization";
+  id: "user" | "professional";
   name: string;
   role: string;
-  icon: string;
-  organizationId?: string;
+  icon?: string;
 }
 
-export default function ContextSwitcher() {
+interface ContextSwitcherProps {
+  userRole?: string | string[];
+  isPremiumPersonal?: boolean;
+  isPremiumProfessional?: boolean;
+  activeContext?: "user" | "professional";
+  onContextChange?: (context: "user" | "professional") => void;
+}
+
+export default function ContextSwitcher({
+  userRole = "user",
+  isPremiumPersonal = false,
+  isPremiumProfessional = false,
+  activeContext: propActiveContext = "user",
+  onContextChange,
+}: ContextSwitcherProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeContext, setActiveContext] = useState<string>("personal");
+  const [activeContext, setActiveContext] = useState<"user" | "professional">(
+    propActiveContext
+  );
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Mock data - dane demonstracyjne
+  // Normalize roles to array
+  const roles = Array.isArray(userRole) ? userRole : [userRole];
+
+  // Simple context data based on user role
   const availableContexts: Context[] = [
     {
-      id: "personal",
-      type: "personal",
-      name: "Konto osobiste",
-      role: "Klient PRO",
-      icon: "🏠",
-    },
-    {
-      id: "professional",
-      type: "professional",
-      name: "Jako trener personalny",
-      role: "Profesjonalista",
-      icon: "💪",
-    },
-    {
-      id: "org-fitcorp",
-      type: "organization",
-      name: "FitCorp",
-      role: "Księgowość",
-      icon: "🏢",
-      organizationId: "fitcorp-123",
-    },
-    {
-      id: "org-gymplus",
-      type: "organization",
-      name: "GymPlus",
-      role: "Trener",
-      icon: "🏋️",
-      organizationId: "gymplus-456",
+      id: "user",
+      name: "Tryb użytkownika",
+      role: isPremiumPersonal ? "Użytkownik PRO" : "Użytkownik",
     },
   ];
+
+  // Add professional context only if user can act as professional
+  const canActAsProfessional =
+    roles.includes("professional") || roles.includes("admin");
+
+  if (canActAsProfessional) {
+    const professionalRole = roles.includes("professional")
+      ? "Profesjonalista"
+      : "Administrator";
+
+    availableContexts.push({
+      id: "professional",
+      name: "Tryb profesjonalny",
+      role:
+        isPremiumProfessional && roles.includes("professional")
+          ? `${professionalRole} PRO`
+          : professionalRole,
+    });
+  }
 
   const currentContext =
     availableContexts.find((ctx) => ctx.id === activeContext) ||
@@ -81,8 +92,9 @@ export default function ContextSwitcher() {
     }
   }, [isOpen]);
 
-  const handleContextSwitch = (contextId: string) => {
+  const handleContextSwitch = (contextId: "user" | "professional") => {
     setActiveContext(contextId);
+    onContextChange?.(contextId);
     setIsOpen(false);
     console.log("Przełączono na tryb:", contextId);
   };
@@ -97,7 +109,6 @@ export default function ContextSwitcher() {
         aria-haspopup="menu"
       >
         <div className="flex items-center space-x-3 min-w-0 flex-1">
-          <span className="text-base flex-shrink-0">{currentContext.icon}</span>
           <div className="text-left min-w-0 flex-1">
             <div className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">
               {currentContext.name}
@@ -149,7 +160,6 @@ export default function ContextSwitcher() {
               tabIndex={isOpen ? 0 : -1}
             >
               <div className="flex items-center space-x-3 flex-1 min-w-0">
-                <span className="text-base flex-shrink-0">{context.icon}</span>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium truncate">
                     {context.name}

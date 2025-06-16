@@ -1,63 +1,68 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 
 interface Context {
-  id: string;
-  type: "personal" | "professional" | "organization";
+  id: "user" | "professional";
   name: string;
   role: string;
-  icon: string;
-  organizationId?: string;
+  icon?: string;
 }
 
 interface ContextSwitcherModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onContextChange?: (contextId: string) => void;
+  onContextChange?: (contextId: "user" | "professional") => void;
+  userRole?: string | string[];
+  isPremiumPersonal?: boolean;
+  isPremiumProfessional?: boolean;
+  activeContext?: "user" | "professional";
 }
 
 export default function ContextSwitcherModal({
   isOpen,
   onClose,
   onContextChange,
+  userRole = "user",
+  isPremiumPersonal = false,
+  isPremiumProfessional = false,
+  activeContext: propActiveContext = "user",
 }: ContextSwitcherModalProps) {
-  const [activeContext, setActiveContext] = useState<string>("personal");
   const modalRef = useRef<HTMLDivElement>(null);
 
-  // Mock data - dane demonstracyjne
+  // Normalize roles to array
+  const roles = Array.isArray(userRole) ? userRole : [userRole];
+
+  // Use prop directly instead of local state
+  const activeContext = propActiveContext;
+
+  // Simple context data based on user role
   const availableContexts: Context[] = [
     {
-      id: "personal",
-      type: "personal",
-      name: "Konto osobiste",
-      role: "Klient PRO",
-      icon: "🏠",
-    },
-    {
-      id: "professional",
-      type: "professional",
-      name: "Jako trener personalny",
-      role: "Profesjonalista",
-      icon: "💪",
-    },
-    {
-      id: "org-fitcorp",
-      type: "organization",
-      name: "FitCorp",
-      role: "Księgowość",
-      icon: "🏢",
-      organizationId: "fitcorp-123",
-    },
-    {
-      id: "org-gymplus",
-      type: "organization",
-      name: "GymPlus",
-      role: "Trener",
-      icon: "🏋️",
-      organizationId: "gymplus-456",
+      id: "user",
+      name: "Tryb użytkownika",
+      role: isPremiumPersonal ? "Użytkownik PRO" : "Użytkownik",
     },
   ];
+
+  // Add professional context only if user can act as professional
+  const canActAsProfessional =
+    roles.includes("professional") || roles.includes("admin");
+
+  if (canActAsProfessional) {
+    const professionalRole = roles.includes("professional")
+      ? "Profesjonalista"
+      : "Administrator";
+
+    availableContexts.push({
+      id: "professional",
+      name: "Tryb profesjonalny",
+      role:
+        isPremiumProfessional && roles.includes("professional")
+          ? `${professionalRole} PRO`
+          : professionalRole,
+    });
+  }
 
   // Handle click outside
   useEffect(() => {
@@ -86,8 +91,7 @@ export default function ContextSwitcherModal({
     }
   }, [isOpen, onClose]);
 
-  const handleContextSwitch = (contextId: string) => {
-    setActiveContext(contextId);
+  const handleContextSwitch = (contextId: "user" | "professional") => {
     onContextChange?.(contextId);
     onClose();
     console.log("Przełączono na tryb:", contextId);
@@ -144,15 +148,6 @@ export default function ContextSwitcherModal({
               }`}
             >
               <div className="flex items-center space-x-4 flex-1 min-w-0">
-                <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
-                    context.id === activeContext
-                      ? "bg-emerald-100 dark:bg-emerald-900/50 ring-2 ring-emerald-200 dark:ring-emerald-700"
-                      : "bg-white dark:bg-slate-600"
-                  }`}
-                >
-                  {context.icon}
-                </div>
                 <div className="flex-1 min-w-0">
                   <div
                     className={`text-base font-semibold truncate ${
@@ -171,11 +166,6 @@ export default function ContextSwitcherModal({
                     }`}
                   >
                     {context.role}
-                    {context.organizationId && (
-                      <span className="ml-1 text-xs">
-                        ID: {context.organizationId}
-                      </span>
-                    )}
                   </div>
                 </div>
 

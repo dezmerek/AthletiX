@@ -22,14 +22,18 @@ export default function Navbar() {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
-  const { data: session } = useSession(); // Only create user object if user is logged in and has an id
+  const { data: session } = useSession();
+  // Only create user object if user is logged in and has an id
   const user = session?.user?.id
     ? ({
         _id: session.user.id,
         name: session.user.name || session.user.email?.split("@")[0] || "User",
         email: session.user.email || "",
         image: session.user.image || "",
-        role: session.user.role || "user",
+        role: session.user.role || ["user"],
+        isPremiumPersonal: session.user.isPremiumPersonal || false,
+        isPremiumProfessional: session.user.isPremiumProfessional || false,
+        activeContext: session.user.activeContext || "user",
       } as User)
     : undefined;
 

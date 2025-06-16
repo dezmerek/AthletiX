@@ -17,11 +17,12 @@ interface SidebarItem {
 }
 
 export default function DashboardSidebar() {
-  const pathname = usePathname();  const [isCollapsed, setIsCollapsed] = useState(false);
+  const pathname = usePathname();
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isContextModalOpen, setIsContextModalOpen] = useState(false);
   const t = useTranslations("sidebar");
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
   // Create user object
@@ -31,7 +32,10 @@ export default function DashboardSidebar() {
         name: session.user.name || session.user.email?.split("@")[0] || "User",
         email: session.user.email || "",
         image: session.user.image || "",
-        role: session.user.role || "user",
+        role: session.user.role || ["user"],
+        isPremiumPersonal: session.user.isPremiumPersonal || false,
+        isPremiumProfessional: session.user.isPremiumProfessional || false,
+        activeContext: session.user.activeContext || "user",
       } as User)
     : undefined;
 
@@ -51,6 +55,32 @@ export default function DashboardSidebar() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleContextChange = async (contextId: "user" | "professional") => {
+    try {
+      const response = await fetch("/api/user/switch-context", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ activeContext: contextId }),
+      });
+
+      if (response.ok) {
+        // Trigger session update to refresh activeContext from database
+        await update();
+        // Refresh the router to update the UI
+        router.refresh();
+      } else {
+        const error = await response.json();
+        console.error("Failed to switch context:", error);
+        // You could show a toast notification here
+      }
+    } catch (error) {
+      console.error("Error switching context:", error);
+      // You could show a toast notification here
+    }
+  };
 
   const handleLogout = async () => {
     setIsDropdownOpen(false);
@@ -321,13 +351,28 @@ export default function DashboardSidebar() {
                 </div>
               </div>
               {!isCollapsed && (
-                <>                  <div className="text-left flex-1 min-w-0">
+                <>
+                  {" "}
+                  <div className="text-left flex-1 min-w-0">
                     <div className="text-sm font-semibold truncate">
                       {user.name}
                     </div>
-                    <div className="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center space-x-1">
-                      <span>🏠</span>
-                      <span>Klient PRO</span>
+                    <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                      {user.activeContext === "user"
+                        ? user.isPremiumPersonal
+                          ? "Użytkownik PRO"
+                          : "Użytkownik"
+                        : user.activeContext === "professional"
+                        ? (() => {
+                            const roles = Array.isArray(user.role)
+                              ? user.role
+                              : [user.role];
+                            if (roles.includes("admin")) return "Administrator";
+                            return user.isPremiumProfessional
+                              ? "Profesjonalista PRO"
+                              : "Profesjonalista";
+                          })()
+                        : "Administrator"}
                     </div>
                   </div>
                   <svg
@@ -348,7 +393,6 @@ export default function DashboardSidebar() {
                 </>
               )}
             </button>
-
             {/* Dropdown Menu */}
             <div
               className={`absolute ${
@@ -360,12 +404,13 @@ export default function DashboardSidebar() {
                   ? "opacity-100 visible translate-y-0"
                   : "opacity-0 invisible -translate-y-2"
               }`}
-            >              <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700/70">
+            >
+              {" "}
+              <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700/70">
                 <div className="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">
                   {user.email}
                 </div>
               </div>
-
               <button
                 onClick={() => {
                   setIsDropdownOpen(false);
@@ -388,7 +433,6 @@ export default function DashboardSidebar() {
                 </svg>
                 <span>Przełącz tryb</span>
               </button>
-
               <button
                 onClick={() => {
                   router.push("/dashboard/settings");
@@ -417,9 +461,7 @@ export default function DashboardSidebar() {
                 </svg>
                 <span>{t("settings")}</span>
               </button>
-
               <div className="border-t border-slate-100 dark:border-slate-700/70"></div>
-
               <button
                 onClick={() => {
                   setIsDropdownOpen(false);
@@ -442,7 +484,8 @@ export default function DashboardSidebar() {
                 </svg>
                 <span>{t("logout")}</span>
               </button>
-            </div>          </div>
+            </div>{" "}
+          </div>
         </div>
       )}
 
@@ -450,9 +493,11 @@ export default function DashboardSidebar() {
       <ContextSwitcherModal
         isOpen={isContextModalOpen}
         onClose={() => setIsContextModalOpen(false)}
-        onContextChange={(contextId) => {
-          console.log("Switched to context:", contextId);
-        }}
+        onContextChange={handleContextChange}
+        userRole={user?.role}
+        isPremiumPersonal={user?.isPremiumPersonal}
+        isPremiumProfessional={user?.isPremiumProfessional}
+        activeContext={user?.activeContext}
       />
     </div>
   );

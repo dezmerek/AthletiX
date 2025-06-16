@@ -56,8 +56,22 @@ export default function UserMenu({ user, onLogout }: Props) {
         <div className="text-left hidden sm:block">
           <div className="text-sm font-semibold">{user.name}</div>
           <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
-            {t(user.role || "user")}
-          </div>{" "}
+            {user.activeContext === "user"
+              ? user.isPremiumPersonal
+                ? "Użytkownik PRO"
+                : "Użytkownik"
+              : user.activeContext === "professional"
+              ? (() => {
+                  const roles = Array.isArray(user.role)
+                    ? user.role
+                    : [user.role];
+                  if (roles.includes("admin")) return "Administrator";
+                  return user.isPremiumProfessional
+                    ? "Profesjonalista PRO"
+                    : "Profesjonalista";
+                })()
+              : "Administrator"}
+          </div>
         </div>{" "}
         <svg
           className={`w-4 h-4 transition-transform ${

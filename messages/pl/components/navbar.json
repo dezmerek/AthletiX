@@ -18,10 +18,10 @@
   "settings": "Ustawienia",
   "logout": "Wyloguj się",
   "user": "Użytkownik",
-  "user_premium": "Użytkownik ⭐",
+  "user_premium": "Użytkownik PRO",
   "admin": "Administrator",
   "trainer": "Trener",
-  "trainer_premium": "Trener ⭐",
+  "trainer_premium": "Trener PRO",
   "nutritionist": "Dietetyk",
-  "nutritionist_premium": "Dietetyk ⭐"
+  "nutritionist_premium": "Dietetyk PRO"
 }
