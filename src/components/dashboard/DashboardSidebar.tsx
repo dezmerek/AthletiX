@@ -14,6 +14,7 @@ interface SidebarItem {
   icon: React.ReactElement;
   label: string;
   badge?: string;
+  context: "user" | "professional" | "admin" | "all"; // Określa dla jakiego kontekstu dostępny
 }
 
 export default function DashboardSidebar() {
@@ -107,6 +108,7 @@ export default function DashboardSidebar() {
         </svg>
       ),
       label: t("dashboard"),
+      context: "all", // Dashboard dostępny dla wszystkich kontekstów
     },
     {
       href: "/dashboard/workouts",
@@ -126,6 +128,7 @@ export default function DashboardSidebar() {
         </svg>
       ),
       label: t("workouts"),
+      context: "user",
     },
     {
       href: "/dashboard/nutrition",
@@ -145,6 +148,7 @@ export default function DashboardSidebar() {
         </svg>
       ),
       label: t("nutrition"),
+      context: "user",
     },
     {
       href: "/dashboard/progress",
@@ -164,6 +168,7 @@ export default function DashboardSidebar() {
         </svg>
       ),
       label: t("progress"),
+      context: "user",
     },
     {
       href: "/dashboard/calendar",
@@ -183,6 +188,7 @@ export default function DashboardSidebar() {
         </svg>
       ),
       label: t("calendar"),
+      context: "user",
     },
     {
       href: "/dashboard/community",
@@ -202,6 +208,7 @@ export default function DashboardSidebar() {
         </svg>
       ),
       label: t("community"),
+      context: "user",
     },
     {
       href: "/dashboard/profile",
@@ -221,6 +228,7 @@ export default function DashboardSidebar() {
         </svg>
       ),
       label: t("profile"),
+      context: "user",
     },
   ];
 
@@ -229,6 +237,25 @@ export default function DashboardSidebar() {
       return pathname === href;
     }
     return pathname.startsWith(href);
+  };
+
+  // Filter menu items based on active context
+  const getFilteredMenuItems = () => {
+    if (!user) return [];
+
+    return menuItems.filter((item) => {
+      // Always show items for "all" contexts
+      if (item.context === "all") return true;
+
+      // Check if item is available for current context
+      if (item.context === user.activeContext) return true;
+
+      // Admin can see everything regardless of context
+      const roles = Array.isArray(user.role) ? user.role : [user.role];
+      if (roles.includes("admin") && item.context === "admin") return true;
+
+      return false;
+    });
   };
 
   return (
@@ -283,7 +310,7 @@ export default function DashboardSidebar() {
       {/* Navigation */}
       <nav className="flex-1 p-4">
         <ul className="space-y-2">
-          {menuItems.map((item) => (
+          {getFilteredMenuItems().map((item) => (
             <li key={item.href}>
               <Link
                 href={item.href}
