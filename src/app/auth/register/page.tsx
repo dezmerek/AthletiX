@@ -57,9 +57,9 @@ export default function RegisterPage() {
         return;
       }
 
-      // After successful sign in, redirect to dashboard
+      // After successful sign in, redirect to role selection
       router.refresh(); // This will refresh the session
-      router.push("/dashboard");
+      router.push("/auth/role-selection");
     } catch (err) {
       console.error("Registration error:", err);
       setError(t("error.generic"));

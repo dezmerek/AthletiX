@@ -13,10 +13,10 @@ interface ContextSwitcherModalProps {
   isOpen: boolean;
   onClose: () => void;
   onContextChange?: (contextId: "user" | "professional") => void;
-  userRole?: string | string[];
+  userRole?: string | string[] | null;
   isPremiumPersonal?: boolean;
   isPremiumProfessional?: boolean;
-  activeContext?: "user" | "professional";
+  activeContext?: "user" | "professional" | null;
 }
 
 export default function ContextSwitcherModal({

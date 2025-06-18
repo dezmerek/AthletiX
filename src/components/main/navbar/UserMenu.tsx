@@ -70,7 +70,9 @@ export default function UserMenu({ user, onLogout }: Props) {
                     ? "Profesjonalista PRO"
                     : "Profesjonalista";
                 })()
-              : "Administrator"}
+              : user.role?.includes?.("admin")
+              ? "Administrator"
+              : "Wybierz rolę"}
           </div>
         </div>{" "}
         <svg

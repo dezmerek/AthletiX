@@ -11,13 +11,14 @@ export interface IUser extends mongoose.Document {
     | ("user" | "professional" | "admin")[]
     | "user"
     | "professional"
-    | "admin";
+    | "admin"
+    | null;
   isPremiumPersonal?: boolean; // Premium dla trybu osobistego
   isPremiumProfessional?: boolean; // Premium dla trybu profesjonalnego
   specialization?: string;
 
   // Simple context switching
-  activeContext?: "user" | "professional";
+  activeContext?: "user" | "professional" | null;
 
   createdAt: Date;
   updatedAt: Date;

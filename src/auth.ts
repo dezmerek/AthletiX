@@ -25,7 +25,8 @@ declare module "next-auth" {
         | ("user" | "professional" | "admin")[]
         | "user"
         | "professional"
-        | "admin";
+        | "admin"
+        | null;
       isPremiumPersonal?: boolean;
       isPremiumProfessional?: boolean;
       activeContext?: "user" | "professional";
@@ -44,7 +45,8 @@ declare module "next-auth" {
       | ("user" | "professional" | "admin")[]
       | "user"
       | "professional"
-      | "admin";
+      | "admin"
+      | null;
     isPremiumPersonal?: boolean;
     isPremiumProfessional?: boolean;
     activeContext?: "user" | "professional";
@@ -63,7 +65,8 @@ declare module "next-auth/jwt" {
       | ("user" | "professional" | "admin")[]
       | "user"
       | "professional"
-      | "admin";
+      | "admin"
+      | null;
     isPremiumPersonal?: boolean;
     isPremiumProfessional?: boolean;
     activeContext?: "user" | "professional";
@@ -130,7 +133,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                   image: user.image,
                   emailVerified: now,
                   updatedAt: now,
-                  ...(existingUser.role ? {} : { role: "user" }),
+                  // Don't set role if it doesn't exist - let user choose
                 },
               }
             );
@@ -141,10 +144,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
               name: user.name,
               image: user.image,
               emailVerified: now,
-              role: ["user"],
+              role: null, // No role assigned initially
               isPremiumPersonal: false,
               isPremiumProfessional: false,
-              activeContext: "user",
+              activeContext: null, // No context until role is selected
               createdAt: now,
               updatedAt: now,
             });
@@ -188,10 +191,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           });
 
           if (dbUser) {
-            token.role = dbUser.role || ["user"];
+            token.role = dbUser.role; // Keep null if role is null
             token.isPremiumPersonal = dbUser.isPremiumPersonal || false;
             token.isPremiumProfessional = dbUser.isPremiumProfessional || false;
-            token.activeContext = dbUser.activeContext || "user";
+            token.activeContext = dbUser.activeContext; // Keep null if activeContext is null
           }
         } catch (error) {
           console.error("Error fetching user role from DB:", error);

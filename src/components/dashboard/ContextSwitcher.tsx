@@ -10,10 +10,10 @@ interface Context {
 }
 
 interface ContextSwitcherProps {
-  userRole?: string | string[];
+  userRole?: string | string[] | null;
   isPremiumPersonal?: boolean;
   isPremiumProfessional?: boolean;
-  activeContext?: "user" | "professional";
+  activeContext?: "user" | "professional" | null;
   onContextChange?: (context: "user" | "professional") => void;
 }
 
@@ -26,7 +26,7 @@ export default function ContextSwitcher({
 }: ContextSwitcherProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeContext, setActiveContext] = useState<"user" | "professional">(
-    propActiveContext
+    propActiveContext || "user"
   );
   const dropdownRef = useRef<HTMLDivElement>(null);
 

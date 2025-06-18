@@ -54,10 +54,10 @@ export async function POST(request: NextRequest) {
       email: email.toLowerCase(),
       password: hashedPassword,
       emailVerified: null,
-      role: ["user"],
+      role: null, // No role assigned initially
       isPremiumPersonal: false,
       isPremiumProfessional: false,
-      activeContext: "user",
+      activeContext: null, // No context until role is selected
       image: null,
       createdAt: now,
       updatedAt: now,

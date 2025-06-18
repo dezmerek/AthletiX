@@ -33,10 +33,10 @@ export default function DashboardSidebar() {
         name: session.user.name || session.user.email?.split("@")[0] || "User",
         email: session.user.email || "",
         image: session.user.image || "",
-        role: session.user.role || ["user"],
+        role: session.user.role, // Keep null if role is null
         isPremiumPersonal: session.user.isPremiumPersonal || false,
         isPremiumProfessional: session.user.isPremiumProfessional || false,
-        activeContext: session.user.activeContext || "user",
+        activeContext: session.user.activeContext, // Keep null if activeContext is null
       } as User)
     : undefined;
 
@@ -399,7 +399,9 @@ export default function DashboardSidebar() {
                               ? "Profesjonalista PRO"
                               : "Profesjonalista";
                           })()
-                        : "Administrator"}
+                        : user.role?.includes?.("admin")
+                        ? "Administrator"
+                        : "Wybierz rolę"}
                     </div>
                   </div>
                   <svg
