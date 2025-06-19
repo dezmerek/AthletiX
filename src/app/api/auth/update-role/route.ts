@@ -3,30 +3,37 @@ import clientPromise from "@/lib/mongodb";
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, role } = await request.json();
+    const { email, roles, activeContext } = await request.json();
 
     // Input validation
-    if (!email || !role) {
+    if (!email || !roles || !Array.isArray(roles) || roles.length === 0) {
       return NextResponse.json(
-        { error: "Email and role are required" },
+        { error: "Email and roles are required" },
         { status: 400 }
       );
     }
 
-    if (!["user", "professional"].includes(role)) {
+    // Validate all roles
+    const validRoles = ["user", "professional"];
+    if (!roles.every(role => validRoles.includes(role))) {
       return NextResponse.json({ error: "Invalid role" }, { status: 400 });
+    }
+
+    // Validate activeContext
+    if (!validRoles.includes(activeContext)) {
+      return NextResponse.json({ error: "Invalid active context" }, { status: 400 });
     }
 
     const client = await clientPromise;
     const db = client.db();
 
-    // Update user role and set active context
+    // Update user roles and set active context
     const result = await db.collection("users").updateOne(
       { email: email.toLowerCase() },
       {
         $set: {
-          role: [role],
-          activeContext: role,
+          role: roles,
+          activeContext: activeContext,
           updatedAt: new Date(),
         },
       }

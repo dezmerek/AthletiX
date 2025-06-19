@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema<IUser>(
     role: {
       type: [String],
       enum: ["user", "professional", "admin"],
-      default: ["user"],
+      default: null,
     },
     isPremiumPersonal: {
       type: Boolean,
@@ -61,7 +61,7 @@ const userSchema = new mongoose.Schema<IUser>(
     activeContext: {
       type: String,
       enum: ["user", "professional"],
-      default: "user",
+      default: null,
     },
   },
   {

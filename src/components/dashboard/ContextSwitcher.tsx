@@ -18,29 +18,32 @@ interface ContextSwitcherProps {
 }
 
 export default function ContextSwitcher({
-  userRole = "user",
+  userRole = null,
   isPremiumPersonal = false,
   isPremiumProfessional = false,
-  activeContext: propActiveContext = "user",
+  activeContext: propActiveContext = null,
   onContextChange,
 }: ContextSwitcherProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeContext, setActiveContext] = useState<"user" | "professional">(
-    propActiveContext || "user"
+  const [activeContext, setActiveContext] = useState<"user" | "professional" | null>(
+    propActiveContext
   );
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Normalize roles to array
-  const roles = Array.isArray(userRole) ? userRole : [userRole];
+  // Normalize roles to array, filter out null values
+  const roles = Array.isArray(userRole) ? userRole.filter(Boolean) : userRole ? [userRole] : [];
 
   // Simple context data based on user role
-  const availableContexts: Context[] = [
-    {
+  const availableContexts: Context[] = [];
+
+  // Add user context only if user has the role
+  if (roles.includes("user")) {
+    availableContexts.push({
       id: "user",
       name: "Tryb użytkownika",
       role: isPremiumPersonal ? "Użytkownik PRO" : "Użytkownik",
-    },
-  ];
+    });
+  }
 
   // Add professional context only if user can act as professional
   const canActAsProfessional =
@@ -61,9 +64,7 @@ export default function ContextSwitcher({
     });
   }
 
-  const currentContext =
-    availableContexts.find((ctx) => ctx.id === activeContext) ||
-    availableContexts[0];
+  const currentContext = availableContexts.find((ctx) => ctx.id === activeContext);
 
   // Handle click outside
   useEffect(() => {
@@ -98,6 +99,11 @@ export default function ContextSwitcher({
     setIsOpen(false);
     console.log("Przełączono na tryb:", contextId);
   };
+
+  // Don't render if no roles or no current context
+  if (roles.length === 0 || !currentContext) {
+    return null;
+  }
 
   return (
     <div className="relative" ref={dropdownRef}>

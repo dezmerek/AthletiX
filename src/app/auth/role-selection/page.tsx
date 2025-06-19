@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 export default function RoleSelectionPage() {
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { data: session, update } = useSession();
 
   const handleRoleSelect = async () => {
-    if (!selectedRole || !session?.user?.email) return;
+    if (selectedRoles.length === 0 || !session?.user?.email) return;
 
     try {
       setIsLoading(true);
@@ -21,7 +21,8 @@ export default function RoleSelectionPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: session.user.email,
-          role: selectedRole,
+          roles: selectedRoles, // Send array of roles
+          activeContext: selectedRoles[0], // Default to first selected role
         }),
       });
 
@@ -40,6 +41,15 @@ export default function RoleSelectionPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Function to toggle role selection
+  const toggleRole = (roleId: string) => {
+    setSelectedRoles(prev => 
+      prev.includes(roleId) 
+        ? prev.filter(id => id !== roleId)
+        : [...prev, roleId]
+    );
   };
 
   const roles = [
@@ -111,8 +121,16 @@ export default function RoleSelectionPage() {
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Wybierz typ konta
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400">
+          <p className="text-xl text-gray-600 dark:text-gray-400 mb-2">
             Dostosujemy AthletiX do Twoich potrzeb
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-500">
+            Możesz wybrać jedną lub obie role
+            {selectedRoles.length > 0 && (
+              <span className="ml-2 px-2 py-1 bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-full text-xs font-medium">
+                {selectedRoles.length} wybrane
+              </span>
+            )}
           </p>
         </div>
 
@@ -121,15 +139,15 @@ export default function RoleSelectionPage() {
           {roles.map((role) => (
             <div
               key={role.id}
-              onClick={() => setSelectedRole(role.id)}
+              onClick={() => toggleRole(role.id)}
               className={`relative p-8 rounded-2xl border-2 cursor-pointer transition-all duration-300 hover:scale-105 ${
-                selectedRole === role.id
+                selectedRoles.includes(role.id)
                   ? `border-transparent bg-gradient-to-br ${role.bgGradient} shadow-2xl`
                   : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600"
               }`}
             >
               {/* Selection indicator */}
-              {selectedRole === role.id && (
+              {selectedRoles.includes(role.id) && (
                 <div className="absolute top-4 right-4">
                   <div
                     className={`w-6 h-6 rounded-full bg-gradient-to-r ${role.gradient} flex items-center justify-center`}
@@ -198,9 +216,9 @@ export default function RoleSelectionPage() {
         <div className="text-center">
           <button
             onClick={handleRoleSelect}
-            disabled={!selectedRole || isLoading}
+            disabled={selectedRoles.length === 0 || isLoading}
             className={`px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 ${
-              selectedRole && !isLoading
+              selectedRoles.length > 0 && !isLoading
                 ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:shadow-lg hover:scale-105"
                 : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
             }`}
@@ -230,7 +248,11 @@ export default function RoleSelectionPage() {
                 Zapisywanie...
               </div>
             ) : (
-              "Kontynuuj"
+              selectedRoles.length === 1 
+                ? "Kontynuuj z 1 rolą"
+                : selectedRoles.length === 2
+                ? "Kontynuuj z 2 rolami"
+                : "Wybierz przynajmniej jedną rolę"
             )}
           </button>
         </div>

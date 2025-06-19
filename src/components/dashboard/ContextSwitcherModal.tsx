@@ -23,27 +23,30 @@ export default function ContextSwitcherModal({
   isOpen,
   onClose,
   onContextChange,
-  userRole = "user",
+  userRole = null,
   isPremiumPersonal = false,
   isPremiumProfessional = false,
-  activeContext: propActiveContext = "user",
+  activeContext: propActiveContext = null,
 }: ContextSwitcherModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
-  // Normalize roles to array
-  const roles = Array.isArray(userRole) ? userRole : [userRole];
+  // Normalize roles to array, filter out null values
+  const roles = Array.isArray(userRole) ? userRole.filter(Boolean) : userRole ? [userRole] : [];
 
   // Use prop directly instead of local state
   const activeContext = propActiveContext;
 
   // Simple context data based on user role
-  const availableContexts: Context[] = [
-    {
+  const availableContexts: Context[] = [];
+
+  // Add user context only if user has the role
+  if (roles.includes("user")) {
+    availableContexts.push({
       id: "user",
       name: "Tryb użytkownika",
       role: isPremiumPersonal ? "Użytkownik PRO" : "Użytkownik",
-    },
-  ];
+    });
+  }
 
   // Add professional context only if user can act as professional
   const canActAsProfessional =
