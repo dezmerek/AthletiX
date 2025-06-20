@@ -8,6 +8,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import type { IUser as User } from "@/models/User";
 import ContextSwitcherModal from "./ContextSwitcherModal";
+import { getRoleDisplayName, hasRole } from "@/utils/roleUtils";
 
 interface SidebarItem {
   href: string;
@@ -251,8 +252,7 @@ export default function DashboardSidebar() {
       if (item.context === user.activeContext) return true;
 
       // Admin can see everything regardless of context
-      const roles = Array.isArray(user.role) ? user.role : [user.role];
-      if (roles.includes("admin") && item.context === "admin") return true;
+      if (hasRole(user, "admin") && item.context === "admin") return true;
 
       return false;
     });
@@ -385,23 +385,7 @@ export default function DashboardSidebar() {
                       {user.name}
                     </div>
                     <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                      {user.activeContext === "user"
-                        ? user.isPremiumPersonal
-                          ? "Użytkownik PRO"
-                          : "Użytkownik"
-                        : user.activeContext === "professional"
-                        ? (() => {
-                            const roles = Array.isArray(user.role)
-                              ? user.role
-                              : [user.role];
-                            if (roles.includes("admin")) return "Administrator";
-                            return user.isPremiumProfessional
-                              ? "Profesjonalista PRO"
-                              : "Profesjonalista";
-                          })()
-                        : user.role?.includes?.("admin")
-                        ? "Administrator"
-                        : "Wybierz rolę"}
+                      {getRoleDisplayName(user)}
                     </div>
                   </div>
                   <svg

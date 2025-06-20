@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import { canActAsProfessional, canActAsUser } from "@/utils/roleUtils";
 
 interface Context {
   id: "user" | "professional";
@@ -40,7 +41,7 @@ export default function ContextSwitcherModal({
   const availableContexts: Context[] = [];
 
   // Add user context only if user has the role
-  if (roles.includes("user")) {
+  if (canActAsUser({ role: userRole })) {
     availableContexts.push({
       id: "user",
       name: "Tryb użytkownika",
@@ -49,10 +50,7 @@ export default function ContextSwitcherModal({
   }
 
   // Add professional context only if user can act as professional
-  const canActAsProfessional =
-    roles.includes("professional") || roles.includes("admin");
-
-  if (canActAsProfessional) {
+  if (canActAsProfessional({ role: userRole })) {
     const professionalRole = roles.includes("professional")
       ? "Profesjonalista"
       : "Administrator";
