@@ -30,14 +30,18 @@ export function getRoleDisplayName(user: UserRoleData): string {
   switch (user.activeContext) {
     case "user":
       return user.isPremiumPersonal ? "Użytkownik PRO" : "Użytkownik";
-    
+
     case "professional":
-      return user.isPremiumProfessional ? "Profesjonalista PRO" : "Profesjonalista";
-    
+      return user.isPremiumProfessional
+        ? "Profesjonalista PRO"
+        : "Profesjonalista";
+
     default:
       // No active context set
       if (roles.includes("professional")) {
-        return user.isPremiumProfessional ? "Profesjonalista PRO" : "Profesjonalista";
+        return user.isPremiumProfessional
+          ? "Profesjonalista PRO"
+          : "Profesjonalista";
       }
       if (roles.includes("user")) {
         return user.isPremiumPersonal ? "Użytkownik PRO" : "Użytkownik";
@@ -85,12 +89,12 @@ export function getContextBadgeStyle(user: UserRoleData): {
   badgeText: string;
 } {
   const roles = getAvailableRoles(user);
-  
+
   if (roles.includes("admin")) {
     return {
       bgColor: "bg-purple-100 dark:bg-purple-900/20",
       textColor: "text-purple-600 dark:text-purple-400",
-      badgeText: "Admin"
+      badgeText: "Admin",
     };
   }
 
@@ -99,21 +103,21 @@ export function getContextBadgeStyle(user: UserRoleData): {
       return {
         bgColor: "bg-emerald-100 dark:bg-emerald-900/20",
         textColor: "text-emerald-600 dark:text-emerald-400",
-        badgeText: "Pro"
+        badgeText: "Pro",
       };
-    
+
     case "user":
       return {
         bgColor: "bg-blue-100 dark:bg-blue-900/20",
         textColor: "text-blue-600 dark:text-blue-400",
-        badgeText: "User"
+        badgeText: "User",
       };
-    
+
     default:
       return {
         bgColor: "bg-gray-100 dark:bg-gray-900/20",
         textColor: "text-gray-600 dark:text-gray-400",
-        badgeText: "?"
+        badgeText: "?",
       };
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
@@ -9,6 +9,16 @@ export default function RoleSelectionPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { data: session, update } = useSession();
+
+  // Preselect current user roles when component mounts
+  useEffect(() => {
+    if (session?.user?.role) {
+      const currentRoles = Array.isArray(session.user.role) 
+        ? session.user.role 
+        : [session.user.role];
+      setSelectedRoles(currentRoles.filter(Boolean)); // Filter out null values
+    }
+  }, [session?.user?.role]);
 
   const handleRoleSelect = async () => {
     if (selectedRoles.length === 0 || !session?.user?.email) return;
@@ -119,10 +129,16 @@ export default function RoleSelectionPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Wybierz typ konta
+            {session?.user?.role && Array.isArray(session.user.role) && session.user.role.length > 0
+              ? "Zarządzaj rolami"
+              : "Wybierz typ konta"
+            }
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400 mb-2">
-            Dostosujemy AthletiX do Twoich potrzeb
+            {session?.user?.role && Array.isArray(session.user.role) && session.user.role.length > 0
+              ? "Dostosuj swoje role w AthletiX"
+              : "Dostosujemy AthletiX do Twoich potrzeb"
+            }
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-500">
             Możesz wybrać jedną lub obie role
@@ -213,7 +229,7 @@ export default function RoleSelectionPage() {
         </div>
 
         {/* Continue Button */}
-        <div className="text-center">
+        <div className="text-center space-y-4">
           <button
             onClick={handleRoleSelect}
             disabled={selectedRoles.length === 0 || isLoading}
@@ -255,6 +271,16 @@ export default function RoleSelectionPage() {
                 : "Wybierz przynajmniej jedną rolę"
             )}
           </button>
+
+          {/* Cancel/Back button - show only if user already has roles */}
+          {session?.user?.role && Array.isArray(session.user.role) && session.user.role.length > 0 && (
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="px-6 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+            >
+              Anuluj i wróć do dashboard
+            </button>
+          )}
         </div>
 
         {/* Note */}

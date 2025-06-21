@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { canActAsProfessional, canActAsUser } from "@/utils/roleUtils";
 
 interface Context {
@@ -26,13 +27,18 @@ export default function ContextSwitcher({
   onContextChange,
 }: ContextSwitcherProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeContext, setActiveContext] = useState<"user" | "professional" | null>(
-    propActiveContext
-  );
+  const [activeContext, setActiveContext] = useState<
+    "user" | "professional" | null
+  >(propActiveContext);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   // Normalize roles to array, filter out null values
-  const roles = Array.isArray(userRole) ? userRole.filter(Boolean) : userRole ? [userRole] : [];
+  const roles = Array.isArray(userRole)
+    ? userRole.filter(Boolean)
+    : userRole
+    ? [userRole]
+    : [];
 
   // Simple context data based on user role
   const availableContexts: Context[] = [];
@@ -62,7 +68,9 @@ export default function ContextSwitcher({
     });
   }
 
-  const currentContext = availableContexts.find((ctx) => ctx.id === activeContext);
+  const currentContext = availableContexts.find(
+    (ctx) => ctx.id === activeContext
+  );
 
   // Handle click outside
   useEffect(() => {
@@ -180,6 +188,32 @@ export default function ContextSwitcher({
               </div>
             </button>
           ))}
+        </div>
+
+        {/* Footer - Zarządzaj trybami */}
+        <div className="border-t border-slate-200 dark:border-slate-700 px-1 py-1">
+          <button
+            onClick={() => {
+              setIsOpen(false);
+              router.push("/auth/role-selection");
+            }}
+            className="w-full flex items-center justify-center px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded transition-colors"
+          >
+            <svg
+              className="w-3 h-3 mr-1.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+            <span>Zarządzaj rolami</span>
+          </button>
         </div>
       </div>
     </div>

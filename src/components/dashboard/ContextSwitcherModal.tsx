@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { canActAsProfessional, canActAsUser } from "@/utils/roleUtils";
 
 interface Context {
@@ -30,9 +31,14 @@ export default function ContextSwitcherModal({
   activeContext: propActiveContext = null,
 }: ContextSwitcherModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   // Normalize roles to array, filter out null values
-  const roles = Array.isArray(userRole) ? userRole.filter(Boolean) : userRole ? [userRole] : [];
+  const roles = Array.isArray(userRole)
+    ? userRole.filter(Boolean)
+    : userRole
+    ? [userRole]
+    : [];
 
   // Use prop directly instead of local state
   const activeContext = propActiveContext;
@@ -197,8 +203,8 @@ export default function ContextSwitcherModal({
         <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/50">
           <button
             onClick={() => {
-              // TODO: Otwórz modal zarządzania trybami
-              console.log("Zarządzaj trybami");
+              onClose(); // Zamknij modal
+              router.push("/auth/role-selection"); // Przekieruj do zarządzania rolami
             }}
             className="w-full flex items-center justify-center px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-colors border border-slate-200 dark:border-slate-600"
           >
