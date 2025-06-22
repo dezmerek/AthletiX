@@ -15,13 +15,16 @@ export async function POST(request: NextRequest) {
 
     // Validate all roles
     const validRoles = ["user", "professional"];
-    if (!roles.every(role => validRoles.includes(role))) {
+    if (!roles.every((role) => validRoles.includes(role))) {
       return NextResponse.json({ error: "Invalid role" }, { status: 400 });
     }
 
     // Validate activeContext
     if (!validRoles.includes(activeContext)) {
-      return NextResponse.json({ error: "Invalid active context" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid active context" },
+        { status: 400 }
+      );
     }
 
     const client = await clientPromise;
