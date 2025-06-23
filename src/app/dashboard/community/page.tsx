@@ -286,7 +286,7 @@ export default function CommunityPage() {
     }
   };
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8">
+    <div className="p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
