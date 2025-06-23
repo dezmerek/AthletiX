@@ -267,7 +267,7 @@ export default function CommunityPage() {
       case "nutritionist":
         return "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400";
       default:
-        return "bg-gray-100 text-gray-600 dark:bg-gray-900/30 dark:text-gray-400";
+        return "bg-slate-100 text-slate-600 dark:bg-slate-900/30 dark:text-slate-400";
     }
   };
 
@@ -301,7 +301,7 @@ export default function CommunityPage() {
           {/* Main Content */}
           <div className="flex-1 space-y-6">
             {/* Create Post */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 {t("createPost.title")}
               </h3>
@@ -310,7 +310,7 @@ export default function CommunityPage() {
                 value={newPost}
                 onChange={(e) => setNewPost(e.target.value)}
                 placeholder={t("createPost.placeholder")}
-                className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+                className="w-full px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
                 rows={3}
               />
 
@@ -330,7 +330,7 @@ export default function CommunityPage() {
               {posts.map((post) => (
                 <div
                   key={post.id}
-                  className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700"
+                  className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700"
                 >
                   {/* Post Header */}
                   <div className="flex items-center space-x-3 mb-4">
@@ -430,7 +430,7 @@ export default function CommunityPage() {
                                 </span>
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
+                                <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3">
                                   <div className="flex items-center space-x-2 mb-1">
                                     <h5 className="text-sm font-medium text-gray-900 dark:text-white">
                                       {comment.author.name}
@@ -504,7 +504,7 @@ export default function CommunityPage() {
                               }))
                             }
                             placeholder="Napisz komentarz..."
-                            className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+                            className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
                             rows={2}
                           />
                           <div className="mt-2 flex justify-end">
@@ -533,7 +533,7 @@ export default function CommunityPage() {
 
           {/* Online Users Sidebar */}
           <div className="w-80">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 sticky top-8">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700 sticky top-8">
               <div className="flex items-center space-x-2 mb-6">
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -548,7 +548,7 @@ export default function CommunityPage() {
                 {onlineUsers.map((user) => (
                   <div
                     key={user.id}
-                    className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                    className="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
                   >
                     <div className="relative">
                       <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
@@ -596,9 +596,9 @@ export default function CommunityPage() {
                       .map((user) => (
                         <div
                           key={user.id}
-                          className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                          className="flex items-center space-x-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
                         >
-                          <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                          <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
                             <span className="text-gray-600 dark:text-gray-400 font-semibold text-xs">
                               {user.name.charAt(0)}
                             </span>

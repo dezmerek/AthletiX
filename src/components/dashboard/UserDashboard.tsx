@@ -240,7 +240,7 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
       case "community":
         return "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400";
       default:
-        return "bg-gray-100 text-gray-600 dark:bg-gray-900/30 dark:text-gray-400";
+        return "bg-slate-100 text-slate-600 dark:bg-slate-900/30 dark:text-slate-400";
     }
   };
 
@@ -263,7 +263,7 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
             <Link
               key={stat.id}
               href={stat.href}
-              className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-200 hover:scale-105"
+              className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700 hover:shadow-xl transition-all duration-200 hover:scale-105"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="p-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white">
@@ -293,7 +293,7 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Recent Activity */}
           <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                   Ostatnia aktywność
@@ -310,7 +310,7 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
                 {recentActivities.map((activity) => (
                   <div
                     key={activity.id}
-                    className="flex items-start space-x-4 p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                    className="flex items-start space-x-4 p-4 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
                   >
                     <div
                       className={`p-2 rounded-lg ${getActivityColor(
@@ -339,7 +339,7 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
           {/* Quick Actions & Today's Plan */}
           <div className="space-y-6">
             {/* Quick Actions */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 Szybkie akcje
               </h3>
@@ -405,7 +405,7 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
             </div>
 
             {/* Today's Plan */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 Plan na dziś
               </h3>
@@ -422,7 +422,7 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
                   </div>
                 </div>
                 <div className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600">
-                  <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                  <div className="w-2 h-2 bg-slate-300 rounded-full"></div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
                       Kolacja białkowa

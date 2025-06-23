@@ -516,7 +516,7 @@ export default function SettingsPage() {
           } gap-8`}
         >
           {/* Profile settings */}
-          <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
             <div className="flex items-center mb-8">
               <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
                 <svg
@@ -567,7 +567,7 @@ export default function SettingsPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder={session?.user?.name || ""}
-                  className="mt-1 block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white transition-colors duration-200"
+                  className="mt-1 block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white transition-colors duration-200"
                 />
               </div>
               <div>
@@ -583,7 +583,7 @@ export default function SettingsPage() {
                   name="email"
                   value={session?.user?.email || ""}
                   disabled
-                  className="mt-1 block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                  className="mt-1 block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                 />
               </div>
               <div className="mt-auto">
@@ -605,7 +605,7 @@ export default function SettingsPage() {
           </div>{" "}
           {/* Email settings */}
           {hasPassword && (
-            <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
               <div className="flex items-center mb-8">
                 <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
                   <svg
@@ -690,7 +690,7 @@ export default function SettingsPage() {
                           id="currentEmailDisplay"
                           value={session?.user?.email || ""}
                           disabled
-                          className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm text-slate-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                          className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                         />
                       </div>
                       <div>
@@ -705,7 +705,7 @@ export default function SettingsPage() {
                           id="newEmail"
                           value={newEmail}
                           onChange={(e) => setNewEmail(e.target.value)}
-                          className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors duration-200"
+                          className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors duration-200"
                         />
                       </div>
                       <div>
@@ -720,7 +720,7 @@ export default function SettingsPage() {
                           id="confirmEmail"
                           value={confirmEmail}
                           onChange={(e) => setConfirmEmail(e.target.value)}
-                          className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors duration-200"
+                          className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors duration-200"
                         />
                       </div>
                     </div>
@@ -745,7 +745,7 @@ export default function SettingsPage() {
             </div>
           )}
           {/* Password */}
-          <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
             <div className="flex items-center mb-8">
               <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
                 <svg
@@ -805,7 +805,7 @@ export default function SettingsPage() {
                       id="currentPassword"
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors duration-200"
+                      className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors duration-200"
                     />
                   </div>
                 )}
@@ -821,7 +821,7 @@ export default function SettingsPage() {
                     id="newPassword"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors duration-200"
+                    className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors duration-200"
                   />
                 </div>
                 <div>
@@ -836,7 +836,7 @@ export default function SettingsPage() {
                     id="confirmPassword"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors duration-200"
+                    className="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors duration-200"
                   />
                 </div>
               </div>
@@ -861,7 +861,7 @@ export default function SettingsPage() {
             </form>
           </div>
           {/* Connected accounts */}
-          <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
             <div className="flex items-center mb-8">
               <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
                 <svg
@@ -896,7 +896,7 @@ export default function SettingsPage() {
                 </div>
               )}
 
-              <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm">
+              <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800">
                 <div className="flex items-center space-x-3">
                   <svg className="h-6 w-6" viewBox="0 0 24 24">
                     <path
@@ -952,7 +952,7 @@ export default function SettingsPage() {
             </div>
           </div>
           {/* Delete account */}
-          <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col">
             <div className="flex items-center mb-8">
               <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center">
                 <svg

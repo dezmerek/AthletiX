@@ -124,7 +124,7 @@ export default function RoleSelectionPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center px-4">
       <div className="max-w-4xl w-full">
         {/* Header */}
         <div className="text-center mb-12">
@@ -161,7 +161,7 @@ export default function RoleSelectionPage() {
               className={`relative p-8 rounded-2xl border-2 cursor-pointer transition-all duration-300 hover:scale-105 ${
                 selectedRoles.includes(role.id)
                   ? `border-transparent bg-gradient-to-br ${role.bgGradient} shadow-2xl`
-                  : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600"
+                  : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600"
               }`}
             >
               {/* Selection indicator */}
@@ -238,7 +238,7 @@ export default function RoleSelectionPage() {
             className={`px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 ${
               selectedRoles.length > 0 && !isLoading
                 ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:shadow-lg hover:scale-105"
-                : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                : "bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed"
             }`}
           >
             {isLoading ? (

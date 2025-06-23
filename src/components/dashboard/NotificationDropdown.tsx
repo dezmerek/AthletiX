@@ -133,7 +133,7 @@ export default function NotificationDropdown({
         );
       default:
         return (
-          <div className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+          <div className="w-8 h-8 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center">
             <svg
               className="w-4 h-4 text-gray-500"
               fill="none"
@@ -180,7 +180,7 @@ export default function NotificationDropdown({
   return (
     <div
       ref={dropdownRef}
-      className="absolute top-12 right-0 w-96 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+      className="absolute top-12 right-0 w-96 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 z-50"
     >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
@@ -224,7 +224,7 @@ export default function NotificationDropdown({
                 onClick={() => markAsRead(notification.id)}
                 className={`p-4 cursor-pointer transition-colors ${
                   notification.isRead
-                    ? "hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                    ? "hover:bg-slate-50 dark:hover:bg-slate-700/50"
                     : "bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30"
                 }`}
               >
