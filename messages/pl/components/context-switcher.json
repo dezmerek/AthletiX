@@ -1,0 +1,13 @@
+{
+  "userMode": "Tryb użytkownika",
+  "professionalMode": "Tryb profesjonalny",
+  "user": "Użytkownik",
+  "userPro": "Użytkownik PRO",
+  "professional": "Profesjonalista",
+  "professionalPro": "Profesjonalista PRO",
+  "administrator": "Administrator",
+  "administratorPro": "Administrator PRO",
+  "manageRoles": "Zarządzaj rolami",
+  "switchMode": "Przełącz tryb",
+  "selectMode": "Wybierz w jakim trybie chcesz działać"
+}

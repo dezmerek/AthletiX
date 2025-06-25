@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { canActAsProfessional, canActAsUser } from "@/utils/roleUtils";
 
 interface Context {
@@ -32,6 +33,7 @@ export default function ContextSwitcher({
   >(propActiveContext);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const t = useTranslations("contextSwitcher");
 
   // Normalize roles to array, filter out null values
   const roles = Array.isArray(userRole)
@@ -47,23 +49,25 @@ export default function ContextSwitcher({
   if (canActAsUser({ role: userRole })) {
     availableContexts.push({
       id: "user",
-      name: "Tryb użytkownika",
-      role: isPremiumPersonal ? "Użytkownik PRO" : "Użytkownik",
+      name: t("userMode"),
+      role: isPremiumPersonal ? t("userPro") : t("user"),
     });
   }
 
   // Add professional context only if user can act as professional
   if (canActAsProfessional({ role: userRole })) {
     const professionalRole = roles.includes("professional")
-      ? "Profesjonalista"
-      : "Administrator";
+      ? t("professional")
+      : t("administrator");
 
     availableContexts.push({
       id: "professional",
-      name: "Tryb profesjonalny",
+      name: t("professionalMode"),
       role:
-        isPremiumProfessional && roles.includes("professional")
-          ? `${professionalRole} PRO`
+        isPremiumProfessional
+          ? roles.includes("professional")
+            ? t("professionalPro")
+            : t("administratorPro")
           : professionalRole,
     });
   }
@@ -212,7 +216,7 @@ export default function ContextSwitcher({
                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"
               />
             </svg>
-            <span>Zarządzaj rolami</span>
+            <span>{t("manageRoles")}</span>
           </button>
         </div>
       </div>

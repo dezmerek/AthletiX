@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { canActAsProfessional, canActAsUser } from "@/utils/roleUtils";
 
 interface Context {
@@ -32,6 +33,7 @@ export default function ContextSwitcherModal({
 }: ContextSwitcherModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const t = useTranslations("contextSwitcher");
 
   // Normalize roles to array, filter out null values
   const roles = Array.isArray(userRole)
@@ -50,23 +52,25 @@ export default function ContextSwitcherModal({
   if (canActAsUser({ role: userRole })) {
     availableContexts.push({
       id: "user",
-      name: "Tryb użytkownika",
-      role: isPremiumPersonal ? "Użytkownik PRO" : "Użytkownik",
+      name: t("userMode"),
+      role: isPremiumPersonal ? t("userPro") : t("user"),
     });
   }
 
   // Add professional context only if user can act as professional
   if (canActAsProfessional({ role: userRole })) {
     const professionalRole = roles.includes("professional")
-      ? "Profesjonalista"
-      : "Administrator";
+      ? t("professional")
+      : t("administrator");
 
     availableContexts.push({
       id: "professional",
-      name: "Tryb profesjonalny",
+      name: t("professionalMode"),
       role:
-        isPremiumProfessional && roles.includes("professional")
-          ? `${professionalRole} PRO`
+        isPremiumProfessional
+          ? roles.includes("professional")
+            ? t("professionalPro")
+            : t("administratorPro")
           : professionalRole,
     });
   }
@@ -116,10 +120,10 @@ export default function ContextSwitcherModal({
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
           <div>
             <div className="text-lg font-semibold text-slate-900 dark:text-white">
-              Przełącz tryb
+              {t("switchMode")}
             </div>
             <div className="text-sm text-slate-500 dark:text-slate-400">
-              Wybierz w jakim trybie chcesz działać
+              {t("selectMode")}
             </div>
           </div>
           <button
@@ -221,7 +225,7 @@ export default function ContextSwitcherModal({
                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"
               />
             </svg>
-            <span>Zarządzaj trybami</span>
+            <span>{t("manageRoles")}</span>
           </button>
         </div>
       </div>

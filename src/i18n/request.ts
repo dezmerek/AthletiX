@@ -26,6 +26,8 @@ export default getRequestConfig(async () => {
       .default,
     sidebar: (await import(`../../messages/${locale}/components/sidebar.json`))
       .default,
+    contextSwitcher: (await import(`../../messages/${locale}/components/context-switcher.json`))
+      .default,
 
     // Containers
     HeroSection: (await import(`../../messages/${locale}/containers/hero.json`))
