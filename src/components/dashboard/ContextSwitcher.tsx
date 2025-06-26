@@ -63,12 +63,11 @@ export default function ContextSwitcher({
     availableContexts.push({
       id: "professional",
       name: t("professionalMode"),
-      role:
-        isPremiumProfessional
-          ? roles.includes("professional")
-            ? t("professionalPro")
-            : t("administratorPro")
-          : professionalRole,
+      role: isPremiumProfessional
+        ? roles.includes("professional")
+          ? t("professionalPro")
+          : t("administrator")
+        : professionalRole,
     });
   }
 
@@ -107,7 +106,7 @@ export default function ContextSwitcher({
     setActiveContext(contextId);
     onContextChange?.(contextId);
     setIsOpen(false);
-    console.log("Przełączono na tryb:", contextId);
+    console.log("Switched to mode:", contextId);
   };
 
   // Don't render if no roles or no current context

@@ -2,6 +2,8 @@
  * Utility functions for role management and display
  */
 
+import { useTranslations } from "next-intl";
+
 export interface UserRoleData {
   role?: string | string[] | null;
   activeContext?: "user" | "professional" | null;
@@ -10,7 +12,104 @@ export interface UserRoleData {
 }
 
 /**
- * Get display name for user's current role/context
+ * Hook to get role display name with translations
+ */
+export function useRoleDisplayName(user: UserRoleData): string {
+  const t = useTranslations("roleUtils");
+
+  // If no role is selected, show role selection prompt
+  if (!user.role || (Array.isArray(user.role) && user.role.length === 0)) {
+    return t("selectRole");
+  }
+
+  // Normalize roles to array
+  const roles = Array.isArray(user.role) ? user.role : [user.role];
+
+  // Handle admin role first
+  if (roles.includes("admin")) {
+    return t("administrator");
+  }
+
+  // Handle based on active context
+  switch (user.activeContext) {
+    case "user":
+      return user.isPremiumPersonal ? t("userPro") : t("user");
+
+    case "professional":
+      // Check if it's admin acting as professional
+      if (roles.includes("admin")) {
+        return t("administrator");
+      }
+      return user.isPremiumProfessional
+        ? t("professionalPro")
+        : t("professional");
+
+    default:
+      // No active context set
+      if (roles.includes("professional")) {
+        return user.isPremiumProfessional
+          ? t("professionalPro")
+          : t("professional");
+      }
+      if (roles.includes("user")) {
+        return user.isPremiumPersonal ? t("userPro") : t("user");
+      }
+      return t("selectRole");
+  }
+}
+
+/**
+ * Get display name for user's current role/context with translations
+ * @deprecated Use useRoleDisplayName hook instead
+ */
+export function getRoleDisplayNameWithTranslations(
+  user: UserRoleData,
+  t: (key: string) => string
+): string {
+  // If no role is selected, show role selection prompt
+  if (!user.role || (Array.isArray(user.role) && user.role.length === 0)) {
+    return t("selectRole");
+  }
+
+  // Normalize roles to array
+  const roles = Array.isArray(user.role) ? user.role : [user.role];
+
+  // Handle admin role first
+  if (roles.includes("admin")) {
+    return t("administrator");
+  }
+
+  // Handle based on active context
+  switch (user.activeContext) {
+    case "user":
+      return user.isPremiumPersonal ? t("userPro") : t("user");
+
+    case "professional":
+      // Check if it's admin acting as professional
+      if (roles.includes("admin")) {
+        return t("administrator");
+      }
+      return user.isPremiumProfessional
+        ? t("professionalPro")
+        : t("professional");
+
+    default:
+      // No active context set
+      if (roles.includes("professional")) {
+        return user.isPremiumProfessional
+          ? t("professionalPro")
+          : t("professional");
+      }
+      if (roles.includes("user")) {
+        return user.isPremiumPersonal ? t("userPro") : t("user");
+      }
+      return t("selectRole");
+  }
+}
+
+/**
+ * Get display name for user's current role/context (legacy - Polish only)
+ * @deprecated Use getRoleDisplayNameWithTranslations instead
  */
 export function getRoleDisplayName(user: UserRoleData): string {
   // If no role is selected, show role selection prompt

@@ -6,8 +6,8 @@
   "professional": "Profesjonalista",
   "professionalPro": "Profesjonalista PRO",
   "administrator": "Administrator",
-  "administratorPro": "Administrator PRO",
   "manageRoles": "Zarządzaj rolami",
   "switchMode": "Przełącz tryb",
-  "selectMode": "Wybierz w jakim trybie chcesz działać"
+  "selectMode": "Wybierz w jakim trybie chcesz działać",
+  "selectRole": "Wybierz rolę"
 }

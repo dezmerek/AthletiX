@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import type { IUser as User } from "@/models/User";
-import { getRoleDisplayName } from "@/utils/roleUtils";
+import { useRoleDisplayName } from "@/utils/roleUtils";
 
 interface Props {
   user: User;
@@ -17,6 +17,7 @@ export default function UserMenu({ user, onLogout }: Props) {
   const menuRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("Navbar");
   const router = useRouter();
+  const roleDisplayName = useRoleDisplayName(user);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -57,7 +58,7 @@ export default function UserMenu({ user, onLogout }: Props) {
         <div className="text-left hidden sm:block">
           <div className="text-sm font-semibold">{user.name}</div>
           <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
-            {getRoleDisplayName(user)}
+            {roleDisplayName}
           </div>
         </div>{" "}
         <svg

@@ -66,12 +66,11 @@ export default function ContextSwitcherModal({
     availableContexts.push({
       id: "professional",
       name: t("professionalMode"),
-      role:
-        isPremiumProfessional
-          ? roles.includes("professional")
-            ? t("professionalPro")
-            : t("administratorPro")
-          : professionalRole,
+      role: isPremiumProfessional
+        ? roles.includes("professional")
+          ? t("professionalPro")
+          : t("administrator")
+        : professionalRole,
     });
   }
 
