@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 export default function RoleSelectionPage() {
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { data: session, update } = useSession();
+  const t = useTranslations("auth.roleSelection");
 
   // Preselect current user roles when component mounts
   useEffect(() => {
@@ -65,13 +67,13 @@ export default function RoleSelectionPage() {
   const roles = [
     {
       id: "user",
-      title: "Użytkownik",
-      description: "Śledzę swoje treningi, dietę i postępy",
+      title: t("user.title"),
+      description: t("user.description"),
       features: [
-        "Plany treningowe",
-        "Śledzenie postępów",
-        "Dieta i kalorie",
-        "Społeczność",
+        t("user.features.workoutPlans"),
+        t("user.features.progressTracking"),
+        t("user.features.dietCalories"),
+        t("user.features.community"),
       ],
       icon: (
         <svg
@@ -94,13 +96,13 @@ export default function RoleSelectionPage() {
     },
     {
       id: "professional",
-      title: "Profesjonalista",
-      description: "Pomagam klientom osiągać cele fitness",
+      title: t("professional.title"),
+      description: t("professional.description"),
       features: [
-        "Zarządzanie klientami",
-        "Tworzenie planów",
-        "Analityka i raporty",
-        "Kalendarz wizyt",
+        t("professional.features.clientManagement"),
+        t("professional.features.planCreation"),
+        t("professional.features.analyticsReports"),
+        t("professional.features.appointmentCalendar"),
       ],
       icon: (
         <svg
@@ -132,21 +134,21 @@ export default function RoleSelectionPage() {
             {session?.user?.role &&
             Array.isArray(session.user.role) &&
             session.user.role.length > 0
-              ? "Zarządzaj rolami"
-              : "Wybierz typ konta"}
+              ? t("manageRoles")
+              : t("selectAccountType")}
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400 mb-2">
             {session?.user?.role &&
             Array.isArray(session.user.role) &&
             session.user.role.length > 0
-              ? "Dostosuj swoje role w AthletiX"
-              : "Dostosujemy AthletiX do Twoich potrzeb"}
+              ? t("manageDescription")
+              : t("selectDescription")}
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-500">
-            Możesz wybrać jedną lub obie role
+            {t("canSelectMultiple")}
             {selectedRoles.length > 0 && (
               <span className="ml-2 px-2 py-1 bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-full text-xs font-medium">
-                {selectedRoles.length} wybrane
+                {selectedRoles.length} {t("selectedCount")}
               </span>
             )}
           </p>
@@ -263,14 +265,14 @@ export default function RoleSelectionPage() {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                Zapisywanie...
+                {t("buttons.saving")}
               </div>
             ) : selectedRoles.length === 1 ? (
-              "Kontynuuj z 1 rolą"
+              t("buttons.continueWith1Role")
             ) : selectedRoles.length === 2 ? (
-              "Kontynuuj z 2 rolami"
+              t("buttons.continueWith2Roles")
             ) : (
-              "Wybierz przynajmniej jedną rolę"
+              t("buttons.selectAtLeastOne")
             )}
           </button>
 
@@ -282,7 +284,7 @@ export default function RoleSelectionPage() {
                 onClick={() => router.push("/dashboard")}
                 className="px-6 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
               >
-                Anuluj i wróć do dashboard
+                {t("buttons.cancelAndReturn")}
               </button>
             )}
         </div>
@@ -290,7 +292,7 @@ export default function RoleSelectionPage() {
         {/* Note */}
         <div className="text-center mt-6">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Możesz to zmienić później w ustawieniach
+            {t("note")}
           </p>
         </div>
       </div>
