@@ -3,7 +3,11 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { canActAsProfessional, canActAsUser, getRoleDisplayName } from "@/utils/roleUtils";
+import {
+  canActAsProfessional,
+  canActAsUser,
+  getRoleDisplayName,
+} from "@/utils/roleUtils";
 
 interface Context {
   id: "user" | "professional";
@@ -48,13 +52,16 @@ export default function ContextSwitcher({
 
   // Add user context only if user has the role
   if (canActAsUser({ role: userRole })) {
-    const userRoleDisplayName = getRoleDisplayName({
-      role: userRole,
-      activeContext: "user",
-      isPremiumPersonal,
-      isPremiumProfessional
-    }, tRole);
-    
+    const userRoleDisplayName = getRoleDisplayName(
+      {
+        role: userRole,
+        activeContext: "user",
+        isPremiumPersonal,
+        isPremiumProfessional,
+      },
+      tRole
+    );
+
     availableContexts.push({
       id: "user",
       name: t("userMode"),
@@ -64,12 +71,15 @@ export default function ContextSwitcher({
 
   // Add professional context only if user can act as professional
   if (canActAsProfessional({ role: userRole })) {
-    const professionalRoleDisplayName = getRoleDisplayName({
-      role: userRole,
-      activeContext: "professional",
-      isPremiumPersonal,
-      isPremiumProfessional
-    }, tRole);
+    const professionalRoleDisplayName = getRoleDisplayName(
+      {
+        role: userRole,
+        activeContext: "professional",
+        isPremiumPersonal,
+        isPremiumProfessional,
+      },
+      tRole
+    );
 
     availableContexts.push({
       id: "professional",

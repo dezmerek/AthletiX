@@ -39,12 +39,16 @@ export function getRoleDisplayName(
       if (roles.includes("admin")) {
         return t("administrator");
       }
-      return user.isPremiumProfessional ? t("professionalPro") : t("professional");
+      return user.isPremiumProfessional
+        ? t("professionalPro")
+        : t("professional");
 
     default:
       // No active context set
       if (roles.includes("professional")) {
-        return user.isPremiumProfessional ? t("professionalPro") : t("professional");
+        return user.isPremiumProfessional
+          ? t("professionalPro")
+          : t("professional");
       }
       if (roles.includes("user")) {
         return user.isPremiumPersonal ? t("userPro") : t("user");
