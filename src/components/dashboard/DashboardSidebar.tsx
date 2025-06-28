@@ -8,7 +8,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import type { IUser as User } from "@/models/User";
 import ContextSwitcherModal from "./ContextSwitcherModal";
-import { useRoleDisplayName, hasRole } from "@/utils/roleUtils";
+import { getRoleDisplayName, hasRole } from "@/utils/roleUtils";
 
 interface SidebarItem {
   href: string;
@@ -24,6 +24,7 @@ export default function DashboardSidebar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isContextModalOpen, setIsContextModalOpen] = useState(false);
   const t = useTranslations("sidebar");
+  const tRole = useTranslations("roleUtils");
   const { data: session, update } = useSession();
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -41,8 +42,8 @@ export default function DashboardSidebar() {
       } as User)
     : undefined;
 
-  // Get role display name using hook
-  const roleDisplayName = useRoleDisplayName(user || {});
+  // Get role display name using translations
+  const roleDisplayName = getRoleDisplayName(user || {}, tRole);
 
   // Handle click outside dropdown
   useEffect(() => {
