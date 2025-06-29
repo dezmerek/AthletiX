@@ -1,0 +1,60 @@
+{
+  "welcome": {
+    "title": "Welcome back, {userName}! 👋",
+    "subtitle": "Here's a summary of your fitness activity"
+  },
+  "quickStats": {
+    "workouts": {
+      "title": "Workouts this week",
+      "change": "+2 vs last week"
+    },
+    "calories": {
+      "title": "Calories burned",
+      "change": "+156 vs yesterday"
+    },
+    "weight": {
+      "title": "Current weight",
+      "change": "-0.8 kg vs last month"
+    },
+    "streak": {
+      "title": "Workout streak",
+      "change": "Longest streak!"
+    }
+  },
+  "recentActivity": {
+    "title": "Recent Activity",
+    "viewAll": "View all",
+    "activities": {
+      "workoutCompleted": "{workoutName} workout completed",
+      "calorieGoalReached": "Calorie goal reached",
+      "newMeasurement": "New measurement added",
+      "communityComment": "{userName} commented on your post",
+      "workoutDescription": "Chest, shoulders, triceps • {duration} min",
+      "nutritionDescription": "{current} / {goal} kcal • Protein: {protein}g",
+      "measurementDescription": "Weight: {weight} kg • BMI: {bmi}",
+      "commentDescription": "Great workout! Congratulations!"
+    }
+  },
+  "quickActions": {
+    "title": "Quick Actions",
+    "newWorkout": "New workout",
+    "addMeal": "Add meal",
+    "newMeasurement": "New measurement"
+  },
+  "todayPlan": {
+    "title": "Today's Plan",
+    "workoutPull": "Pull Day Workout",
+    "dinner": "Protein dinner"
+  },
+  "timeFormat": {
+    "minutesAgo": "{minutes}m ago",
+    "hoursAgo": "{hours}h ago",
+    "daysAgo": "{days}d ago"
+  },
+  "professional": {
+    "welcome": {
+      "title": "Welcome, {userName}!",
+      "subtitle": "Professional Panel - manage clients and training programs"
+    }
+  }
+}

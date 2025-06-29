@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface QuickStat {
   id: string;
@@ -26,13 +27,15 @@ interface UserDashboardProps {
 }
 
 export default function UserDashboard({ userName }: UserDashboardProps) {
+  const t = useTranslations("dashboard");
+  
   // Statystyki dla użytkowników
   const quickStats: QuickStat[] = [
     {
       id: "workouts",
-      title: "Treningi w tym tygodniu",
+      title: t("quickStats.workouts.title"),
       value: "4",
-      change: "+2 vs ostatni tydzień",
+      change: t("quickStats.workouts.change"),
       isPositive: true,
       href: "/dashboard/workouts",
       icon: (
@@ -53,9 +56,9 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
     },
     {
       id: "calories",
-      title: "Spalone kalorie",
+      title: t("quickStats.calories.title"),
       value: "2,847",
-      change: "+156 vs wczoraj",
+      change: t("quickStats.calories.change"),
       isPositive: true,
       href: "/dashboard/nutrition",
       icon: (
@@ -76,9 +79,9 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
     },
     {
       id: "weight",
-      title: "Obecna waga",
+      title: t("quickStats.weight.title"),
       value: "72.5 kg",
-      change: "-0.8 kg vs miesiąc temu",
+      change: t("quickStats.weight.change"),
       isPositive: true,
       href: "/dashboard/progress",
       icon: (
@@ -99,9 +102,9 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
     },
     {
       id: "streak",
-      title: "Seria treningów",
+      title: t("quickStats.streak.title"),
       value: "12 dni",
-      change: "Najdłuższa seria!",
+      change: t("quickStats.streak.change"),
       isPositive: true,
       href: "/dashboard/calendar",
       icon: (
@@ -127,8 +130,8 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
     {
       id: "1",
       type: "workout",
-      title: "Trening Push Day zakończony",
-      description: "Klatka piersiowa, ramiona, triceps • 75 min",
+      title: t("recentActivity.activities.workoutCompleted", { workoutName: "Push Day" }),
+      description: t("recentActivity.activities.workoutDescription", { duration: "75" }),
       timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2h temu
       icon: (
         <svg
@@ -149,8 +152,12 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
     {
       id: "2",
       type: "nutrition",
-      title: "Cel kaloryczny osiągnięty",
-      description: "2,350 / 2,400 kcal • Białko: 140g",
+      title: t("recentActivity.activities.calorieGoalReached"),
+      description: t("recentActivity.activities.nutritionDescription", { 
+        current: "2,350", 
+        goal: "2,400", 
+        protein: "140" 
+      }),
       timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4h temu
       icon: (
         <svg
@@ -171,8 +178,11 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
     {
       id: "3",
       type: "progress",
-      title: "Nowy pomiar dodany",
-      description: "Waga: 72.5 kg • BMI: 23.1",
+      title: t("recentActivity.activities.newMeasurement"),
+      description: t("recentActivity.activities.measurementDescription", { 
+        weight: "72.5", 
+        bmi: "23.1" 
+      }),
       timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 dzień temu
       icon: (
         <svg
@@ -193,8 +203,8 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
     {
       id: "4",
       type: "community",
-      title: "Anna Kowalska skomentowała Twój post",
-      description: "Świetny trening! Gratulacje!",
+      title: t("recentActivity.activities.communityComment", { userName: "Anna Kowalska" }),
+      description: t("recentActivity.activities.commentDescription"),
       timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 dni temu
       icon: (
         <svg
@@ -221,11 +231,11 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
     );
 
     if (diffInMinutes < 60) {
-      return `${diffInMinutes}m temu`;
+      return t("timeFormat.minutesAgo", { minutes: diffInMinutes });
     } else if (diffInMinutes < 1440) {
-      return `${Math.floor(diffInMinutes / 60)}h temu`;
+      return t("timeFormat.hoursAgo", { hours: Math.floor(diffInMinutes / 60) });
     } else {
-      return `${Math.floor(diffInMinutes / 1440)}d temu`;
+      return t("timeFormat.daysAgo", { days: Math.floor(diffInMinutes / 1440) });
     }
   };
 
@@ -250,10 +260,10 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
         {/* Welcome Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Witaj ponownie, {userName}! 👋
+            {t("welcome.title", { userName })}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Oto podsumowanie Twojej aktywności fitness
+            {t("welcome.subtitle")}
           </p>
         </div>
 
@@ -296,13 +306,13 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
             <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Ostatnia aktywność
+                  {t("recentActivity.title")}
                 </h2>
                 <Link
                   href="/dashboard/progress"
                   className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
                 >
-                  Zobacz wszystko
+                  {t("recentActivity.viewAll")}
                 </Link>
               </div>
 
@@ -341,7 +351,7 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
             {/* Quick Actions */}
             <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Szybkie akcje
+                {t("quickActions.title")}
               </h3>
               <div className="space-y-3">
                 <Link
@@ -361,7 +371,7 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
                       d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                     />
                   </svg>
-                  <span className="font-medium">Nowy trening</span>
+                  <span className="font-medium">{t("quickActions.newWorkout")}</span>
                 </Link>
                 <Link
                   href="/dashboard/nutrition"
@@ -380,7 +390,7 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
                       d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                     />
                   </svg>
-                  <span className="font-medium">Dodaj posiłek</span>
+                  <span className="font-medium">{t("quickActions.addMeal")}</span>
                 </Link>
                 <Link
                   href="/dashboard/progress"
@@ -399,7 +409,7 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
                       d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                     />
                   </svg>
-                  <span className="font-medium">Nowy pomiar</span>
+                  <span className="font-medium">{t("quickActions.newMeasurement")}</span>
                 </Link>
               </div>
             </div>
@@ -407,14 +417,14 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
             {/* Today's Plan */}
             <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Plan na dziś
+                {t("todayPlan.title")}
               </h3>
               <div className="space-y-3">
                 <div className="flex items-center space-x-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20">
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
-                      Trening Pull Day
+                      {t("todayPlan.workoutPull")}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       18:00 - 19:30
@@ -425,7 +435,7 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
                   <div className="w-2 h-2 bg-slate-300 rounded-full"></div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
-                      Kolacja białkowa
+                      {t("todayPlan.dinner")}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       20:00

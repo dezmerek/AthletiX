@@ -537,7 +537,7 @@ export default function CommunityPage() {
               <div className="flex items-center space-x-2 mb-6">
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Użytkownicy online
+                  {t("onlineUsers.title")}
                 </h3>
                 <span className="text-sm text-gray-500 dark:text-gray-400">
                   ({onlineUsers.filter((user) => user.isOnline).length})
@@ -576,7 +576,7 @@ export default function CommunityPage() {
                       </div>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         {user.isOnline
-                          ? "Online"
+                          ? t("onlineUsers.online")
                           : `${formatTimestamp(user.lastSeen)}`}
                       </p>
                     </div>
@@ -588,7 +588,7 @@ export default function CommunityPage() {
                 <>
                   <div className="border-t border-gray-200 dark:border-gray-700 my-4"></div>
                   <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                    Ostatnio aktywni
+                    {t("onlineUsers.recentlyActive")}
                   </h4>
                   <div className="space-y-2">
                     {onlineUsers

@@ -1,0 +1,60 @@
+{
+  "welcome": {
+    "title": "Witaj ponownie, {userName}! 👋",
+    "subtitle": "Oto podsumowanie Twojej aktywności fitness"
+  },
+  "quickStats": {
+    "workouts": {
+      "title": "Treningi w tym tygodniu",
+      "change": "+2 vs ostatni tydzień"
+    },
+    "calories": {
+      "title": "Spalone kalorie",
+      "change": "+156 vs wczoraj"
+    },
+    "weight": {
+      "title": "Obecna waga",
+      "change": "-0.8 kg vs miesiąc temu"
+    },
+    "streak": {
+      "title": "Seria treningów",
+      "change": "Najdłuższa seria!"
+    }
+  },
+  "recentActivity": {
+    "title": "Ostatnia aktywność",
+    "viewAll": "Zobacz wszystko",
+    "activities": {
+      "workoutCompleted": "Trening {workoutName} zakończony",
+      "calorieGoalReached": "Cel kaloryczny osiągnięty",
+      "newMeasurement": "Nowy pomiar dodany",
+      "communityComment": "{userName} skomentowała Twój post",
+      "workoutDescription": "Klatka piersiowa, ramiona, triceps • {duration} min",
+      "nutritionDescription": "{current} / {goal} kcal • Białko: {protein}g",
+      "measurementDescription": "Waga: {weight} kg • BMI: {bmi}",
+      "commentDescription": "Świetny trening! Gratulacje!"
+    }
+  },
+  "quickActions": {
+    "title": "Szybkie akcje",
+    "newWorkout": "Nowy trening",
+    "addMeal": "Dodaj posiłek",
+    "newMeasurement": "Nowy pomiar"
+  },
+  "todayPlan": {
+    "title": "Plan na dziś",
+    "workoutPull": "Trening Pull Day",
+    "dinner": "Kolacja białkowa"
+  },
+  "timeFormat": {
+    "minutesAgo": "{minutes}m temu",
+    "hoursAgo": "{hours}h temu", 
+    "daysAgo": "{days}d temu"
+  },
+  "professional": {
+    "welcome": {
+      "title": "Witaj, {userName}!",
+      "subtitle": "Panel profesjonalisty - zarządzaj klientami i programami treningowymi"
+    }
+  }
+}

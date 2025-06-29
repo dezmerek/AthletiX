@@ -77,6 +77,8 @@ export default getRequestConfig(async () => {
       .default,
     roleUtils: (await import(`../../messages/${locale}/roleUtils.json`))
       .default,
+    dashboard: (await import(`../../messages/${locale}/dashboard.json`))
+      .default,
   };
 
   return {

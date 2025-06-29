@@ -52,5 +52,10 @@
   },
   "featured": {
     "title": "Featured professionals"
+  },
+  "onlineUsers": {
+    "title": "Online Users",
+    "recentlyActive": "Recently Active",
+    "online": "Online"
   }
 }

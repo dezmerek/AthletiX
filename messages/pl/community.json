@@ -52,5 +52,10 @@
   },
   "featured": {
     "title": "Polecani specjaliści"
+  },
+  "onlineUsers": {
+    "title": "Użytkownicy online",
+    "recentlyActive": "Ostatnio aktywni",
+    "online": "Online"
   }
 }
