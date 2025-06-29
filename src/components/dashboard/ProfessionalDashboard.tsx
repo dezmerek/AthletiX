@@ -10,7 +10,7 @@ export default function ProfessionalDashboard({
   userName,
 }: ProfessionalDashboardProps) {
   const t = useTranslations("dashboard");
-  
+
   return (
     <div className="p-8">
       <div className="max-w-7xl mx-auto space-y-8">

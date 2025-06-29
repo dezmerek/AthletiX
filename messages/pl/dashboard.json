@@ -48,7 +48,7 @@
   },
   "timeFormat": {
     "minutesAgo": "{minutes}m temu",
-    "hoursAgo": "{hours}h temu", 
+    "hoursAgo": "{hours}h temu",
     "daysAgo": "{days}d temu"
   },
   "professional": {

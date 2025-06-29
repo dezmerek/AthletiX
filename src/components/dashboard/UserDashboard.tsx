@@ -28,7 +28,7 @@ interface UserDashboardProps {
 
 export default function UserDashboard({ userName }: UserDashboardProps) {
   const t = useTranslations("dashboard");
-  
+
   // Statystyki dla użytkowników
   const quickStats: QuickStat[] = [
     {
@@ -130,8 +130,12 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
     {
       id: "1",
       type: "workout",
-      title: t("recentActivity.activities.workoutCompleted", { workoutName: "Push Day" }),
-      description: t("recentActivity.activities.workoutDescription", { duration: "75" }),
+      title: t("recentActivity.activities.workoutCompleted", {
+        workoutName: "Push Day",
+      }),
+      description: t("recentActivity.activities.workoutDescription", {
+        duration: "75",
+      }),
       timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2h temu
       icon: (
         <svg
@@ -153,10 +157,10 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
       id: "2",
       type: "nutrition",
       title: t("recentActivity.activities.calorieGoalReached"),
-      description: t("recentActivity.activities.nutritionDescription", { 
-        current: "2,350", 
-        goal: "2,400", 
-        protein: "140" 
+      description: t("recentActivity.activities.nutritionDescription", {
+        current: "2,350",
+        goal: "2,400",
+        protein: "140",
       }),
       timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4h temu
       icon: (
@@ -179,9 +183,9 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
       id: "3",
       type: "progress",
       title: t("recentActivity.activities.newMeasurement"),
-      description: t("recentActivity.activities.measurementDescription", { 
-        weight: "72.5", 
-        bmi: "23.1" 
+      description: t("recentActivity.activities.measurementDescription", {
+        weight: "72.5",
+        bmi: "23.1",
       }),
       timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 dzień temu
       icon: (
@@ -203,7 +207,9 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
     {
       id: "4",
       type: "community",
-      title: t("recentActivity.activities.communityComment", { userName: "Anna Kowalska" }),
+      title: t("recentActivity.activities.communityComment", {
+        userName: "Anna Kowalska",
+      }),
       description: t("recentActivity.activities.commentDescription"),
       timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 dni temu
       icon: (
@@ -233,9 +239,13 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
     if (diffInMinutes < 60) {
       return t("timeFormat.minutesAgo", { minutes: diffInMinutes });
     } else if (diffInMinutes < 1440) {
-      return t("timeFormat.hoursAgo", { hours: Math.floor(diffInMinutes / 60) });
+      return t("timeFormat.hoursAgo", {
+        hours: Math.floor(diffInMinutes / 60),
+      });
     } else {
-      return t("timeFormat.daysAgo", { days: Math.floor(diffInMinutes / 1440) });
+      return t("timeFormat.daysAgo", {
+        days: Math.floor(diffInMinutes / 1440),
+      });
     }
   };
 
@@ -371,7 +381,9 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
                       d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                     />
                   </svg>
-                  <span className="font-medium">{t("quickActions.newWorkout")}</span>
+                  <span className="font-medium">
+                    {t("quickActions.newWorkout")}
+                  </span>
                 </Link>
                 <Link
                   href="/dashboard/nutrition"
@@ -390,7 +402,9 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
                       d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                     />
                   </svg>
-                  <span className="font-medium">{t("quickActions.addMeal")}</span>
+                  <span className="font-medium">
+                    {t("quickActions.addMeal")}
+                  </span>
                 </Link>
                 <Link
                   href="/dashboard/progress"
@@ -409,7 +423,9 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
                       d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                     />
                   </svg>
-                  <span className="font-medium">{t("quickActions.newMeasurement")}</span>
+                  <span className="font-medium">
+                    {t("quickActions.newMeasurement")}
+                  </span>
                 </Link>
               </div>
             </div>
