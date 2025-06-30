@@ -24,26 +24,21 @@ export function getRoleDisplayName(
   // Normalize roles to array
   const roles = Array.isArray(user.role) ? user.role : [user.role];
 
-  // Handle admin role first
-  if (roles.includes("admin")) {
-    return t("administrator");
-  }
-
   // Handle based on active context
   switch (user.activeContext) {
     case "user":
       return user.isPremiumPersonal ? t("userPro") : t("user");
 
     case "professional":
-      // Check if it's admin acting as professional
-      if (roles.includes("admin")) {
-        return t("administrator");
-      }
       return user.isPremiumProfessional
         ? t("professionalPro")
         : t("professional");
 
     default:
+      // No active context set - check if admin, otherwise use first available role
+      if (roles.includes("admin")) {
+        return t("administrator");
+      }
       // No active context set
       if (roles.includes("professional")) {
         return user.isPremiumProfessional
