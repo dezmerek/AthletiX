@@ -12,13 +12,13 @@ export default function RoleSelectionPage() {
   const { data: session, update } = useSession();
   const t = useTranslations("auth.roleSelection");
 
-  // Preselect current user roles when component mounts
+  // Preselect current user roles when component mounts (exclude admin - it's a system role)
   useEffect(() => {
     if (session?.user?.role) {
       const currentRoles = Array.isArray(session.user.role)
         ? session.user.role
         : [session.user.role];
-      setSelectedRoles(currentRoles.filter(Boolean)); // Filter out null values
+      setSelectedRoles(currentRoles.filter((role) => role && role !== "admin")); // Filter out null values and admin role
     }
   }, [session?.user?.role]);
 
@@ -28,13 +28,25 @@ export default function RoleSelectionPage() {
     try {
       setIsLoading(true);
 
+      // Preserve admin role if user has it (admin is a system role, not selectable)
+      const currentRoles = Array.isArray(session?.user?.role)
+        ? session.user.role
+        : session?.user?.role
+        ? [session.user.role]
+        : [];
+
+      const hasAdminRole = currentRoles.includes("admin");
+      const finalRoles = hasAdminRole
+        ? [...selectedRoles, "admin"]
+        : selectedRoles;
+
       const response = await fetch("/api/auth/update-role", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: session.user.email,
-          roles: selectedRoles, // Send array of roles
-          activeContext: selectedRoles[0], // Default to first selected role
+          roles: finalRoles, // Send array of roles (including preserved admin if applicable)
+          activeContext: selectedRoles[0], // Default to first selected role (never admin)
         }),
       });
 
@@ -45,8 +57,13 @@ export default function RoleSelectionPage() {
       // Update the session
       await update();
 
-      // Redirect to dashboard
-      router.push("/dashboard");
+      // Force refresh of all server components and then reload page
+      router.refresh();
+
+      // Small delay to ensure refresh is processed
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 100);
     } catch (error) {
       console.error("Error updating role:", error);
       // You could add error handling here

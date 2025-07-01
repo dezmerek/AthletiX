@@ -62,7 +62,9 @@ export default function DashboardSidebar() {
     };
   }, []);
 
-  const handleContextChange = async (contextId: "user" | "professional") => {
+  const handleContextChange = async (
+    contextId: "user" | "professional" | "admin"
+  ) => {
     try {
       const response = await fetch("/api/user/switch-context", {
         method: "POST",

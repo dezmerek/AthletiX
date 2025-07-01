@@ -1,16 +1,17 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   canActAsProfessional,
   canActAsUser,
+  canActAsAdmin,
   getRoleDisplayName,
 } from "@/utils/roleUtils";
 
 interface Context {
-  id: "user" | "professional";
+  id: "user" | "professional" | "admin";
   name: string;
   role: string;
   icon?: string;
@@ -19,11 +20,11 @@ interface Context {
 interface ContextSwitcherModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onContextChange?: (contextId: "user" | "professional") => void;
+  onContextChange?: (contextId: "user" | "professional" | "admin") => void;
   userRole?: string | string[] | null;
   isPremiumPersonal?: boolean;
   isPremiumProfessional?: boolean;
-  activeContext?: "user" | "professional" | null;
+  activeContext?: "user" | "professional" | "admin" | null;
 }
 
 export default function ContextSwitcherModal({
@@ -39,50 +40,74 @@ export default function ContextSwitcherModal({
   const router = useRouter();
   const t = useTranslations("contextSwitcher");
   const tRole = useTranslations("roleUtils");
+  const [availableContexts, setAvailableContexts] = useState<Context[]>([]);
 
   // Use prop directly instead of local state
   const activeContext = propActiveContext;
 
-  // Simple context data based on user role
-  const availableContexts: Context[] = [];
+  // Update available contexts when userRole changes
+  useEffect(() => {
+    const contexts: Context[] = [];
 
-  // Add user context only if user has the role
-  if (canActAsUser({ role: userRole })) {
-    const userRoleDisplayName = getRoleDisplayName(
-      {
-        role: userRole,
-        activeContext: "user",
-        isPremiumPersonal,
-        isPremiumProfessional,
-      },
-      tRole
-    );
+    // Add user context only if user has the role
+    if (canActAsUser({ role: userRole })) {
+      const userRoleDisplayName = getRoleDisplayName(
+        {
+          role: userRole,
+          activeContext: "user",
+          isPremiumPersonal,
+          isPremiumProfessional,
+        },
+        tRole
+      );
 
-    availableContexts.push({
-      id: "user",
-      name: t("userMode"),
-      role: userRoleDisplayName,
-    });
-  }
+      contexts.push({
+        id: "user",
+        name: t("userMode"),
+        role: userRoleDisplayName,
+      });
+    }
 
-  // Add professional context only if user can act as professional
-  if (canActAsProfessional({ role: userRole })) {
-    const professionalRoleDisplayName = getRoleDisplayName(
-      {
-        role: userRole,
-        activeContext: "professional",
-        isPremiumPersonal,
-        isPremiumProfessional,
-      },
-      tRole
-    );
+    // Add professional context only if user can act as professional
+    if (canActAsProfessional({ role: userRole })) {
+      const professionalRoleDisplayName = getRoleDisplayName(
+        {
+          role: userRole,
+          activeContext: "professional",
+          isPremiumPersonal,
+          isPremiumProfessional,
+        },
+        tRole
+      );
 
-    availableContexts.push({
-      id: "professional",
-      name: t("professionalMode"),
-      role: professionalRoleDisplayName,
-    });
-  }
+      contexts.push({
+        id: "professional",
+        name: t("professionalMode"),
+        role: professionalRoleDisplayName,
+      });
+    }
+
+    // Add admin context only if user is admin
+    if (canActAsAdmin({ role: userRole })) {
+      const adminRoleDisplayName = getRoleDisplayName(
+        {
+          role: userRole,
+          activeContext: null, // Admin without context shows as Administrator
+          isPremiumPersonal,
+          isPremiumProfessional,
+        },
+        tRole
+      );
+
+      contexts.push({
+        id: "admin",
+        name: t("adminMode"),
+        role: adminRoleDisplayName,
+      });
+    }
+
+    setAvailableContexts(contexts);
+  }, [userRole, isPremiumPersonal, isPremiumProfessional, t, tRole]);
 
   // Handle click outside
   useEffect(() => {
@@ -111,7 +136,9 @@ export default function ContextSwitcherModal({
     }
   }, [isOpen, onClose]);
 
-  const handleContextSwitch = (contextId: "user" | "professional") => {
+  const handleContextSwitch = (
+    contextId: "user" | "professional" | "admin"
+  ) => {
     onContextChange?.(contextId);
     onClose();
     console.log("Przełączono na tryb:", contextId);

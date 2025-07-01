@@ -1,6 +1,7 @@
 {
   "userMode": "User Mode",
   "professionalMode": "Professional Mode",
+  "adminMode": "Administrator Mode",
   "manageRoles": "Manage Roles",
   "switchMode": "Switch Mode",
   "selectMode": "Select which mode you want to work in"

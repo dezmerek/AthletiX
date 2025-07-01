@@ -1,6 +1,7 @@
 {
   "userMode": "Tryb użytkownika",
   "professionalMode": "Tryb profesjonalny",
+  "adminMode": "Tryb administratora",
   "manageRoles": "Zarządzaj rolami",
   "switchMode": "Przełącz tryb",
   "selectMode": "Wybierz w jakim trybie chcesz działać"

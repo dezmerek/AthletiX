@@ -4,7 +4,7 @@
 
 export interface UserRoleData {
   role?: string | string[] | null;
-  activeContext?: "user" | "professional" | null;
+  activeContext?: "user" | "professional" | "admin" | null;
   isPremiumPersonal?: boolean;
   isPremiumProfessional?: boolean;
 }
@@ -33,6 +33,9 @@ export function getRoleDisplayName(
       return user.isPremiumProfessional
         ? t("professionalPro")
         : t("professional");
+
+    case "admin":
+      return t("administrator");
 
     default:
       // No active context set - check if admin, otherwise use first available role
@@ -72,14 +75,21 @@ export function hasRole(user: UserRoleData, role: string): boolean {
  * Check if user can act as professional
  */
 export function canActAsProfessional(user: UserRoleData): boolean {
-  return hasRole(user, "professional") || hasRole(user, "admin");
+  return hasRole(user, "professional");
 }
 
 /**
  * Check if user can act as regular user
  */
 export function canActAsUser(user: UserRoleData): boolean {
-  return hasRole(user, "user") || hasRole(user, "admin");
+  return hasRole(user, "user");
+}
+
+/**
+ * Check if user can act as admin
+ */
+export function canActAsAdmin(user: UserRoleData): boolean {
+  return hasRole(user, "admin");
 }
 
 /**

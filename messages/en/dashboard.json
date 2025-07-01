@@ -56,5 +56,37 @@
       "title": "Welcome, {userName}!",
       "subtitle": "Professional Panel - manage clients and training programs"
     }
+  },
+  "admin": {
+    "welcome": {
+      "title": "Welcome, {userName}!",
+      "subtitle": "Administrator Panel - manage the entire AthletiX platform"
+    },
+    "stats": {
+      "totalUsers": "Total Users",
+      "activeProfessionals": "Active Professionals",
+      "systemHealth": "System Health",
+      "monthlyRevenue": "Monthly Revenue"
+    },
+    "actions": {
+      "manageUsers": "Manage Users",
+      "manageUsersDesc": "View and manage user accounts",
+      "systemSettings": "System Settings",
+      "systemSettingsDesc": "Configure platform parameters",
+      "viewReports": "View Reports",
+      "viewReportsDesc": "Analyze statistics and reports",
+      "moderateCommunity": "Moderate Community",
+      "moderateCommunityDesc": "Manage community content"
+    },
+    "quickActions": {
+      "title": "Quick Actions"
+    },
+    "systemStatus": {
+      "title": "System Status",
+      "database": "Database",
+      "api": "API",
+      "auth": "Authentication",
+      "operational": "Operational"
+    }
   }
 }

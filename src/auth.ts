@@ -29,7 +29,7 @@ declare module "next-auth" {
         | null;
       isPremiumPersonal?: boolean;
       isPremiumProfessional?: boolean;
-      activeContext?: "user" | "professional";
+      activeContext?: "user" | "professional" | "admin";
     };
   }
 

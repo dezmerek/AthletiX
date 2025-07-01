@@ -13,9 +13,14 @@ export async function POST(request: NextRequest) {
 
     const { activeContext } = await request.json();
 
-    if (!activeContext || !["user", "professional"].includes(activeContext)) {
+    if (
+      !activeContext ||
+      !["user", "professional", "admin"].includes(activeContext)
+    ) {
       return NextResponse.json(
-        { error: "Invalid context. Must be 'user' or 'professional'" },
+        {
+          error: "Invalid context. Must be 'user', 'professional', or 'admin'",
+        },
         { status: 400 }
       );
     }
@@ -42,6 +47,21 @@ export async function POST(request: NextRequest) {
           {
             error:
               "You don't have permission to switch to professional context",
+          },
+          { status: 403 }
+        );
+      }
+    }
+
+    // Check if user can switch to admin context
+    if (activeContext === "admin") {
+      const roles = Array.isArray(user.role) ? user.role : [user.role];
+      const canActAsAdmin = roles.includes("admin");
+
+      if (!canActAsAdmin) {
+        return NextResponse.json(
+          {
+            error: "You don't have permission to switch to admin context",
           },
           { status: 403 }
         );
