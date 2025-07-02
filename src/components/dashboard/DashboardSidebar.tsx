@@ -195,7 +195,7 @@ export default function DashboardSidebar() {
         </svg>
       ),
       label: t("calendar"),
-      context: "user",
+      context: "all", // Kalendarz dostępny dla wszystkich kontekstów (różne funkcjonalności)
     },
     {
       href: "/dashboard/community",
@@ -235,7 +235,7 @@ export default function DashboardSidebar() {
         </svg>
       ),
       label: t("profile"),
-      context: "user",
+      context: "user", // Profil tylko dla użytkowników
     },
   ];
 
