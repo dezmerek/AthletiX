@@ -109,5 +109,6 @@
     "gainWeightOptimal": "Optymalne tempo przyrostu masy to 0,25-0,5 kg na tydzień. Pozwala to na budowę mięśni przy minimalnym przyroście tkanki tłuszczowej.",
     "maintainWeight": "Utrzymywanie wagi pozwala na rekomponowanie sylwetki - budowę mięśni przy jednoczesnej redukcji tkanki tłuszczowej."
   },
-  "saveProfile": "Zapisz Profil"
+  "saveProfile": "Zapisz Profil",
+  "saving": "Zapisywanie..."
 }

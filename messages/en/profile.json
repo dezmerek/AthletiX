@@ -109,5 +109,6 @@
     "gainWeightOptimal": "Optimal mass gain rate is 0.25-0.5 kg per week. This allows muscle building with minimal fat gain.",
     "maintainWeight": "Maintaining weight allows body recomposition - building muscle while reducing fat tissue."
   },
-  "saveProfile": "Save Profile"
+  "saveProfile": "Save Profile",
+  "saving": "Saving..."
 }
