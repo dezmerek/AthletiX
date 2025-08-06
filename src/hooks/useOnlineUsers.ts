@@ -108,7 +108,7 @@ export function useOnlineUsers({
         ...processedOnlineUsers.filter((user) => !user.isOnline),
         ...processedRecentlyActive,
       ].filter(
-        (user) => !user.isOnline && (user.timeSinceLastActivity || 0) <= 15
+        (user) => !user.isOnline && (user.timeSinceLastActivity || 0) <= 60
       );
 
       setOnlineUsers(actuallyOnline);

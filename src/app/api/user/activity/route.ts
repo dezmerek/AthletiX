@@ -74,18 +74,15 @@ export async function GET() {
     const client = await clientPromise;
     const db = client.db();
 
-    // Get users who are online or were active in the last 15 minutes
-    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+    // Get users who are online or were active in the last 1 hour
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     const now = new Date();
 
     const users = await db
       .collection("users")
       .find(
         {
-          $or: [
-            { isOnline: true },
-            { lastActivity: { $gte: fifteenMinutesAgo } },
-          ],
+          $or: [{ isOnline: true }, { lastActivity: { $gte: oneHourAgo } }],
         },
         {
           projection: {
@@ -136,7 +133,7 @@ export async function GET() {
     // Separate online and recently active users
     const onlineUsers = processedUsers.filter((user) => user.isOnline);
     const recentlyActiveUsers = processedUsers.filter(
-      (user) => !user.isOnline && user.timeSinceLastActivity <= 15
+      (user) => !user.isOnline && user.timeSinceLastActivity <= 60
     );
 
     return NextResponse.json({
