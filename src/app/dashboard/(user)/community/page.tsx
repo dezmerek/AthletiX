@@ -33,6 +33,10 @@ export default function CommunityPage() {
     totalPosts,
     loadMore,
     goToPage,
+    nextPage,
+    prevPage,
+    setPostExpanded,
+    clearNewCommentsFlag, // Add this new function
   } = useCommunityPosts({
     postsPerPage: COMMUNITY_CONFIG.POSTS_PER_PAGE,
     paginationType: paginationType,
@@ -68,10 +72,21 @@ export default function CommunityPage() {
   };
 
   const toggleComments = (postId: string) => {
+    const isCurrentlyShown = showComments[postId];
+    const newState = !isCurrentlyShown;
+
     setShowComments((prev) => ({
       ...prev,
-      [postId]: !prev[postId],
+      [postId]: newState,
     }));
+
+    // Notify the hook about expanded state for real-time comment updates
+    setPostExpanded(postId, newState);
+
+    // Clear the new comments flag when user opens comments
+    if (newState) {
+      clearNewCommentsFlag(postId);
+    }
   };
 
   const handleAddComment = async (postId: string, content: string) => {
@@ -275,6 +290,11 @@ export default function CommunityPage() {
                                 }`
                               : t("actions.comment")}
                           </span>
+                          {post.hasNewComments && !showComments[post._id] && (
+                            <span className="inline-flex items-center justify-center w-2 h-2 bg-blue-500 rounded-full animate-pulse">
+                              <span className="sr-only">Nowe komentarze</span>
+                            </span>
+                          )}
                         </button>
                       </div>
 

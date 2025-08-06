@@ -12,6 +12,7 @@ export interface CommunityPost {
   commentCount: number;
   isLikedByUser: boolean;
   comments: CommunityComment[];
+  hasNewComments?: boolean; // Add this field for real-time updates
   author: {
     _id: string;
     name: string;
@@ -51,6 +52,8 @@ interface UseCommunityPostsReturn {
   nextPage: () => Promise<void>;
   prevPage: () => Promise<void>;
   refresh: () => Promise<void>;
+  setPostExpanded: (postId: string, expanded: boolean) => void;
+  clearNewCommentsFlag: (postId: string) => void;
 }
 
 interface UseCommunityPostsConfig {
@@ -70,6 +73,102 @@ export function useCommunityPosts(
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [totalPosts, setTotalPosts] = useState(0);
+  const [expandedPosts, setExpandedPosts] = useState<Set<string>>(new Set());
+  const [lastCommentCheck, setLastCommentCheck] = useState<Map<string, string>>(
+    new Map()
+  );
+
+  // Function to mark post as expanded (comments visible)
+  const setPostExpanded = useCallback((postId: string, expanded: boolean) => {
+    setExpandedPosts((prev) => {
+      const newSet = new Set(prev);
+      if (expanded) {
+        newSet.add(postId);
+      } else {
+        newSet.delete(postId);
+      }
+      return newSet;
+    });
+  }, []);
+
+  const clearNewCommentsFlag = useCallback((postId: string) => {
+    setPosts((prev) =>
+      prev.map((post) =>
+        post._id === postId ? { ...post, hasNewComments: false } : post
+      )
+    );
+  }, []);
+
+  // Check for new comments in expanded posts
+  const checkForNewComments = useCallback(async () => {
+    if (!session?.user?.id || expandedPosts.size === 0) return;
+
+    try {
+      for (const postId of expandedPosts) {
+        const lastCheck = lastCommentCheck.get(postId);
+        const params = new URLSearchParams();
+        if (lastCheck) {
+          params.append("lastCheck", lastCheck);
+        }
+
+        const response = await fetch(
+          `/api/community/posts/${postId}/comments/check?${params}`,
+          {
+            method: "GET",
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+
+          // Update last check time
+          setLastCommentCheck((prev) =>
+            new Map(prev).set(postId, data.lastCheck)
+          );
+
+          // Update post if there are new comments
+          if (data.hasNewComments) {
+            setPosts((prev) =>
+              prev.map((post) =>
+                post._id === postId
+                  ? {
+                      ...post,
+                      comments: data.comments.map(
+                        (comment: CommunityComment) => ({
+                          ...comment,
+                          timestamp: new Date(comment.timestamp).toISOString(),
+                        })
+                      ),
+                      commentCount: data.comments.length,
+                      hasNewComments: true,
+                    }
+                  : post
+              )
+            );
+
+            // Trigger visual notification for new comments
+            if (typeof window !== "undefined") {
+              window.dispatchEvent(
+                new CustomEvent("new-comment", {
+                  detail: { postId, commentCount: data.comments.length },
+                })
+              );
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error checking for new comments:", error);
+    }
+  }, [expandedPosts, session?.user?.id, lastCommentCheck]);
+
+  // Polling for new comments in expanded posts
+  useEffect(() => {
+    if (expandedPosts.size === 0) return;
+
+    const interval = setInterval(checkForNewComments, 5000);
+    return () => clearInterval(interval);
+  }, [expandedPosts, checkForNewComments]);
 
   const fetchPosts = useCallback(
     async (pageNum: number = 1, append: boolean = false) => {
@@ -375,5 +474,7 @@ export function useCommunityPosts(
     nextPage,
     prevPage,
     refresh,
+    setPostExpanded,
+    clearNewCommentsFlag,
   };
 }
