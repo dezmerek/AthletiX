@@ -6,7 +6,7 @@ import { ObjectId } from "mongodb";
 // Add comment to a post
 export async function POST(
   request: NextRequest,
-  { params }: { params: { postId: string } }
+  { params }: { params: Promise<{ postId: string }> }
 ) {
   try {
     const session = await auth();
@@ -15,7 +15,7 @@ export async function POST(
     }
 
     const { content } = await request.json();
-    const { postId } = params;
+    const { postId } = await params;
 
     if (!ObjectId.isValid(postId)) {
       return NextResponse.json({ error: "Invalid post ID" }, { status: 400 });

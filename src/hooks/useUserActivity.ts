@@ -14,7 +14,6 @@ export function useUserActivity({
   enabled = true,
   updateInterval = 30000, // 30 seconds
   onlineThreshold = 120000, // 2 minutes
-  offlineAfter = 300000, // 5 minutes
 }: UseUserActivityOptions = {}) {
   const { data: session } = useSession();
   const lastActivityRef = useRef<Date>(new Date());
@@ -161,10 +160,11 @@ export function useUserActivity({
     const handleBeforeUnload = () => {
       // Use sendBeacon for reliable offline status update
       if (navigator.sendBeacon) {
-        navigator.sendBeacon(
-          "/api/user/activity",
-          JSON.stringify({ isOnline: false })
-        );
+        // Create a Blob with proper Content-Type for JSON
+        const data = new Blob([JSON.stringify({ isOnline: false })], {
+          type: "application/json",
+        });
+        navigator.sendBeacon("/api/user/activity", data);
       } else {
         setOffline();
       }

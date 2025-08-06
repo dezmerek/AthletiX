@@ -43,6 +43,7 @@ interface UseCommunityPostsReturn {
   totalPosts: number;
   createPost: (content: string) => Promise<boolean>;
   likePost: (postId: string) => Promise<void>;
+  likeComment: (postId: string, commentId: string) => Promise<void>;
   addComment: (postId: string, content: string) => Promise<void>;
   loadMore: () => Promise<void>;
   goToPage: (page: number) => Promise<void>;
@@ -217,6 +218,52 @@ export function useCommunityPosts(
     [session?.user?.id]
   );
 
+  const likeComment = useCallback(
+    async (postId: string, commentId: string): Promise<void> => {
+      if (!session?.user?.id) return;
+
+      try {
+        const response = await fetch(
+          `/api/community/posts/${postId}/comments/${commentId}/like`,
+          {
+            method: "POST",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to toggle comment like");
+        }
+
+        const data = await response.json();
+
+        setPosts((prev) =>
+          prev.map((post) =>
+            post._id === postId
+              ? {
+                  ...post,
+                  comments: post.comments.map((comment) =>
+                    comment.id === commentId
+                      ? {
+                          ...comment,
+                          isLikedByUser: data.isLiked,
+                          likes: data.likeCount,
+                        }
+                      : comment
+                  ),
+                }
+              : post
+          )
+        );
+      } catch (err) {
+        console.error("Error toggling comment like:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to toggle comment like"
+        );
+      }
+    },
+    [session?.user?.id]
+  );
+
   const addComment = useCallback(
     async (postId: string, content: string): Promise<void> => {
       if (!session?.user?.id || !content.trim()) return;
@@ -307,6 +354,7 @@ export function useCommunityPosts(
     totalPosts,
     createPost,
     likePost,
+    likeComment,
     addComment,
     loadMore,
     goToPage,

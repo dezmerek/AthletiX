@@ -25,6 +25,7 @@ export default function CommunityPage() {
     error: postsError,
     createPost,
     likePost,
+    likeComment,
     addComment: addCommentAPI,
     hasMore,
     currentPage,
@@ -60,6 +61,10 @@ export default function CommunityPage() {
 
   const handleLike = async (postId: string) => {
     await likePost(postId);
+  };
+
+  const handleCommentLike = async (postId: string, commentId: string) => {
+    await likeComment(postId, commentId);
   };
 
   const toggleComments = (postId: string) => {
@@ -312,6 +317,12 @@ export default function CommunityPage() {
                                     </div>
                                     <div className="flex items-center space-x-4 mt-2">
                                       <button
+                                        onClick={() =>
+                                          handleCommentLike(
+                                            post._id,
+                                            comment.id
+                                          )
+                                        }
                                         className={`flex items-center space-x-1 text-xs transition-colors ${
                                           comment.isLikedByUser
                                             ? "text-red-500"

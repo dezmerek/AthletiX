@@ -11,7 +11,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { isOnline } = await request.json();
+    let isOnline: boolean | undefined;
+
+    // Try to parse JSON, but handle cases where body is empty or invalid
+    try {
+      const body = await request.text();
+      if (body.trim()) {
+        const parsed = JSON.parse(body);
+        isOnline = parsed.isOnline;
+      }
+    } catch (parseError) {
+      // If JSON parsing fails, continue without isOnline value
+      // This can happen when sendBeacon is aborted during page unload - it's normal
+      const errorCode = (parseError as Error & { code?: string })?.code;
+      if (errorCode !== "ECONNRESET") {
+        console.warn("Failed to parse request body:", parseError);
+      }
+    }
+
     const client = await clientPromise;
     const db = client.db();
 
