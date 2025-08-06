@@ -4,12 +4,19 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useOnlineUsers } from "@/hooks/useOnlineUsers";
 import { useCommunityPosts } from "@/hooks/useCommunityPosts";
+import { COMMUNITY_CONFIG } from "@/config/community";
+import { PaginationControls } from "@/components/community/PaginationControls";
+import { PaginationSettings } from "@/components/community/PaginationSettings";
 
 export default function CommunityPage() {
   const t = useTranslations("community");
+  const tTime = useTranslations("community.time");
   const [newPost, setNewPost] = useState("");
   const [newComments, setNewComments] = useState<Record<string, string>>({});
   const [showComments, setShowComments] = useState<Record<string, boolean>>({});
+  const [paginationType, setPaginationType] = useState<"loadMore" | "pages">(
+    COMMUNITY_CONFIG.PAGINATION_TYPE
+  );
 
   // Community posts data
   const {
@@ -20,8 +27,15 @@ export default function CommunityPage() {
     likePost,
     addComment: addCommentAPI,
     hasMore,
+    currentPage,
+    totalPages,
+    totalPosts,
     loadMore,
-  } = useCommunityPosts();
+    goToPage,
+  } = useCommunityPosts({
+    postsPerPage: COMMUNITY_CONFIG.POSTS_PER_PAGE,
+    paginationType: paginationType,
+  });
 
   // Online users data
   const {
@@ -32,7 +46,7 @@ export default function CommunityPage() {
     error: usersError,
   } = useOnlineUsers({
     enabled: true,
-    refreshInterval: 15000, // 15 seconds for faster updates
+    refreshInterval: COMMUNITY_CONFIG.ONLINE_USERS_REFRESH_INTERVAL,
   });
 
   const handleCreatePost = async () => {
@@ -98,11 +112,11 @@ export default function CommunityPage() {
     );
 
     if (diffInMinutes < 60) {
-      return `${diffInMinutes}m temu`;
+      return tTime("minutesAgo", { minutes: diffInMinutes });
     } else if (diffInMinutes < 1440) {
-      return `${Math.floor(diffInMinutes / 60)}h temu`;
+      return tTime("hoursAgo", { hours: Math.floor(diffInMinutes / 60) });
     } else {
-      return `${Math.floor(diffInMinutes / 1440)}d temu`;
+      return tTime("daysAgo", { days: Math.floor(diffInMinutes / 1440) });
     }
   };
   return (
@@ -143,6 +157,17 @@ export default function CommunityPage() {
                   {t("createPost.publish")}
                 </button>
               </div>
+            </div>
+
+            {/* Posts Feed Header */}
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                {t("feed.title")}
+              </h2>
+              <PaginationSettings
+                currentType={paginationType}
+                onTypeChange={setPaginationType}
+              />
             </div>
 
             {/* Posts Feed */}
@@ -335,7 +360,7 @@ export default function CommunityPage() {
                                     [post._id]: e.target.value,
                                   }))
                                 }
-                                placeholder="Napisz komentarz..."
+                                placeholder={t("feed.commentPlaceholder")}
                                 className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
                                 rows={2}
                               />
@@ -350,7 +375,7 @@ export default function CommunityPage() {
                                   disabled={!newComments[post._id]?.trim()}
                                   className="px-4 py-1.5 text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 >
-                                  Dodaj komentarz
+                                  {t("feed.addComment")}
                                 </button>
                               </div>
                             </div>
@@ -360,18 +385,19 @@ export default function CommunityPage() {
                     </div>
                   ))}
 
-                  {/* Load More Button */}
-                  {hasMore && (
-                    <div className="text-center">
-                      <button
-                        onClick={loadMore}
-                        disabled={postsLoading}
-                        className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                      >
-                        {postsLoading ? "Ładowanie..." : "Załaduj więcej"}
-                      </button>
-                    </div>
-                  )}
+                  {/* Pagination Controls */}
+                  <PaginationControls
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalPosts={totalPosts}
+                    hasMore={hasMore}
+                    loading={postsLoading}
+                    onPageChange={goToPage}
+                    onLoadMore={loadMore}
+                    paginationType={paginationType}
+                    postsPerPage={COMMUNITY_CONFIG.POSTS_PER_PAGE}
+                    showPostCount={true}
+                  />
                 </>
               )}
             </div>

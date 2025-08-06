@@ -38,20 +38,36 @@ interface UseCommunityPostsReturn {
   loading: boolean;
   error: string | null;
   hasMore: boolean;
+  currentPage: number;
+  totalPages: number;
+  totalPosts: number;
   createPost: (content: string) => Promise<boolean>;
   likePost: (postId: string) => Promise<void>;
   addComment: (postId: string, content: string) => Promise<void>;
   loadMore: () => Promise<void>;
+  goToPage: (page: number) => Promise<void>;
+  nextPage: () => Promise<void>;
+  prevPage: () => Promise<void>;
   refresh: () => Promise<void>;
 }
 
-export function useCommunityPosts(): UseCommunityPostsReturn {
+interface UseCommunityPostsConfig {
+  postsPerPage?: number;
+  paginationType?: "loadMore" | "pages";
+}
+
+export function useCommunityPosts(
+  config: UseCommunityPostsConfig = {}
+): UseCommunityPostsReturn {
+  const { postsPerPage = 10 } = config;
   const { data: session } = useSession();
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalPosts, setTotalPosts] = useState(0);
 
   const fetchPosts = useCallback(
     async (pageNum: number = 1, append: boolean = false) => {
@@ -62,7 +78,7 @@ export function useCommunityPosts(): UseCommunityPostsReturn {
         setError(null);
 
         const response = await fetch(
-          `/api/community/posts?page=${pageNum}&limit=10`
+          `/api/community/posts?page=${pageNum}&limit=${postsPerPage}`
         );
 
         if (!response.ok) {
@@ -118,6 +134,8 @@ export function useCommunityPosts(): UseCommunityPostsReturn {
         }
 
         setHasMore(data.pagination.hasMore);
+        setTotalPages(data.pagination.totalPages);
+        setTotalPosts(data.pagination.totalCount);
         setPage(pageNum);
       } catch (err) {
         console.error("Error fetching posts:", err);
@@ -126,7 +144,7 @@ export function useCommunityPosts(): UseCommunityPostsReturn {
         setLoading(false);
       }
     },
-    [session?.user?.id]
+    [session?.user?.id, postsPerPage]
   );
 
   const createPost = useCallback(
@@ -249,6 +267,25 @@ export function useCommunityPosts(): UseCommunityPostsReturn {
     await fetchPosts(page + 1, true);
   }, [hasMore, loading, page, fetchPosts]);
 
+  const goToPage = useCallback(
+    async (pageNum: number): Promise<void> => {
+      if (pageNum < 1 || pageNum > totalPages || pageNum === page || loading)
+        return;
+      await fetchPosts(pageNum, false);
+    },
+    [totalPages, page, loading, fetchPosts]
+  );
+
+  const nextPage = useCallback(async (): Promise<void> => {
+    if (page >= totalPages || loading) return;
+    await fetchPosts(page + 1, false);
+  }, [page, totalPages, loading, fetchPosts]);
+
+  const prevPage = useCallback(async (): Promise<void> => {
+    if (page <= 1 || loading) return;
+    await fetchPosts(page - 1, false);
+  }, [page, loading, fetchPosts]);
+
   const refresh = useCallback(async (): Promise<void> => {
     await fetchPosts(1, false);
   }, [fetchPosts]);
@@ -265,10 +302,16 @@ export function useCommunityPosts(): UseCommunityPostsReturn {
     loading,
     error,
     hasMore,
+    currentPage: page,
+    totalPages,
+    totalPosts,
     createPost,
     likePost,
     addComment,
     loadMore,
+    goToPage,
+    nextPage,
+    prevPage,
     refresh,
   };
 }

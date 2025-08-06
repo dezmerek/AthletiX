@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
+import { COMMUNITY_CONFIG } from "@/config/community";
 
 // Get community posts
 export async function GET(request: NextRequest) {
@@ -13,7 +14,9 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "10");
+    const limit = parseInt(
+      searchParams.get("limit") || COMMUNITY_CONFIG.POSTS_PER_PAGE.toString()
+    );
     const skip = (page - 1) * limit;
 
     const client = await clientPromise;
@@ -198,9 +201,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (content.length > 2000) {
+    if (content.length > COMMUNITY_CONFIG.MAX_POST_LENGTH) {
       return NextResponse.json(
-        { error: "Post content cannot exceed 2000 characters" },
+        {
+          error: `Post content cannot exceed ${COMMUNITY_CONFIG.MAX_POST_LENGTH} characters`,
+        },
         { status: 400 }
       );
     }

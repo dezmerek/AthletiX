@@ -11,6 +11,11 @@
     "placeholder": "Co masz na myśli? Podziel się swoimi myślami, osiągnięciami lub zadaj pytanie...",
     "publish": "Opublikuj"
   },
+  "feed": {
+    "title": "Posty społeczności",
+    "addComment": "Dodaj komentarz",
+    "commentPlaceholder": "Napisz komentarz..."
+  },
   "postTypes": {
     "motivation": "Motywacja",
     "workout": "Trening",
@@ -20,7 +25,7 @@
   },
   "roles": {
     "user": "Użytkownik",
-    "professional": "Specjalista",
+    "professional": "Profesjonalista",
     "trainer": "Trener",
     "nutritionist": "Dietetyk",
     "admin": "Administrator"
@@ -58,5 +63,21 @@
     "title": "Użytkownicy online",
     "recentlyActive": "Ostatnio aktywni",
     "online": "Online"
+  },
+  "pagination": {
+    "navigation": "Nawigacja",
+    "chooseMode": "Wybierz tryb nawigacji",
+    "loadMore": "Załaduj więcej",
+    "loadMoreDescription": "Kontinualne ładowanie postów",
+    "pages": "Numeracja stron",
+    "pagesDescription": "Tradycyjna nawigacja po stronach",
+    "loading": "Ładowanie...",
+    "showingPosts": "Wyświetlanie {start}-{end} z {total} postów",
+    "allPostsShown": "Wyświetlono wszystkie posty"
+  },
+  "time": {
+    "minutesAgo": "{minutes}m temu",
+    "hoursAgo": "{hours}h temu",
+    "daysAgo": "{days}d temu"
   }
 }

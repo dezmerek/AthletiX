@@ -11,6 +11,11 @@
     "placeholder": "What's on your mind? Share your thoughts, achievements, or ask a question...",
     "publish": "Publish"
   },
+  "feed": {
+    "title": "Community Posts",
+    "addComment": "Add comment",
+    "commentPlaceholder": "Write a comment..."
+  },
   "postTypes": {
     "motivation": "Motivation",
     "workout": "Workout",
@@ -58,5 +63,21 @@
     "title": "Online Users",
     "recentlyActive": "Recently Active",
     "online": "Online"
+  },
+  "pagination": {
+    "navigation": "Navigation",
+    "chooseMode": "Choose navigation mode",
+    "loadMore": "Load More",
+    "loadMoreDescription": "Continuous loading of posts",
+    "pages": "Page Numbers",
+    "pagesDescription": "Traditional page navigation",
+    "loading": "Loading...",
+    "showingPosts": "Showing {start}-{end} of {total} posts",
+    "allPostsShown": "All posts shown"
+  },
+  "time": {
+    "minutesAgo": "{minutes}m ago",
+    "hoursAgo": "{hours}h ago",
+    "daysAgo": "{days}d ago"
   }
 }
