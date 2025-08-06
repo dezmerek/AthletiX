@@ -122,12 +122,14 @@ export async function GET() {
       return {
         id: user._id.toString(),
         name: user.name || user.email?.split("@")[0] || "Użytkownik",
-        role: Array.isArray(user.role) ? user.role[0] : user.role || "user",
+        role: user.role || "user", // Return the role as-is (array or string)
         activeContext: user.activeContext,
         lastSeen: user.lastSeen || user.lastActivity,
         lastActivity: user.lastActivity,
         isOnline: isCurrentlyOnline,
         timeSinceLastActivity: Math.floor(timeSinceLastActivity / 1000 / 60), // in minutes
+        isPremiumPersonal: user.isPremiumPersonal || false,
+        isPremiumProfessional: user.isPremiumProfessional || false,
       };
     });
 

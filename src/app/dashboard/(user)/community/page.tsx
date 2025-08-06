@@ -99,28 +99,82 @@ export default function CommunityPage() {
     }));
   };
 
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case "professional":
-        return "💼";
-      case "admin":
-        return "👑";
-      case "user":
-      default:
-        return "👤";
-    }
+  const getRoleIcon = (role: string | string[]) => {
+    const roles = Array.isArray(role) ? role : [role];
+
+    // Priorytet: admin > professional > user
+    if (roles.includes("admin")) return "👑";
+    if (roles.includes("professional")) return "💼";
+    return "👤";
   };
 
-  const getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case "professional":
-        return "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400";
-      case "admin":
-        return "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400";
-      case "user":
-      default:
-        return "bg-slate-100 text-slate-600 dark:bg-slate-900/30 dark:text-slate-400";
+  const getRoleBadgeColor = (role: string | string[]) => {
+    const roles = Array.isArray(role) ? role : [role];
+
+    // Priorytet: admin > professional > user
+    if (roles.includes("admin")) {
+      return "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400";
     }
+    if (roles.includes("professional")) {
+      return "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400";
+    }
+    return "bg-slate-100 text-slate-600 dark:bg-slate-900/30 dark:text-slate-400";
+  };
+
+  const getRoleDisplayText = (
+    role: string | string[],
+    isPremiumPersonal?: boolean,
+    isPremiumProfessional?: boolean
+  ) => {
+    const roles = Array.isArray(role) ? role : [role];
+
+    // Priorytet: admin > professional > user
+    let mainRole = "user";
+    if (roles.includes("admin")) {
+      mainRole = "admin";
+    } else if (roles.includes("professional")) {
+      mainRole = "professional";
+    }
+
+    let displayText = t(`roles.${mainRole}`);
+
+    // Dodaj premium status dla głównej roli
+    if (mainRole === "user" && isPremiumPersonal) {
+      displayText += " PRO";
+    } else if (mainRole === "professional" && isPremiumProfessional) {
+      displayText += " PRO";
+    }
+
+    return displayText;
+  };
+
+  const getAllRoles = (
+    role: string | string[],
+    isPremiumPersonal?: boolean,
+    isPremiumProfessional?: boolean
+  ) => {
+    const roles = Array.isArray(role) ? role : [role];
+    const roleTexts: string[] = [];
+
+    roles.forEach((r) => {
+      let roleText = t(`roles.${r}`);
+
+      // Dodaj premium status
+      if (r === "user" && isPremiumPersonal) {
+        roleText += " PRO";
+      } else if (r === "professional" && isPremiumProfessional) {
+        roleText += " PRO";
+      }
+
+      roleTexts.push(roleText);
+    });
+
+    return roleTexts.join(", ");
+  };
+
+  const hasMultipleRoles = (role: string | string[]) => {
+    const roles = Array.isArray(role) ? role : [role];
+    return roles.length > 1;
   };
 
   const formatTimestamp = (dateString: string | Date) => {
@@ -220,12 +274,41 @@ export default function CommunityPage() {
                               {post.author.name}
                             </h4>
                             <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(
+                              className={`px-2 py-1 rounded-full text-xs font-medium relative group cursor-help ${getRoleBadgeColor(
                                 post.author.role
                               )}`}
+                              title={
+                                hasMultipleRoles(post.author.role)
+                                  ? getAllRoles(
+                                      post.author.role,
+                                      post.author.isPremiumPersonal,
+                                      post.author.isPremiumProfessional
+                                    )
+                                  : undefined
+                              }
                             >
                               {getRoleIcon(post.author.role)}{" "}
-                              {t(`roles.${post.author.role}`)}
+                              {getRoleDisplayText(
+                                post.author.role,
+                                post.author.isPremiumPersonal,
+                                post.author.isPremiumProfessional
+                              )}
+                              {hasMultipleRoles(post.author.role) && (
+                                <span className="ml-1 text-xs opacity-75">
+                                  +
+                                </span>
+                              )}
+                              {/* Tooltip dla wielokrotnych ról */}
+                              {hasMultipleRoles(post.author.role) && (
+                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                                  {getAllRoles(
+                                    post.author.role,
+                                    post.author.isPremiumPersonal,
+                                    post.author.isPremiumProfessional
+                                  )}
+                                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-700"></div>
+                                </div>
+                              )}
                             </span>
                           </div>
                           <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -321,11 +404,47 @@ export default function CommunityPage() {
                                           {comment.author.name}
                                         </h5>
                                         <span
-                                          className={`px-1.5 py-0.5 rounded text-xs font-medium ${getRoleBadgeColor(
+                                          className={`px-1.5 py-0.5 rounded text-xs font-medium relative group cursor-help ${getRoleBadgeColor(
                                             comment.author.role
                                           )}`}
+                                          title={
+                                            hasMultipleRoles(
+                                              comment.author.role
+                                            )
+                                              ? getAllRoles(
+                                                  comment.author.role,
+                                                  comment.author
+                                                    .isPremiumPersonal,
+                                                  comment.author
+                                                    .isPremiumProfessional
+                                                )
+                                              : undefined
+                                          }
                                         >
                                           {getRoleIcon(comment.author.role)}
+                                          {hasMultipleRoles(
+                                            comment.author.role
+                                          ) && (
+                                            <span className="ml-0.5 text-xs opacity-75">
+                                              +
+                                            </span>
+                                          )}
+
+                                          {/* Tooltip dla wielokrotnych ról */}
+                                          {hasMultipleRoles(
+                                            comment.author.role
+                                          ) && (
+                                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                                              {getAllRoles(
+                                                comment.author.role,
+                                                comment.author
+                                                  .isPremiumPersonal,
+                                                comment.author
+                                                  .isPremiumProfessional
+                                              )}
+                                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-700"></div>
+                                            </div>
+                                          )}
                                         </span>
                                         <span className="text-xs text-gray-500 dark:text-gray-400">
                                           {formatTimestamp(comment.timestamp)}
@@ -480,11 +599,37 @@ export default function CommunityPage() {
                               {user.name}
                             </p>
                             <span
-                              className={`px-1.5 py-0.5 rounded text-xs font-medium ${getRoleBadgeColor(
+                              className={`px-1.5 py-0.5 rounded text-xs font-medium relative group cursor-help ${getRoleBadgeColor(
                                 user.role
                               )}`}
+                              title={
+                                hasMultipleRoles(user.role)
+                                  ? getAllRoles(
+                                      user.role,
+                                      user.isPremiumPersonal,
+                                      user.isPremiumProfessional
+                                    )
+                                  : undefined
+                              }
                             >
                               {getRoleIcon(user.role)}
+                              {hasMultipleRoles(user.role) && (
+                                <span className="ml-0.5 text-xs opacity-75">
+                                  +
+                                </span>
+                              )}
+
+                              {/* Tooltip dla wielokrotnych ról */}
+                              {hasMultipleRoles(user.role) && (
+                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                                  {getAllRoles(
+                                    user.role,
+                                    user.isPremiumPersonal,
+                                    user.isPremiumProfessional
+                                  )}
+                                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-700"></div>
+                                </div>
+                              )}
                             </span>
                           </div>
                           <p className="text-xs text-gray-500 dark:text-gray-400">

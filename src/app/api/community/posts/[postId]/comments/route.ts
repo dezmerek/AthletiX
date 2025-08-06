@@ -99,7 +99,9 @@ export async function POST(
       author: {
         id: session.user.id,
         name: user?.name || user?.email?.split("@")[0] || "User",
-        role: Array.isArray(user?.role) ? user.role[0] : user?.role || "user",
+        role: user?.role || "user", // Return role as-is (array or string)
+        isPremiumPersonal: user?.isPremiumPersonal || false,
+        isPremiumProfessional: user?.isPremiumProfessional || false,
       },
     };
 

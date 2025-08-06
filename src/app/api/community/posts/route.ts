@@ -105,9 +105,18 @@ export async function GET(request: NextRequest) {
                         role: {
                           $cond: {
                             if: { $isArray: "$$commentAuthor.role" },
-                            then: { $arrayElemAt: ["$$commentAuthor.role", 0] },
+                            then: "$$commentAuthor.role", // Return the entire array
                             else: { $ifNull: ["$$commentAuthor.role", "user"] },
                           },
+                        },
+                        isPremiumPersonal: {
+                          $ifNull: ["$$commentAuthor.isPremiumPersonal", false],
+                        },
+                        isPremiumProfessional: {
+                          $ifNull: [
+                            "$$commentAuthor.isPremiumProfessional",
+                            false,
+                          ],
                         },
                       },
                     },
@@ -141,9 +150,15 @@ export async function GET(request: NextRequest) {
               role: {
                 $cond: {
                   if: { $isArray: "$authorInfo.role" },
-                  then: { $arrayElemAt: ["$authorInfo.role", 0] },
+                  then: "$authorInfo.role", // Return the entire array
                   else: { $ifNull: ["$authorInfo.role", "user"] },
                 },
+              },
+              isPremiumPersonal: {
+                $ifNull: ["$authorInfo.isPremiumPersonal", false],
+              },
+              isPremiumProfessional: {
+                $ifNull: ["$authorInfo.isPremiumProfessional", false],
               },
             },
           },
@@ -272,9 +287,15 @@ export async function POST(request: NextRequest) {
               role: {
                 $cond: {
                   if: { $isArray: "$authorInfo.role" },
-                  then: { $arrayElemAt: ["$authorInfo.role", 0] },
+                  then: "$authorInfo.role", // Return the entire array
                   else: { $ifNull: ["$authorInfo.role", "user"] },
                 },
+              },
+              isPremiumPersonal: {
+                $ifNull: ["$authorInfo.isPremiumPersonal", false],
+              },
+              isPremiumProfessional: {
+                $ifNull: ["$authorInfo.isPremiumProfessional", false],
               },
             },
           },

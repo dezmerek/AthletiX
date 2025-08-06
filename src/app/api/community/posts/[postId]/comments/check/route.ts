@@ -50,7 +50,10 @@ export async function GET(
                   timestamp: "$$comment.timestamp",
                   likes: { $size: { $ifNull: ["$$comment.likes", []] } },
                   isLikedByUser: {
-                    $in: [new ObjectId(session.user.id), { $ifNull: ["$$comment.likes", []] }],
+                    $in: [
+                      new ObjectId(session.user.id),
+                      { $ifNull: ["$$comment.likes", []] },
+                    ],
                   },
                   author: {
                     $let: {
@@ -60,7 +63,9 @@ export async function GET(
                             {
                               $filter: {
                                 input: "$commentAuthors",
-                                cond: { $eq: ["$$this._id", "$$comment.author"] },
+                                cond: {
+                                  $eq: ["$$this._id", "$$comment.author"],
+                                },
                               },
                             },
                             0,
@@ -73,9 +78,15 @@ export async function GET(
                         role: {
                           $cond: {
                             if: { $isArray: "$$author.role" },
-                            then: { $arrayElemAt: ["$$author.role", 0] },
+                            then: "$$author.role", // Return the entire array
                             else: { $ifNull: ["$$author.role", "user"] },
                           },
+                        },
+                        isPremiumPersonal: {
+                          $ifNull: ["$$author.isPremiumPersonal", false],
+                        },
+                        isPremiumProfessional: {
+                          $ifNull: ["$$author.isPremiumProfessional", false],
                         },
                       },
                     },
@@ -94,13 +105,14 @@ export async function GET(
     }
 
     const comments = post[0].comments || [];
-    
+
     // Check if there are new comments since last check
     let hasNewComments = false;
     if (lastCheckTime) {
       const lastCheck = new Date(lastCheckTime);
-      hasNewComments = comments.some((comment: { timestamp: string }) => 
-        new Date(comment.timestamp) > lastCheck
+      hasNewComments = comments.some(
+        (comment: { timestamp: string }) =>
+          new Date(comment.timestamp) > lastCheck
       );
     } else {
       hasNewComments = true; // First check, assume there might be new comments

@@ -16,7 +16,13 @@ export interface CommunityPost {
   author: {
     _id: string;
     name: string;
-    role: "user" | "professional" | "admin";
+    role:
+      | "user"
+      | "professional"
+      | "admin"
+      | ("user" | "professional" | "admin")[];
+    isPremiumPersonal?: boolean;
+    isPremiumProfessional?: boolean;
   };
   createdAt: string;
   updatedAt: string;
@@ -31,7 +37,13 @@ export interface CommunityComment {
   author: {
     _id: string;
     name: string;
-    role: "user" | "professional" | "admin";
+    role:
+      | "user"
+      | "professional"
+      | "admin"
+      | ("user" | "professional" | "admin")[];
+    isPremiumPersonal?: boolean;
+    isPremiumProfessional?: boolean;
   };
 }
 

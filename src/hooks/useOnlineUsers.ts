@@ -6,12 +6,14 @@ import { useSession } from "next-auth/react";
 interface OnlineUser {
   id: string;
   name: string;
-  role: "user" | "trainer" | "nutritionist" | "admin";
-  activeContext?: "user" | "professional" | "admin";
+  role: string | string[]; // Allow any role configuration
+  activeContext?: string;
   lastSeen: Date;
   lastActivity: Date;
   isOnline: boolean;
   timeSinceLastActivity?: number;
+  isPremiumPersonal?: boolean;
+  isPremiumProfessional?: boolean;
 }
 
 interface UseOnlineUsersReturn {
@@ -86,11 +88,6 @@ export function useOnlineUsers({
 
           return {
             ...user,
-            role: user.role as "user" | "trainer" | "nutritionist" | "admin",
-            activeContext: user.activeContext as
-              | "user"
-              | "professional"
-              | "admin",
             lastSeen: new Date(user.lastSeen),
             lastActivity,
             isOnline: isActuallyOnline,
