@@ -1,17 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-
-interface Notification {
-  id: string;
-  type: "like" | "comment" | "follow" | "workout" | "achievement";
-  title: string;
-  message: string;
-  timestamp: Date;
-  isRead: boolean;
-  avatar?: string;
-  author?: string;
-}
+import { useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
+import { useNotifications } from "@/hooks/useNotifications";
 
 interface NotificationDropdownProps {
   isOpen: boolean;
@@ -25,45 +16,14 @@ export default function NotificationDropdown({
   onUnreadCountChange,
 }: NotificationDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
-  // Przykładowe powiadomienia
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: "1",
-      type: "comment",
-      title: "Nowy komentarz",
-      message: "Anna Kowalska skomentowała Twój post o treningu",
-      timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 min temu
-      isRead: false,
-      author: "Anna Kowalska",
-    },
-    {
-      id: "2",
-      type: "like",
-      title: "Polubienie",
-      message: "Michał Nowak polubił Twój post",
-      timestamp: new Date(Date.now() - 15 * 60 * 1000), // 15 min temu
-      isRead: false,
-      author: "Michał Nowak",
-    },
-    {
-      id: "3",
-      type: "comment",
-      title: "Nowy komentarz",
-      message: "Dr. Maria Zielińska odpowiedziała na Twój komentarz",
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2h temu
-      isRead: true,
-      author: "Dr. Maria Zielińska",
-    },
-    {
-      id: "4",
-      type: "like",
-      title: "Polubienie",
-      message: "Tomasz Wiśniewski polubił Twój komentarz",
-      timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4h temu
-      isRead: true,
-      author: "Tomasz Wiśniewski",
-    },
-  ]);
+  const t = useTranslations("dashboard.notifications");
+
+  const { notifications, unreadCount, markAsRead, markAllAsRead } =
+    useNotifications({
+      enabled: true,
+      pollInterval: 30000,
+      limit: 10,
+    });
 
   // Zamknij dropdown po kliknięciu poza nim
   useEffect(() => {
@@ -85,7 +45,8 @@ export default function NotificationDropdown({
     };
   }, [isOpen, onClose]);
 
-  const formatTimestamp = (date: Date) => {
+  const formatTimestamp = (dateString: string) => {
+    const date = new Date(dateString);
     const now = new Date();
     const diffInMinutes = Math.floor(
       (now.getTime() - date.getTime()) / (1000 * 60)
@@ -99,6 +60,7 @@ export default function NotificationDropdown({
       return `${Math.floor(diffInMinutes / 1440)}d temu`;
     }
   };
+
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case "like":
@@ -114,6 +76,7 @@ export default function NotificationDropdown({
           </div>
         );
       case "comment":
+      case "comment_like":
         return (
           <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
             <svg
@@ -152,24 +115,6 @@ export default function NotificationDropdown({
     }
   };
 
-  const markAsRead = (notificationId: string) => {
-    setNotifications((prev) =>
-      prev.map((notification) =>
-        notification.id === notificationId
-          ? { ...notification, isRead: true }
-          : notification
-      )
-    );
-  };
-
-  const markAllAsRead = () => {
-    setNotifications((prev) =>
-      prev.map((notification) => ({ ...notification, isRead: true }))
-    );
-  };
-
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
-
   // Powiadom rodzica o zmianie liczby nieprzeczytanych
   useEffect(() => {
     onUnreadCountChange(unreadCount);
@@ -185,14 +130,14 @@ export default function NotificationDropdown({
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Powiadomienia
+          {t("title")}
         </h3>
         {unreadCount > 0 && (
           <button
             onClick={markAllAsRead}
             className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
           >
-            Oznacz wszystkie jako przeczytane
+            {t("markAllAsRead")}
           </button>
         )}
       </div>
@@ -214,14 +159,16 @@ export default function NotificationDropdown({
                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
               />
             </svg>
-            <p className="text-gray-500 dark:text-gray-400">Brak powiadomień</p>
+            <p className="text-gray-500 dark:text-gray-400">
+              {t("noNotifications")}
+            </p>
           </div>
         ) : (
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {notifications.map((notification) => (
               <div
-                key={notification.id}
-                onClick={() => markAsRead(notification.id)}
+                key={notification._id}
+                onClick={() => markAsRead(notification._id)}
                 className={`p-4 cursor-pointer transition-colors ${
                   notification.isRead
                     ? "hover:bg-slate-50 dark:hover:bg-slate-700/50"
@@ -243,7 +190,7 @@ export default function NotificationDropdown({
                       {notification.message}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                      {formatTimestamp(notification.timestamp)}
+                      {formatTimestamp(notification.createdAt)}
                     </p>
                   </div>
                 </div>

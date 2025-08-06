@@ -66,6 +66,25 @@ export async function POST(
       }
     );
 
+    // Create notification for post author (only if commenter is not the post author)
+    if (post.author && !post.author.equals(new ObjectId(session.user.id))) {
+      await db.collection("notifications").insertOne({
+        recipient: post.author,
+        sender: new ObjectId(session.user.id),
+        type: "comment",
+        title: "Nowy komentarz",
+        message: `${session.user.name || "Ktoś"} skomentował Twój post`,
+        postId: new ObjectId(postId),
+        metadata: {
+          postContent: post.content?.substring(0, 100) || "",
+          commentContent: content.trim().substring(0, 100),
+        },
+        isRead: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    }
+
     // Get user info for the response
     const user = await db
       .collection("users")

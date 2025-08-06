@@ -88,5 +88,24 @@
       "auth": "Autoryzacja",
       "operational": "Sprawny"
     }
+  },
+  "notifications": {
+    "title": "Powiadomienia",
+    "markAllAsRead": "Oznacz wszystkie jako przeczytane",
+    "noNotifications": "Brak powiadomień",
+    "types": {
+      "like": "Polubienie",
+      "comment": "Komentarz",
+      "comment_like": "Polubienie komentarza",
+      "follow": "Obserwowanie",
+      "post_mention": "Wzmianka w poście"
+    },
+    "messages": {
+      "likedPost": "{name} polubił Twój post",
+      "commentedPost": "{name} skomentował Twój post",
+      "likedComment": "{name} polubił Twój komentarz",
+      "followedYou": "{name} zaczął Cię obserwować",
+      "mentionedYou": "{name} wspomniał o Tobie w poście"
+    }
   }
 }

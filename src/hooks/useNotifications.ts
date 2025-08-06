@@ -1,0 +1,227 @@
+import { useState, useEffect, useCallback } from "react";
+import { useSession } from "next-auth/react";
+
+export interface Notification {
+  _id: string;
+  type: "like" | "comment" | "comment_like" | "follow" | "post_mention";
+  title: string;
+  message: string;
+  isRead: boolean;
+  postId?: string;
+  commentId?: string;
+  senderName: string;
+  senderImage?: string;
+  metadata?: {
+    postContent?: string;
+    commentContent?: string;
+  };
+  createdAt: string;
+}
+
+interface UseNotificationsOptions {
+  enabled?: boolean;
+  pollInterval?: number;
+  limit?: number;
+}
+
+interface NotificationsPagination {
+  page: number;
+  limit: number;
+  total: number;
+  hasMore: boolean;
+}
+
+export function useNotifications(options: UseNotificationsOptions = {}) {
+  const { enabled = true, pollInterval = 30000, limit = 20 } = options;
+  const { data: session } = useSession();
+
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [pagination, setPagination] = useState<NotificationsPagination>({
+    page: 1,
+    limit,
+    total: 0,
+    hasMore: false,
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch notifications
+  const fetchNotifications = useCallback(
+    async (page = 1, append = false) => {
+      if (!session?.user?.id || !enabled) return;
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const params = new URLSearchParams({
+          page: page.toString(),
+          limit: limit.toString(),
+        });
+
+        const response = await fetch(`/api/notifications?${params}`);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch notifications");
+        }
+
+        const data = await response.json();
+
+        setNotifications((prev) =>
+          append ? [...prev, ...data.notifications] : data.notifications
+        );
+        setPagination(data.pagination);
+        setUnreadCount(data.unreadCount);
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch notifications"
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [session?.user?.id, enabled, limit]
+  );
+
+  // Load more notifications
+  const loadMore = useCallback(() => {
+    if (pagination.hasMore && !isLoading) {
+      fetchNotifications(pagination.page + 1, true);
+    }
+  }, [pagination.hasMore, pagination.page, isLoading, fetchNotifications]);
+
+  // Mark notifications as read
+  const markAsRead = useCallback(
+    async (notificationIds?: string[]) => {
+      if (!session?.user?.id) return;
+
+      try {
+        const response = await fetch("/api/notifications", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            notificationIds,
+            markAll: !notificationIds,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to mark notifications as read");
+        }
+
+        // Update local state
+        setNotifications((prev) =>
+          prev.map((notification) => {
+            if (
+              !notificationIds ||
+              notificationIds.includes(notification._id)
+            ) {
+              return { ...notification, isRead: true };
+            }
+            return notification;
+          })
+        );
+
+        if (!notificationIds) {
+          setUnreadCount(0);
+        } else {
+          setUnreadCount((prev) => Math.max(0, prev - notificationIds.length));
+        }
+      } catch (error) {
+        console.error("Error marking notifications as read:", error);
+        setError(
+          error instanceof Error ? error.message : "Failed to mark as read"
+        );
+      }
+    },
+    [session?.user?.id]
+  );
+
+  // Mark single notification as read
+  const markSingleAsRead = useCallback(
+    (notificationId: string) => {
+      markAsRead([notificationId]);
+    },
+    [markAsRead]
+  );
+
+  // Mark all as read
+  const markAllAsRead = useCallback(() => {
+    markAsRead();
+  }, [markAsRead]);
+
+  // Refresh notifications
+  const refresh = useCallback(() => {
+    fetchNotifications(1, false);
+  }, [fetchNotifications]);
+
+  // Get unread notifications only
+  const fetchUnreadOnly = useCallback(async () => {
+    if (!session?.user?.id || !enabled) return;
+
+    try {
+      const params = new URLSearchParams({
+        unreadOnly: "true",
+        limit: "50",
+      });
+
+      const response = await fetch(`/api/notifications?${params}`);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch unread notifications");
+      }
+
+      const data = await response.json();
+      return data.notifications;
+    } catch (error) {
+      console.error("Error fetching unread notifications:", error);
+      return [];
+    }
+  }, [session?.user?.id, enabled]);
+
+  // Initial fetch
+  useEffect(() => {
+    if (session?.user?.id && enabled) {
+      fetchNotifications();
+    }
+  }, [session?.user?.id, enabled, fetchNotifications]);
+
+  // Polling for new notifications
+  useEffect(() => {
+    if (!session?.user?.id || !enabled || !pollInterval) return;
+
+    const interval = setInterval(() => {
+      // Only check for unread count to avoid disrupting the user's view
+      fetch("/api/notifications?page=1&limit=1")
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.unreadCount !== unreadCount) {
+            setUnreadCount(data.unreadCount);
+          }
+        })
+        .catch(console.error);
+    }, pollInterval);
+
+    return () => clearInterval(interval);
+  }, [session?.user?.id, enabled, pollInterval, unreadCount]);
+
+  return {
+    notifications,
+    unreadCount,
+    pagination,
+    isLoading,
+    error,
+    fetchNotifications,
+    loadMore,
+    markAsRead: markSingleAsRead,
+    markAllAsRead,
+    refresh,
+    fetchUnreadOnly,
+  };
+}

@@ -73,6 +73,30 @@ export async function POST(
         } as object
       );
       isLiked = true;
+
+      // Create notification for comment author (only when liking, not when unliking)
+      if (comment.author && !comment.author.equals(userId)) {
+        // Get user info for notification
+        const user = await db
+          .collection("users")
+          .findOne({ _id: userId }, { projection: { name: 1 } });
+
+        await db.collection("notifications").insertOne({
+          recipient: comment.author,
+          sender: userId,
+          type: "comment_like",
+          title: "Polubienie komentarza",
+          message: `${user?.name || "Ktoś"} polubił Twój komentarz`,
+          postId: new ObjectId(postId),
+          commentId: commentId,
+          metadata: {
+            commentContent: comment.content?.substring(0, 100) || "",
+          },
+          isRead: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+      }
     }
 
     // Get updated comment to return like count

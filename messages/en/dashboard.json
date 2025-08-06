@@ -88,5 +88,24 @@
       "auth": "Authentication",
       "operational": "Operational"
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllAsRead": "Mark all as read",
+    "noNotifications": "No notifications",
+    "types": {
+      "like": "Like",
+      "comment": "Comment",
+      "comment_like": "Comment like",
+      "follow": "Follow",
+      "post_mention": "Post mention"
+    },
+    "messages": {
+      "likedPost": "{name} liked your post",
+      "commentedPost": "{name} commented on your post",
+      "likedComment": "{name} liked your comment",
+      "followedYou": "{name} started following you",
+      "mentionedYou": "{name} mentioned you in a post"
+    }
   }
 }

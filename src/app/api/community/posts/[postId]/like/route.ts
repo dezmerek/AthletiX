@@ -23,7 +23,7 @@ export async function POST(
     const db = client.db();
     const userId = new ObjectId(session.user.id);
 
-    // Check if post exists
+    // Check if post exists and get post author info
     const post = await db
       .collection("communityposts")
       .findOne({ _id: new ObjectId(postId) });
@@ -32,6 +32,11 @@ export async function POST(
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
+    // Get user info for notification
+    const user = await db
+      .collection("users")
+      .findOne({ _id: userId }, { projection: { name: 1 } });
+
     // Check if user already liked the post
     const hasLiked = post.likes?.some((like: ObjectId) => like.equals(userId));
 
@@ -39,20 +44,38 @@ export async function POST(
 
     // Update the post
     if (hasLiked) {
-      // @ts-expect-error - MongoDB types issue with ObjectId in $pull
       await db
         .collection("communityposts")
+        // @ts-expect-error - MongoDB types issue with ObjectId in $pull
         .updateOne({ _id: new ObjectId(postId) }, { $pull: { likes: userId } });
       isLiked = false;
     } else {
-      // @ts-expect-error - MongoDB types issue with ObjectId in $addToSet
       await db
         .collection("communityposts")
+        // @ts-expect-error - MongoDB types issue with ObjectId in $addToSet
         .updateOne(
           { _id: new ObjectId(postId) },
           { $addToSet: { likes: userId } }
         );
       isLiked = true;
+
+      // Create notification for post author (only when liking, not when unliking)
+      if (post.author && !post.author.equals(userId)) {
+        await db.collection("notifications").insertOne({
+          recipient: post.author,
+          sender: userId,
+          type: "like",
+          title: "Nowe polubienie",
+          message: `${user?.name || "Ktoś"} polubił Twój post`,
+          postId: new ObjectId(postId),
+          metadata: {
+            postContent: post.content?.substring(0, 100) || "",
+          },
+          isRead: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+      }
     }
 
     // Get updated like count
