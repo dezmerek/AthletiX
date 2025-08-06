@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useOnlineUsers } from "@/hooks/useOnlineUsers";
 
 interface CommunityPost {
   id: string;
@@ -29,57 +30,22 @@ interface Comment {
   isLiked: boolean;
 }
 
-interface OnlineUser {
-  id: string;
-  name: string;
-  role: "user" | "trainer" | "nutritionist";
-  lastSeen: Date;
-  isOnline: boolean;
-}
-
 export default function CommunityPage() {
   const t = useTranslations("community");
   const [newPost, setNewPost] = useState("");
   const [newComments, setNewComments] = useState<Record<string, string>>({});
 
-  // Przykładowi użytkownicy online
-  const [onlineUsers] = useState<OnlineUser[]>([
-    {
-      id: "1",
-      name: "Anna Kowalska",
-      role: "trainer",
-      lastSeen: new Date(),
-      isOnline: true,
-    },
-    {
-      id: "2",
-      name: "Michał Nowak",
-      role: "user",
-      lastSeen: new Date(),
-      isOnline: true,
-    },
-    {
-      id: "3",
-      name: "Dr. Maria Zielińska",
-      role: "nutritionist",
-      lastSeen: new Date(Date.now() - 5 * 60 * 1000), // 5 min temu
-      isOnline: false,
-    },
-    {
-      id: "4",
-      name: "Tomasz Wiśniewski",
-      role: "user",
-      lastSeen: new Date(),
-      isOnline: true,
-    },
-    {
-      id: "5",
-      name: "Katarzyna Nowacka",
-      role: "trainer",
-      lastSeen: new Date(Date.now() - 2 * 60 * 1000), // 2 min temu
-      isOnline: false,
-    },
-  ]);
+  // Online users data
+  const {
+    onlineUsers,
+    recentlyActiveUsers,
+    totalOnline,
+    isLoading: isLoadingUsers,
+    error: usersError,
+  } = useOnlineUsers({
+    enabled: true,
+    refreshInterval: 15000, // 15 seconds for faster updates
+  });
   // Podstawowe przykładowe posty
   const [posts, setPosts] = useState<CommunityPost[]>([
     {
@@ -256,6 +222,8 @@ export default function CommunityPage() {
         return "🏋️";
       case "nutritionist":
         return "🥗";
+      case "admin":
+        return "👑";
       default:
         return "👤";
     }
@@ -266,6 +234,8 @@ export default function CommunityPage() {
         return "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400";
       case "nutritionist":
         return "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400";
+      case "admin":
+        return "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400";
       default:
         return "bg-slate-100 text-slate-600 dark:bg-slate-900/30 dark:text-slate-400";
     }
@@ -540,80 +510,90 @@ export default function CommunityPage() {
                   {t("onlineUsers.title")}
                 </h3>
                 <span className="text-sm text-gray-500 dark:text-gray-400">
-                  ({onlineUsers.filter((user) => user.isOnline).length})
+                  ({totalOnline})
                 </span>
               </div>
 
-              <div className="space-y-3">
-                {onlineUsers.map((user) => (
-                  <div
-                    key={user.id}
-                    className="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                  >
-                    <div className="relative">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
-                        <span className="text-blue-600 dark:text-blue-400 font-semibold text-sm">
-                          {user.name.charAt(0)}
-                        </span>
-                      </div>
-                      {user.isOnline && (
-                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
-                      )}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-2">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                          {user.name}
-                        </p>
-                        <span
-                          className={`px-1.5 py-0.5 rounded text-xs font-medium ${getRoleBadgeColor(
-                            user.role
-                          )}`}
-                        >
-                          {getRoleIcon(user.role)}
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {user.isOnline
-                          ? t("onlineUsers.online")
-                          : `${formatTimestamp(user.lastSeen)}`}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {onlineUsers.filter((user) => !user.isOnline).length > 0 && (
+              {isLoadingUsers ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                </div>
+              ) : usersError ? (
+                <div className="text-center py-8">
+                  <p className="text-red-500 text-sm">{usersError}</p>
+                </div>
+              ) : (
                 <>
-                  <div className="border-t border-gray-200 dark:border-gray-700 my-4"></div>
-                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                    {t("onlineUsers.recentlyActive")}
-                  </h4>
-                  <div className="space-y-2">
-                    {onlineUsers
-                      .filter((user) => !user.isOnline)
-                      .map((user) => (
-                        <div
-                          key={user.id}
-                          className="flex items-center space-x-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                        >
-                          <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
-                            <span className="text-gray-600 dark:text-gray-400 font-semibold text-xs">
+                  <div className="space-y-3">
+                    {onlineUsers.map((user) => (
+                      <div
+                        key={user.id}
+                        className="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                      >
+                        <div className="relative">
+                          <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
+                            <span className="text-blue-600 dark:text-blue-400 font-semibold text-sm">
                               {user.name.charAt(0)}
                             </span>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate">
+                          {user.isOnline && (
+                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
+                          )}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-2">
+                            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                               {user.name}
                             </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {formatTimestamp(user.lastSeen)}
-                            </p>
+                            <span
+                              className={`px-1.5 py-0.5 rounded text-xs font-medium ${getRoleBadgeColor(
+                                user.role
+                              )}`}
+                            >
+                              {getRoleIcon(user.role)}
+                            </span>
                           </div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {user.isOnline
+                              ? t("onlineUsers.online")
+                              : `${formatTimestamp(user.lastSeen)}`}
+                          </p>
                         </div>
-                      ))}
+                      </div>
+                    ))}
                   </div>
+
+                  {recentlyActiveUsers.length > 0 && (
+                    <>
+                      <div className="border-t border-gray-200 dark:border-gray-700 my-4"></div>
+                      <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                        {t("onlineUsers.recentlyActive")}
+                      </h4>
+                      <div className="space-y-2">
+                        {recentlyActiveUsers.map((user) => (
+                          <div
+                            key={user.id}
+                            className="flex items-center space-x-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                          >
+                            <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
+                              <span className="text-gray-600 dark:text-gray-400 font-semibold text-xs">
+                                {user.name.charAt(0)}
+                              </span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate">
+                                {user.name}
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                {formatTimestamp(user.lastSeen)}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </>
               )}
             </div>

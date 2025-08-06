@@ -20,6 +20,11 @@ export interface IUser extends mongoose.Document {
   // Simple context switching
   activeContext?: "user" | "professional" | null;
 
+  // Activity tracking
+  lastSeen?: Date;
+  isOnline?: boolean;
+  lastActivity?: Date;
+
   createdAt: Date;
   updatedAt: Date;
   comparePassword?(candidatePassword: string): Promise<boolean>;
@@ -62,6 +67,20 @@ const userSchema = new mongoose.Schema<IUser>(
       type: String,
       enum: ["user", "professional"],
       default: null,
+    },
+
+    // Activity tracking
+    lastSeen: {
+      type: Date,
+      default: Date.now,
+    },
+    isOnline: {
+      type: Boolean,
+      default: false,
+    },
+    lastActivity: {
+      type: Date,
+      default: Date.now,
     },
   },
   {
