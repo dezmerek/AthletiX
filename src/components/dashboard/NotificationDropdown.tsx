@@ -2,7 +2,7 @@
 
 import { useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { useNotifications } from "@/hooks/useNotifications";
+import { useNotificationContext } from "@/contexts/NotificationContext";
 
 interface NotificationDropdownProps {
   isOpen: boolean;
@@ -19,11 +19,7 @@ export default function NotificationDropdown({
   const t = useTranslations("dashboard.notifications");
 
   const { notifications, unreadCount, markAsRead, markAllAsRead } =
-    useNotifications({
-      enabled: true,
-      pollInterval: 30000,
-      limit: 10,
-    });
+    useNotificationContext();
 
   // Zamknij dropdown po kliknięciu poza nim
   useEffect(() => {

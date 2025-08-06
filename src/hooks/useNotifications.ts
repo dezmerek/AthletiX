@@ -32,7 +32,7 @@ interface NotificationsPagination {
 }
 
 export function useNotifications(options: UseNotificationsOptions = {}) {
-  const { enabled = true, pollInterval = 30000, limit = 20 } = options;
+  const { enabled = true, pollInterval = 5000, limit = 20 } = options; // Zmniejszenie interwału do 5 sekund
   const { data: session } = useSession();
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -196,20 +196,92 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
   useEffect(() => {
     if (!session?.user?.id || !enabled || !pollInterval) return;
 
-    const interval = setInterval(() => {
-      // Only check for unread count to avoid disrupting the user's view
-      fetch("/api/notifications?page=1&limit=1")
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.unreadCount !== unreadCount) {
-            setUnreadCount(data.unreadCount);
+    const interval = setInterval(async () => {
+      try {
+        const response = await fetch("/api/notifications?page=1&limit=5");
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        // Update unread count
+        if (data.unreadCount !== unreadCount) {
+          setUnreadCount(data.unreadCount);
+        }
+
+        // Check for new notifications (compare timestamps)
+        const latestNotificationTime = notifications[0]?.createdAt;
+        const newNotifications = data.notifications.filter(
+          (notification: Notification) => {
+            return (
+              !latestNotificationTime ||
+              new Date(notification.createdAt) >
+                new Date(latestNotificationTime)
+            );
           }
-        })
-        .catch(console.error);
+        );
+
+        // Add new notifications to the beginning of the list
+        if (newNotifications.length > 0) {
+          setNotifications((prev) => {
+            // Remove duplicates and add new ones at the beginning
+            const existingIds = new Set(prev.map((n) => n._id));
+            const uniqueNewNotifications = newNotifications.filter(
+              (notification: Notification) => !existingIds.has(notification._id)
+            );
+
+            if (uniqueNewNotifications.length > 0) {
+              // Show browser notification if page is not visible
+              if (
+                document.hidden &&
+                "Notification" in window &&
+                Notification.permission === "granted"
+              ) {
+                const latestNotification = uniqueNewNotifications[0];
+                new Notification(latestNotification.title, {
+                  body: latestNotification.message,
+                  icon: "/favicon.ico",
+                  tag: "athletix-notification",
+                });
+              }
+
+              return [...uniqueNewNotifications, ...prev];
+            }
+            return prev;
+          });
+        }
+      } catch (error) {
+        console.error("Error polling notifications:", error);
+      }
     }, pollInterval);
 
     return () => clearInterval(interval);
-  }, [session?.user?.id, enabled, pollInterval, unreadCount]);
+  }, [session?.user?.id, enabled, pollInterval, unreadCount, notifications]);
+
+  // Add new notification manually (for real-time updates)
+  const addNotification = useCallback((notification: Notification) => {
+    setNotifications((prev) => [notification, ...prev]);
+    setUnreadCount((prev) => prev + 1);
+
+    // Show browser notification if page is not visible
+    if (
+      document.hidden &&
+      "Notification" in window &&
+      Notification.permission === "granted"
+    ) {
+      new Notification(notification.title, {
+        body: notification.message,
+        icon: "/favicon.ico",
+        tag: "athletix-notification",
+      });
+    }
+  }, []);
+
+  // Request notification permission
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  }, []);
 
   return {
     notifications,
@@ -223,5 +295,6 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
     markAllAsRead,
     refresh,
     fetchUnreadOnly,
+    addNotification, // Dodajemy nową funkcję
   };
 }

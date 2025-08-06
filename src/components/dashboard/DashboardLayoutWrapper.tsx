@@ -1,6 +1,7 @@
 "use client";
 
 import { useUserActivity } from "@/hooks/useUserActivity";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardTopBar from "@/components/dashboard/DashboardTopBar";
 
@@ -20,18 +21,20 @@ export default function DashboardLayoutWrapper({
   });
 
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-900">
-      {/* Sidebar */}
-      <DashboardSidebar />
+    <NotificationProvider>
+      <div className="flex h-screen bg-slate-50 dark:bg-slate-900">
+        {/* Sidebar */}
+        <DashboardSidebar />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Bar */}
-        <DashboardTopBar />
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Top Bar */}
+          <DashboardTopBar />
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-y-auto">{children}</main>
+          {/* Page Content */}
+          <main className="flex-1 overflow-y-auto">{children}</main>
+        </div>
       </div>
-    </div>
+    </NotificationProvider>
   );
 }

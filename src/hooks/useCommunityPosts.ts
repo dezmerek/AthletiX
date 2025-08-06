@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import { triggerNotificationCheck } from "@/utils/notificationUtils";
 
 export interface CommunityPost {
   _id: string;
@@ -210,6 +211,11 @@ export function useCommunityPosts(
               : post
           )
         );
+
+        // Trigger notification check after liking (only if user liked, not unliked)
+        if (data.isLiked) {
+          triggerNotificationCheck();
+        }
       } catch (err) {
         console.error("Error toggling like:", err);
         setError(err instanceof Error ? err.message : "Failed to toggle like");
@@ -254,6 +260,11 @@ export function useCommunityPosts(
               : post
           )
         );
+
+        // Trigger notification check after liking comment (only if user liked, not unliked)
+        if (data.isLiked) {
+          triggerNotificationCheck();
+        }
       } catch (err) {
         console.error("Error toggling comment like:", err);
         setError(
@@ -301,6 +312,9 @@ export function useCommunityPosts(
               : post
           )
         );
+
+        // Trigger notification check after adding comment
+        triggerNotificationCheck();
       } catch (err) {
         console.error("Error adding comment:", err);
         setError(err instanceof Error ? err.message : "Failed to add comment");
