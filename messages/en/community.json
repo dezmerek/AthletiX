@@ -20,6 +20,7 @@
   },
   "roles": {
     "user": "User",
+    "professional": "Professional",
     "trainer": "Trainer",
     "nutritionist": "Nutritionist",
     "admin": "Administrator"

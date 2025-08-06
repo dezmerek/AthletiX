@@ -20,6 +20,7 @@
   },
   "roles": {
     "user": "Użytkownik",
+    "professional": "Specjalista",
     "trainer": "Trener",
     "nutritionist": "Dietetyk",
     "admin": "Administrator"
