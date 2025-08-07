@@ -2,18 +2,11 @@
 
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-
-interface CalendarEvent {
-  id: string;
-  title: string;
-  type: "workout" | "meal" | "appointment" | "other";
-  date: string;
-  time: string;
-  duration: number; // minutes
-  description?: string;
-  color: string;
-  completed?: boolean;
-}
+import {
+  useCalendarEvents,
+  CalendarEvent as CalendarEventType,
+  CreateCalendarEventData,
+} from "@/hooks/useCalendarEvents";
 
 type ViewType = "month" | "week" | "day";
 
@@ -24,72 +17,27 @@ export default function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [viewType, setViewType] = useState<ViewType>("month");
   const [showEventModal, setShowEventModal] = useState(false);
-  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
-  const [events, setEvents] = useState<CalendarEvent[]>([
-    {
-      id: "1",
-      title: "Morning Workout",
-      type: "workout",
-      date: "2025-01-20",
-      time: "07:00",
-      duration: 60,
-      description: "Upper body strength training",
-      color: "#10B981",
-      completed: true,
-    },
-    {
-      id: "2",
-      title: "Cardio Session",
-      type: "workout",
-      date: "2025-01-21",
-      time: "18:00",
-      duration: 45,
-      description: "30 min running + 15 min stretching",
-      color: "#10B981",
-    },
-    {
-      id: "3",
-      title: "Nutrition Consultation",
-      type: "appointment",
-      date: "2025-01-22",
-      time: "14:00",
-      duration: 60,
-      description: "Monthly check-in with nutritionist",
-      color: "#3B82F6",
-    },
-    {
-      id: "4",
-      title: "Meal Prep",
-      type: "meal",
-      date: "2025-01-23",
-      time: "16:00",
-      duration: 120,
-      description: "Prepare meals for the week",
-      color: "#F59E0B",
-    },
-    {
-      id: "5",
-      title: "Yoga Class",
-      type: "workout",
-      date: "2025-01-24",
-      time: "09:00",
-      duration: 75,
-      description: "Hatha yoga session",
-      color: "#10B981",
-    },
-    {
-      id: "6",
-      title: "PT Session",
-      type: "appointment",
-      date: "2025-01-25",
-      time: "11:00",
-      duration: 60,
-      description: "Personal training session",
-      color: "#3B82F6",
-    },
-  ]);
+  const [editingEvent, setEditingEvent] = useState<CalendarEventType | null>(
+    null
+  );
 
-  const [newEvent, setNewEvent] = useState<Partial<CalendarEvent>>({
+  // Use the calendar events hook
+  const {
+    events,
+    loading,
+    error,
+    createEvent,
+    updateEvent,
+    deleteEvent,
+    toggleEventComplete,
+    getEventsForDate,
+    refreshEvents,
+  } = useCalendarEvents({
+    initialDate: currentDate,
+    autoLoad: true,
+  });
+
+  const [newEvent, setNewEvent] = useState<Partial<CreateCalendarEventData>>({
     title: "",
     type: "workout",
     date: "",
@@ -99,6 +47,12 @@ export default function CalendarPage() {
     color: "#10B981",
   });
 
+  const [formErrors, setFormErrors] = useState<{
+    title?: string;
+    date?: string;
+    time?: string;
+  }>({});
+
   // Get calendar display data
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();
@@ -106,12 +60,16 @@ export default function CalendarPage() {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
+
+    // Adjust for Monday as first day of week
     const startingDayOfWeek = firstDay.getDay();
+    const adjustedStartingDay =
+      startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1;
 
     const days = [];
 
     // Add empty cells for days before the first day of the month
-    for (let i = 0; i < startingDayOfWeek; i++) {
+    for (let i = 0; i < adjustedStartingDay; i++) {
       days.push(null);
     }
 
@@ -123,15 +81,13 @@ export default function CalendarPage() {
     return days;
   };
 
-  const getEventsForDate = (date: Date) => {
-    const dateString = date.toISOString().split("T")[0];
-    return events.filter((event) => event.date === dateString);
-  };
-
   const getWeekDays = (date: Date) => {
     const week = [];
     const startOfWeek = new Date(date);
-    startOfWeek.setDate(date.getDate() - date.getDay());
+    // Adjust to make Monday the first day of the week (like in month view)
+    const dayOfWeek = date.getDay();
+    const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Sunday = 0, so subtract 6 to get to Monday
+    startOfWeek.setDate(date.getDate() - daysToSubtract);
 
     for (let i = 0; i < 7; i++) {
       const day = new Date(startOfWeek);
@@ -219,20 +175,43 @@ export default function CalendarPage() {
     }
   };
 
-  const handleAddEvent = () => {
-    if (newEvent.title && newEvent.date && newEvent.time) {
-      const event: CalendarEvent = {
-        id: Date.now().toString(),
-        title: newEvent.title!,
-        type: newEvent.type as CalendarEvent["type"],
-        date: newEvent.date!,
-        time: newEvent.time!,
-        duration: newEvent.duration || 60,
-        description: newEvent.description,
-        color: newEvent.color || "#10B981",
-      };
+  const validateForm = () => {
+    const errors: { title?: string; date?: string; time?: string } = {};
 
-      setEvents([...events, event]);
+    if (!newEvent.title?.trim()) {
+      errors.title = t("form.titleRequired");
+    }
+
+    if (!newEvent.date) {
+      errors.date = t("form.dateRequired");
+    }
+
+    if (!newEvent.time) {
+      errors.time = t("form.timeRequired");
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleAddEvent = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    const eventData: CreateCalendarEventData = {
+      title: newEvent.title!,
+      type: newEvent.type as CreateCalendarEventData["type"],
+      date: newEvent.date!,
+      time: newEvent.time!,
+      duration: newEvent.duration || 60,
+      description: newEvent.description,
+      color: newEvent.color || "#10B981",
+    };
+
+    const createdEvent = await createEvent(eventData);
+
+    if (createdEvent) {
       setNewEvent({
         title: "",
         type: "workout",
@@ -242,34 +221,35 @@ export default function CalendarPage() {
         description: "",
         color: "#10B981",
       });
+      setFormErrors({});
       setShowEventModal(false);
     }
   };
 
-  const handleEditEvent = (event: CalendarEvent) => {
+  const handleEditEvent = (event: CalendarEventType) => {
     setEditingEvent(event);
     setNewEvent(event);
     setShowEventModal(true);
   };
 
-  const handleUpdateEvent = () => {
-    if (editingEvent && newEvent.title && newEvent.date && newEvent.time) {
-      const updatedEvents = events.map((event) =>
-        event.id === editingEvent.id
-          ? {
-              ...event,
-              title: newEvent.title!,
-              type: newEvent.type as CalendarEvent["type"],
-              date: newEvent.date!,
-              time: newEvent.time!,
-              duration: newEvent.duration || 60,
-              description: newEvent.description,
-              color: newEvent.color || "#10B981",
-            }
-          : event
-      );
+  const handleUpdateEvent = async () => {
+    if (!validateForm() || !editingEvent) {
+      return;
+    }
 
-      setEvents(updatedEvents);
+    const eventData: CreateCalendarEventData = {
+      title: newEvent.title!,
+      type: newEvent.type as CreateCalendarEventData["type"],
+      date: newEvent.date!,
+      time: newEvent.time!,
+      duration: newEvent.duration || 60,
+      description: newEvent.description,
+      color: newEvent.color || "#10B981",
+    };
+
+    const updatedEvent = await updateEvent(editingEvent.id, eventData);
+
+    if (updatedEvent) {
       setEditingEvent(null);
       setNewEvent({
         title: "",
@@ -280,20 +260,17 @@ export default function CalendarPage() {
         description: "",
         color: "#10B981",
       });
+      setFormErrors({});
       setShowEventModal(false);
     }
   };
 
-  const handleDeleteEvent = (eventId: string) => {
-    setEvents(events.filter((event) => event.id !== eventId));
+  const handleDeleteEvent = async (eventId: string) => {
+    await deleteEvent(eventId);
   };
 
-  const toggleEventComplete = (eventId: string) => {
-    setEvents(
-      events.map((event) =>
-        event.id === eventId ? { ...event, completed: !event.completed } : event
-      )
-    );
+  const handleToggleEventComplete = async (eventId: string) => {
+    await toggleEventComplete(eventId);
   };
 
   const navigateMonth = (direction: number) => {
@@ -359,13 +336,13 @@ export default function CalendarPage() {
   const renderMonthView = () => {
     const days = getDaysInMonth(currentDate);
     const dayNames = [
-      t("dayNames.sunday"),
       t("dayNames.monday"),
       t("dayNames.tuesday"),
       t("dayNames.wednesday"),
       t("dayNames.thursday"),
       t("dayNames.friday"),
       t("dayNames.saturday"),
+      t("dayNames.sunday"),
     ];
 
     return (
@@ -389,7 +366,7 @@ export default function CalendarPage() {
               return (
                 <div
                   key={index}
-                  className="h-32 border-r border-b border-slate-200 dark:border-slate-700"
+                  className="h-36 border-r border-b border-slate-200 dark:border-slate-700"
                 ></div>
               );
             }
@@ -403,7 +380,7 @@ export default function CalendarPage() {
               <div
                 key={index}
                 onClick={() => setSelectedDate(day)}
-                className={`h-32 border-r border-b border-slate-200 dark:border-slate-700 p-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors ${
+                className={`h-36 border-r border-b border-slate-200 dark:border-slate-700 p-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors ${
                   isSelected ? "bg-blue-50 dark:bg-blue-900/20" : ""
                 }`}
               >
@@ -434,7 +411,7 @@ export default function CalendarPage() {
                     </div>
                   ))}{" "}
                   {dayEvents.length > 3 && (
-                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                    <div className="text-xs text-slate-500 dark:text-slate-400 truncate">
                       +{dayEvents.length - 3} {t("events.moreEvents")}
                     </div>
                   )}
@@ -506,7 +483,7 @@ export default function CalendarPage() {
                     key={`${day.toISOString()}-${hour}`}
                     className="p-1 border-r border-slate-200 dark:border-slate-700 min-h-[60px]"
                   >
-                    {dayEvents.map((event) => (
+                    {dayEvents.slice(0, 2).map((event) => (
                       <div
                         key={event.id}
                         onClick={() => handleEditEvent(event)}
@@ -520,6 +497,11 @@ export default function CalendarPage() {
                         <span className="truncate">{event.title}</span>
                       </div>
                     ))}
+                    {dayEvents.length > 2 && (
+                      <div className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                        +{dayEvents.length - 2} {t("events.moreEvents")}
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -649,7 +631,7 @@ export default function CalendarPage() {
                     </div>
                     <div className="flex items-center space-x-2">
                       <button
-                        onClick={() => toggleEventComplete(event.id)}
+                        onClick={() => handleToggleEventComplete(event.id)}
                         className={`p-1 rounded ${
                           event.completed
                             ? "text-green-500 hover:text-green-600"
@@ -736,6 +718,11 @@ export default function CalendarPage() {
           <p className="text-slate-600 dark:text-slate-400">
             {t("description")}
           </p>
+          {error && (
+            <div className="mt-2 p-3 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg">
+              <p className="text-red-700 dark:text-red-400 text-sm">{error}</p>
+            </div>
+          )}
         </div>
 
         {/* Controls */}
@@ -874,12 +861,24 @@ export default function CalendarPage() {
                     <input
                       type="text"
                       value={newEvent.title}
-                      onChange={(e) =>
-                        setNewEvent({ ...newEvent, title: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      onChange={(e) => {
+                        setNewEvent({ ...newEvent, title: e.target.value });
+                        if (formErrors.title) {
+                          setFormErrors({ ...formErrors, title: undefined });
+                        }
+                      }}
+                      className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        formErrors.title
+                          ? "border-red-300 dark:border-red-600"
+                          : "border-slate-300 dark:border-slate-600"
+                      }`}
                       placeholder={t("form.titlePlaceholder")}
                     />
+                    {formErrors.title && (
+                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                        {formErrors.title}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -891,7 +890,8 @@ export default function CalendarPage() {
                       onChange={(e) =>
                         setNewEvent({
                           ...newEvent,
-                          type: e.target.value as CalendarEvent["type"],
+                          type: e.target
+                            .value as CreateCalendarEventData["type"],
                         })
                       }
                       className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -913,11 +913,23 @@ export default function CalendarPage() {
                       <input
                         type="date"
                         value={newEvent.date}
-                        onChange={(e) =>
-                          setNewEvent({ ...newEvent, date: e.target.value })
-                        }
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        onChange={(e) => {
+                          setNewEvent({ ...newEvent, date: e.target.value });
+                          if (formErrors.date) {
+                            setFormErrors({ ...formErrors, date: undefined });
+                          }
+                        }}
+                        className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                          formErrors.date
+                            ? "border-red-300 dark:border-red-600"
+                            : "border-slate-300 dark:border-slate-600"
+                        }`}
                       />
+                      {formErrors.date && (
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                          {formErrors.date}
+                        </p>
+                      )}
                     </div>
 
                     <div>
@@ -927,11 +939,23 @@ export default function CalendarPage() {
                       <input
                         type="time"
                         value={newEvent.time}
-                        onChange={(e) =>
-                          setNewEvent({ ...newEvent, time: e.target.value })
-                        }
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        onChange={(e) => {
+                          setNewEvent({ ...newEvent, time: e.target.value });
+                          if (formErrors.time) {
+                            setFormErrors({ ...formErrors, time: undefined });
+                          }
+                        }}
+                        className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                          formErrors.time
+                            ? "border-red-300 dark:border-red-600"
+                            : "border-slate-300 dark:border-slate-600"
+                        }`}
                       />
+                      {formErrors.time && (
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                          {formErrors.time}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -1013,6 +1037,7 @@ export default function CalendarPage() {
                         description: "",
                         color: "#10B981",
                       });
+                      setFormErrors({});
                     }}
                     className="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                   >
@@ -1020,9 +1045,14 @@ export default function CalendarPage() {
                   </button>
                   <button
                     onClick={editingEvent ? handleUpdateEvent : handleAddEvent}
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    disabled={loading}
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {editingEvent ? t("actions.update") : t("actions.add")}
+                    {loading
+                      ? "..."
+                      : editingEvent
+                      ? t("actions.update")
+                      : t("actions.add")}
                   </button>
                 </div>
               </div>

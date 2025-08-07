@@ -30,9 +30,12 @@
   "form": {
     "title": "Title",
     "titlePlaceholder": "Event title",
+    "titleRequired": "Title is required",
     "type": "Type",
     "date": "Date",
+    "dateRequired": "Date is required",
     "time": "Time",
+    "timeRequired": "Time is required",
     "duration": "Duration",
     "minutes": "minutes",
     "description": "Description",

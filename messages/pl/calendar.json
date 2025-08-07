@@ -30,9 +30,12 @@
   "form": {
     "title": "Tytuł",
     "titlePlaceholder": "Tytuł wydarzenia",
+    "titleRequired": "Tytuł jest wymagany",
     "type": "Typ",
     "date": "Data",
+    "dateRequired": "Data jest wymagana",
     "time": "Czas",
+    "timeRequired": "Czas jest wymagany",
     "duration": "Czas trwania",
     "minutes": "minut",
     "description": "Opis",
