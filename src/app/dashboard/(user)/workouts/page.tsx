@@ -1,22 +1,27 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import EditWorkoutModal from "./EditWorkoutModal";
+import PlanWorkoutModal from "./PlanWorkoutModal";
 
 interface Exercise {
   id: string;
   name: string;
+  nameEn?: string;
   sets: number;
   reps: number;
   weight?: number;
   duration?: number; // for cardio exercises in minutes
   restTime?: number; // rest time in seconds
   notes?: string;
+  notesEn?: string;
 }
 
 interface Workout {
   id: string;
   name: string;
+  nameEn?: string;
   date: string;
   type: "strength" | "cardio" | "flexibility" | "mixed";
   duration: number; // total workout duration in minutes
@@ -28,6 +33,7 @@ interface Workout {
 interface WorkoutTemplate {
   id: string;
   name: string;
+  nameEn?: string;
   type: "strength" | "cardio" | "flexibility" | "mixed";
   exercises: Omit<Exercise, "id">[];
   estimatedDuration: number;
@@ -35,218 +41,150 @@ interface WorkoutTemplate {
 
 export default function WorkoutsPage() {
   const t = useTranslations("workouts");
+  const locale = useLocale();
 
-  // Mock data - w prawdziwej aplikacji to będzie z API
-  const [workouts, setWorkouts] = useState<Workout[]>([
-    {
-      id: "1",
-      name: "Push Day - Klatka, ramiona, triceps",
-      date: "2025-06-04",
-      type: "strength",
-      duration: 75,
-      status: "completed",
-      exercises: [
-        {
-          id: "1",
-          name: "Wyciskanie sztangi na ławce płaskiej",
-          sets: 4,
-          reps: 8,
-          weight: 80,
-          restTime: 120,
-        },
-        {
-          id: "2",
-          name: "Pompki na poręczach",
-          sets: 3,
-          reps: 12,
-          restTime: 90,
-        },
-        {
-          id: "3",
-          name: "Wyciskanie hantli nad głową",
-          sets: 3,
-          reps: 10,
-          weight: 25,
-          restTime: 90,
-        },
-        {
-          id: "4",
-          name: "Rozpiętki na ławce skośnej",
-          sets: 3,
-          reps: 12,
-          weight: 15,
-          restTime: 60,
-        },
-      ],
-    },
-    {
-      id: "2",
-      name: "Cardio - Bieganie",
-      date: "2025-06-03",
-      type: "cardio",
-      duration: 45,
-      status: "completed",
-      exercises: [
-        {
-          id: "5",
-          name: "Bieganie",
-          sets: 1,
-          reps: 1,
-          duration: 45,
-          notes: "Tempo 6:00/km, dystans 7.5km",
-        },
-      ],
-    },
-    {
-      id: "3",
-      name: "Pull Day - Plecy, biceps",
-      date: "2025-06-02",
-      type: "strength",
-      duration: 80,
-      status: "completed",
-      exercises: [
-        {
-          id: "6",
-          name: "Podciąganie na drążku",
-          sets: 4,
-          reps: 8,
-          restTime: 120,
-        },
-        {
-          id: "7",
-          name: "Wiosłowanie sztangą",
-          sets: 4,
-          reps: 10,
-          weight: 70,
-          restTime: 90,
-        },
-        {
-          id: "8",
-          name: "Uginanie ramion ze sztangą",
-          sets: 3,
-          reps: 12,
-          weight: 30,
-          restTime: 60,
-        },
-      ],
-    },
-    {
-      id: "4",
-      name: "Legs Day - Nogi",
-      date: "2025-06-06",
-      type: "strength",
-      duration: 0,
-      status: "planned",
-      exercises: [
-        {
-          id: "9",
-          name: "Przysiady ze sztangą",
-          sets: 4,
-          reps: 10,
-          weight: 90,
-          restTime: 180,
-        },
-        {
-          id: "10",
-          name: "Martwy ciąg",
-          sets: 4,
-          reps: 8,
-          weight: 100,
-          restTime: 180,
-        },
-        {
-          id: "11",
-          name: "Wypady z hantlami",
-          sets: 3,
-          reps: 12,
-          weight: 20,
-          restTime: 90,
-        },
-      ],
-    },
-  ]);
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
 
-  const [workoutTemplates] = useState<WorkoutTemplate[]>([
-    {
-      id: "1",
-      name: "Push Day",
-      type: "strength",
-      estimatedDuration: 75,
-      exercises: [
-        {
-          name: "Wyciskanie sztangi na ławce płaskiej",
-          sets: 4,
-          reps: 8,
-          weight: 80,
-          restTime: 120,
-        },
-        {
-          name: "Pompki na poręczach",
-          sets: 3,
-          reps: 12,
-          restTime: 90,
-        },
-        {
-          name: "Wyciskanie hantli nad głową",
-          sets: 3,
-          reps: 10,
-          weight: 25,
-          restTime: 90,
-        },
-      ],
-    },
-    {
-      id: "2",
-      name: "Pull Day",
-      type: "strength",
-      estimatedDuration: 80,
-      exercises: [
-        {
-          name: "Podciąganie na drążku",
-          sets: 4,
-          reps: 8,
-          restTime: 120,
-        },
-        {
-          name: "Wiosłowanie sztangą",
-          sets: 4,
-          reps: 10,
-          weight: 70,
-          restTime: 90,
-        },
-        {
-          name: "Uginanie ramion ze sztangą",
-          sets: 3,
-          reps: 12,
-          weight: 30,
-          restTime: 60,
-        },
-      ],
-    },
-    {
-      id: "3",
-      name: "Cardio Base",
-      type: "cardio",
-      estimatedDuration: 45,
-      exercises: [
-        {
-          name: "Bieganie",
-          sets: 1,
-          reps: 1,
-          duration: 45,
-        },
-      ],
-    },
-  ]);
+  const [workoutTemplates, setWorkoutTemplates] = useState<WorkoutTemplate[]>(
+    []
+  );
 
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] =
-    useState<WorkoutTemplate | null>(null);
-  const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+
+  const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
   const [activeTab, setActiveTab] = useState<
     "recent" | "planned" | "templates"
   >("recent");
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [activeTimer, setActiveTimer] = useState<{
+    workoutId: string;
+    startTime: number;
+    pausedTime: number;
+    isPaused: boolean;
+  } | null>(null);
+
+  const toggleExpanded = (id: string) =>
+    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
+
+  // Timer functions
+  const startTimer = (workoutId: string) => {
+    setActiveTimer({
+      workoutId,
+      startTime: Date.now(),
+      pausedTime: 0,
+      isPaused: false,
+    });
+  };
+
+  const pauseTimer = () => {
+    if (activeTimer && !activeTimer.isPaused) {
+      setActiveTimer((prev) =>
+        prev
+          ? {
+              ...prev,
+              pausedTime: Date.now() - prev.startTime,
+              isPaused: true,
+            }
+          : null
+      );
+    }
+  };
+
+  const resumeTimer = () => {
+    if (activeTimer && activeTimer.isPaused) {
+      setActiveTimer((prev) =>
+        prev
+          ? {
+              ...prev,
+              startTime: Date.now() - prev.pausedTime,
+              pausedTime: 0,
+              isPaused: false,
+            }
+          : null
+      );
+    }
+  };
+
+  const stopTimer = () => {
+    if (activeTimer) {
+      const totalTime = activeTimer.isPaused
+        ? activeTimer.pausedTime
+        : Date.now() - activeTimer.startTime;
+      const durationMinutes = Math.round(totalTime / (1000 * 60));
+
+      // Complete the workout with calculated duration
+      handleCompleteWorkout(activeTimer.workoutId, durationMinutes);
+      setActiveTimer(null);
+    }
+  };
+
+  const getCurrentTime = () => {
+    if (!activeTimer) return 0;
+
+    if (activeTimer.isPaused) {
+      return activeTimer.pausedTime;
+    }
+
+    return Date.now() - activeTimer.startTime;
+  };
+
+  // Auto-start timer when workout status changes to in-progress
+  useEffect(() => {
+    const inProgressWorkout = workouts.find((w) => w.status === "in-progress");
+    if (inProgressWorkout && !activeTimer) {
+      startTimer(inProgressWorkout.id);
+    } else if (!inProgressWorkout && activeTimer) {
+      setActiveTimer(null);
+    }
+  }, [workouts, activeTimer]);
+
+  // Update timer display every second
+  useEffect(() => {
+    if (!activeTimer) return;
+
+    const interval = setInterval(() => {
+      // Force re-render to update timer display
+      setWorkouts((prev) => [...prev]);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [activeTimer]);
+
+  // Helper function to get localized name
+  const getLocalizedName = (workout: Workout) => {
+    console.log("getLocalizedName:", {
+      locale,
+      name: workout.name,
+      nameEn: workout.nameEn,
+      hasNameEn: !!workout.nameEn,
+    });
+    return locale === "en" && workout.nameEn ? workout.nameEn : workout.name;
+  };
+
+  // Helper function to get localized exercise name
+  const getLocalizedExerciseName = (exercise: Exercise) => {
+    console.log("getLocalizedExerciseName:", {
+      locale,
+      name: exercise.name,
+      nameEn: exercise.nameEn,
+      hasNameEn: !!exercise.nameEn,
+    });
+    return locale === "en" && exercise.nameEn ? exercise.nameEn : exercise.name;
+  };
+
+  // Helper function to get localized exercise notes
+  const getLocalizedExerciseNotes = (exercise: Exercise) => {
+    return locale === "en" && exercise.notesEn
+      ? exercise.notesEn
+      : exercise.notes;
+  };
+
+  // Helper function to get localized template name
+  const getLocalizedTemplateName = (template: WorkoutTemplate) => {
+    return locale === "en" && template.nameEn ? template.nameEn : template.name;
+  };
 
   // Statistics calculations
   const completedWorkouts = workouts.filter((w) => w.status === "completed");
@@ -264,34 +202,279 @@ export default function WorkoutsPage() {
     return workoutDate >= weekAgo && workoutDate <= today;
   }).length;
 
-  const handleStartWorkoutFromTemplate = (template: WorkoutTemplate) => {
-    const newWorkout: Workout = {
-      id: Date.now().toString(),
-      name: template.name,
-      date: new Date().toISOString().split("T")[0],
-      type: template.type,
-      duration: 0,
-      status: "in-progress",
-      exercises: template.exercises.map((exercise, index) => ({
-        ...exercise,
-        id: `${Date.now()}-${index}`,
-      })),
-    };
-    setWorkouts((prev) => [newWorkout, ...prev]);
-    setCurrentWorkout(newWorkout);
-    setShowTemplateModal(false);
+  const handleStartWorkoutFromTemplate = async (template: WorkoutTemplate) => {
+    try {
+      const res = await fetch(`/api/workouts/templates/${template.id}/use`, {
+        method: "POST",
+      });
+      if (!res.ok) {
+        let message = `Failed to create workout from template (${res.status})`;
+        try {
+          const j = await res.json();
+          if (j?.error) message = j.error;
+        } catch {}
+        alert(message);
+        return;
+      }
+      const data = await res.json();
+      const w = data.workout as any;
+      const mapped: Workout = {
+        id: w._id,
+        name: w.name,
+        nameEn: w.nameEn,
+        date: new Date(w.date).toISOString().split("T")[0],
+        type: w.type,
+        duration: w.duration,
+        status: w.status,
+        exercises: (w.exercises || []).map((e: any) => ({ id: e._id, ...e })),
+        notes: w.notes,
+      };
+      setWorkouts((prev) => [mapped, ...prev]);
+      setShowTemplateModal(false);
+      setActiveTab("planned");
+    } catch (e) {
+      alert("Network error while creating workout from template");
+      // eslint-disable-next-line no-console
+      console.error(e);
+    }
   };
 
-  const handleCompleteWorkout = (workoutId: string, duration: number) => {
+  const handleCompleteWorkout = async (workoutId: string, duration: number) => {
+    const res = await fetch(`/api/workouts/${workoutId}/complete`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ duration }),
+    });
+    if (!res.ok) return;
     setWorkouts((prev) =>
       prev.map((w) =>
-        w.id === workoutId
-          ? { ...w, status: "completed" as const, duration }
-          : w
+        w.id === workoutId ? { ...w, status: "completed", duration } : w
       )
     );
-    setCurrentWorkout(null);
   };
+
+  const handleStartPlannedWorkout = async (workoutId: string) => {
+    // Check if there's already a workout in progress
+    const workoutInProgress = workouts.find((w) => w.status === "in-progress");
+    if (workoutInProgress) {
+      alert(
+        `Masz już rozpoczęty trening: "${workoutInProgress.name}". Zakończ go najpierw, zanim rozpoczniesz nowy.`
+      );
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/workouts/${workoutId}/start`, {
+        method: "POST",
+      });
+      if (!res.ok) {
+        let message = `Failed to start workout (${res.status})`;
+        try {
+          const j = await res.json();
+          if (j?.error) message = j.error;
+        } catch {}
+        alert(message);
+        return;
+      }
+      setWorkouts((prev) =>
+        prev.map((w) =>
+          w.id === workoutId ? { ...w, status: "in-progress" } : w
+        )
+      );
+      setActiveTab("recent");
+    } catch (e) {
+      alert("Network error while starting workout");
+      // eslint-disable-next-line no-console
+      console.error(e);
+    }
+  };
+
+  const handleCreatePlannedWorkout = async (workoutData: {
+    name: string;
+    nameEn?: string;
+    date: string;
+    type: string;
+    exercises: Array<{
+      name: string;
+      nameEn?: string;
+      sets: number;
+      reps: number;
+      weight?: number;
+      duration?: number;
+      restTime?: number;
+      notes?: string;
+    }>;
+  }) => {
+    try {
+      const res = await fetch(`/api/workouts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: workoutData.name,
+          nameEn: workoutData.nameEn,
+          date: workoutData.date,
+          type: workoutData.type,
+          status: "planned",
+          exercises: workoutData.exercises,
+        }),
+      });
+      if (!res.ok) {
+        let message = `Failed to plan workout (${res.status})`;
+        try {
+          const j = await res.json();
+          if (j?.error) message = j.error;
+        } catch {}
+        alert(message);
+        return;
+      }
+      const { workout } = await res.json();
+      const mapped: Workout = {
+        id: workout._id,
+        name: workout.name,
+        date: new Date(workout.date).toISOString().split("T")[0],
+        type: workout.type,
+        duration: workout.duration,
+        status: workout.status,
+        exercises: workout.exercises || [],
+        notes: workout.notes,
+      };
+      setWorkouts((prev) => [mapped, ...prev]);
+      setShowWorkoutModal(false);
+      setActiveTab("planned");
+    } catch (e) {
+      alert("Network error while planning workout");
+      // eslint-disable-next-line no-console
+      console.error(e);
+    }
+  };
+
+  const handleEditWorkout = (workout: Workout) => {
+    setEditingWorkout(workout);
+    setShowEditModal(true);
+  };
+
+  const handleUpdateWorkout = async (
+    workoutId: string,
+    updatedData: {
+      name: string;
+      nameEn?: string;
+      date: string;
+      type: string;
+      exercises: Array<{
+        name: string;
+        nameEn?: string;
+        sets: number;
+        reps: number;
+        weight?: number;
+        duration?: number;
+        restTime?: number;
+        notes?: string;
+      }>;
+    }
+  ) => {
+    try {
+      const res = await fetch(`/api/workouts/${workoutId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
+      });
+      if (!res.ok) {
+        let message = `Failed to update workout (${res.status})`;
+        try {
+          const j = await res.json();
+          if (j?.error) message = j.error;
+        } catch {}
+        alert(message);
+        return;
+      }
+      const { workout } = await res.json();
+      const updated: Workout = {
+        id: workout._id,
+        name: workout.name,
+        nameEn: workout.nameEn,
+        date: new Date(workout.date).toISOString().split("T")[0],
+        type: workout.type,
+        duration: workout.duration,
+        status: workout.status,
+        exercises: workout.exercises || [],
+        notes: workout.notes,
+      };
+      setWorkouts((prev) =>
+        prev.map((w) => (w.id === workoutId ? updated : w))
+      );
+      setShowEditModal(false);
+      setEditingWorkout(null);
+    } catch (e) {
+      alert("Network error while updating workout");
+      console.error(e);
+    }
+  };
+
+  const handleDeleteWorkout = async (workoutId: string) => {
+    if (!confirm(t("actions.confirmDelete"))) return;
+    try {
+      const res = await fetch(`/api/workouts/${workoutId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        let message = `Failed to delete workout (${res.status})`;
+        try {
+          const j = await res.json();
+          if (j?.error) message = j.error;
+        } catch {}
+        alert(message);
+        return;
+      }
+      setWorkouts((prev) => prev.filter((w) => w.id !== workoutId));
+    } catch (e) {
+      alert("Network error while deleting workout");
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    // initial fetch of workouts and templates
+    const load = async () => {
+      const [wRes, tRes] = await Promise.all([
+        fetch("/api/workouts"),
+        fetch(`/api/workouts/templates?lang=${encodeURIComponent(locale)}`),
+      ]);
+      if (wRes.ok) {
+        const { workouts } = await wRes.json();
+        console.log("API workouts response:", workouts);
+        setWorkouts(
+          (workouts || []).map((w: any) => ({
+            id: w._id,
+            name: w.name,
+            nameEn: w.nameEn,
+            date: new Date(w.date).toISOString().split("T")[0],
+            type: w.type,
+            duration: w.duration,
+            status: w.status,
+            exercises: (w.exercises || []).map((e: any) => ({
+              id: e._id,
+              ...e,
+            })),
+            notes: w.notes,
+          }))
+        );
+      }
+      if (tRes.ok) {
+        const { templates } = await tRes.json();
+        setWorkoutTemplates(
+          (templates || []).map((t: any) => ({
+            id: t._id,
+            name: t.name,
+            nameEn: t.nameEn,
+            type: t.type,
+            estimatedDuration: t.estimatedDuration,
+            exercises: t.exercises || [],
+          }))
+        );
+      }
+    };
+    load();
+  }, [locale]);
 
   const getWorkoutTypeIcon = (type: string) => {
     switch (type) {
@@ -414,7 +597,7 @@ export default function WorkoutsPage() {
               {thisWeekWorkouts}
             </div>
             <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              z {totalWorkouts} {t("statistics.total")}
+              {t("statistics.of")} {totalWorkouts} {t("statistics.total")}
             </div>
           </div>{" "}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
@@ -439,10 +622,11 @@ export default function WorkoutsPage() {
               </div>
             </div>
             <div className="text-2xl font-bold text-slate-900 dark:text-white">
-              {Math.round(totalDuration / 60)}
+              {Math.floor(totalDuration / 60)}:
+              {String(totalDuration % 60).padStart(2, "0")}
             </div>
             <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              {t("statistics.hours")}
+              {t("statistics.hours")}:{t("statistics.minutes")}
             </div>
           </div>{" "}
           <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
@@ -572,7 +756,7 @@ export default function WorkoutsPage() {
             </h2>
             <div className="grid gap-6">
               {workouts
-                .filter((w) => w.status === "completed")
+                .filter((w) => w.status !== "planned")
                 .map((workout) => (
                   <div
                     key={workout.id}
@@ -589,18 +773,15 @@ export default function WorkoutsPage() {
                         </div>
                         <div>
                           <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-                            {workout.name}
+                            {getLocalizedName(workout)}
                           </h3>
                           <p className="text-sm text-slate-500 dark:text-slate-400">
-                            {new Date(workout.date).toLocaleDateString(
-                              "pl-PL",
-                              {
-                                weekday: "long",
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              }
-                            )}
+                            {new Date(workout.date).toLocaleDateString(locale, {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}
                           </p>
                         </div>
                       </div>
@@ -612,37 +793,119 @@ export default function WorkoutsPage() {
                         <div className="text-sm text-slate-500 dark:text-slate-400">
                           {workout.exercises.length} {t("workout.exercises")}
                         </div>
+                        {workout.status === "in-progress" && (
+                          <div className="mt-1 inline-block px-2 py-0.5 text-xs rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
+                            {t("workout.inProgress")}
+                          </div>
+                        )}
+                        {workout.status === "in-progress" && (
+                          <div className="mt-2">
+                            {activeTimer &&
+                            activeTimer.workoutId === workout.id ? (
+                              <div className="space-y-2">
+                                <div className="text-center text-lg font-mono text-blue-600 dark:text-blue-400">
+                                  {Math.floor(getCurrentTime() / (1000 * 60))}:
+                                  {String(
+                                    Math.floor(
+                                      (getCurrentTime() % (1000 * 60)) / 1000
+                                    )
+                                  ).padStart(2, "0")}
+                                </div>
+                                <div className="flex gap-2 justify-center">
+                                  {activeTimer.isPaused ? (
+                                    <button
+                                      onClick={resumeTimer}
+                                      className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
+                                    >
+                                      {t("actions.resume")}
+                                    </button>
+                                  ) : (
+                                    <button
+                                      onClick={pauseTimer}
+                                      className="px-3 py-1 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md text-sm"
+                                    >
+                                      {t("actions.pause")}
+                                    </button>
+                                  )}
+                                  <button
+                                    onClick={stopTimer}
+                                    className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm"
+                                  >
+                                    {t("actions.finish")}
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="text-center text-sm text-slate-500 dark:text-slate-400">
+                                Timer starting...
+                              </div>
+                            )}
+                            <div className="mt-2 flex justify-center">
+                              <button
+                                onClick={() => handleDeleteWorkout(workout.id)}
+                                className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm"
+                              >
+                                {t("actions.delete")}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                        {workout.status === "completed" && (
+                          <div className="mt-2">
+                            <button
+                              onClick={() => handleDeleteWorkout(workout.id)}
+                              className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm"
+                            >
+                              {t("actions.delete")}
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    <div className="grid gap-3">
-                      {workout.exercises.slice(0, 3).map((exercise) => (
-                        <div
-                          key={exercise.id}
-                          className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"
-                        >
-                          <div>
-                            <div className="font-medium text-slate-900 dark:text-white">
-                              {exercise.name}
-                            </div>
-                            <div className="text-sm text-slate-500 dark:text-slate-400">
-                              {exercise.sets} {t("workout.sets")} ×{" "}
-                              {exercise.reps} {t("workout.reps")}
-                              {exercise.weight &&
-                                ` @ ${exercise.weight}${t("workout.weight")}`}
-                              {exercise.duration &&
-                                ` ${exercise.duration}${t("workout.duration")}`}
+                    {/* Toggle to show/hide exercises */}
+                    <div className="flex justify-end">
+                      <button
+                        onClick={() => toggleExpanded(workout.id)}
+                        className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                      >
+                        {expanded[workout.id]
+                          ? t("actions.hideDetails")
+                          : t("actions.showDetails")}
+                      </button>
+                    </div>
+                    {expanded[workout.id] && (
+                      <div className="grid gap-3 mt-3">
+                        {workout.exercises.map((exercise) => (
+                          <div
+                            key={exercise.id}
+                            className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"
+                          >
+                            <div>
+                              <div className="font-medium text-slate-900 dark:text-white">
+                                {getLocalizedExerciseName(exercise)}
+                              </div>
+                              <div className="text-sm text-slate-500 dark:text-slate-400">
+                                {exercise.sets} {t("workout.sets")} ×{" "}
+                                {exercise.reps} {t("workout.reps")}
+                                {exercise.weight &&
+                                  ` @ ${exercise.weight}${t("workout.weight")}`}
+                                {exercise.duration &&
+                                  ` ${exercise.duration}${t(
+                                    "workout.duration"
+                                  )}`}
+                                {exercise.restTime &&
+                                  ` • ${t("workout.restTime")}: ${
+                                    exercise.restTime
+                                  }s`}
+                                {getLocalizedExerciseNotes(exercise) &&
+                                  ` • ${getLocalizedExerciseNotes(exercise)}`}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                      {workout.exercises.length > 3 && (
-                        <div className="text-center text-sm text-slate-500 dark:text-slate-400 py-2">
-                          +{workout.exercises.length - 3}{" "}
-                          {t("workout.moreExercises")}
-                        </div>
-                      )}
-                    </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
             </div>
@@ -672,41 +935,109 @@ export default function WorkoutsPage() {
                         </div>
                         <div>
                           <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-                            {workout.name}
+                            {getLocalizedName(workout)}
                           </h3>
                           <p className="text-sm text-slate-500 dark:text-slate-400">
                             {t("workout.plannedFor")}{" "}
-                            {new Date(workout.date).toLocaleDateString("pl-PL")}
+                            {new Date(workout.date).toLocaleDateString(locale, {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}
                           </p>
                         </div>
                       </div>
-                      <button
-                        onClick={() => handleCompleteWorkout(workout.id, 75)}
-                        className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors font-medium"
-                      >
-                        {t("actions.start")}
-                      </button>
+                      <div className="flex gap-2">
+                        {workout.status === "planned" ? (
+                          <>
+                            <button
+                              onClick={() =>
+                                handleStartPlannedWorkout(workout.id)
+                              }
+                              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors font-medium"
+                            >
+                              {t("actions.start")}
+                            </button>
+                            <button
+                              onClick={() => handleEditWorkout(workout)}
+                              className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                            >
+                              {t("actions.edit")}
+                            </button>
+                            <button
+                              onClick={() => handleDeleteWorkout(workout.id)}
+                              className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                            >
+                              {t("actions.delete")}
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              const input = prompt(
+                                t("workout.enterDuration") + " (min)"
+                              );
+                              const d = input ? parseInt(input, 10) : NaN;
+                              if (!isNaN(d) && d >= 0) {
+                                handleCompleteWorkout(workout.id, d);
+                              }
+                            }}
+                            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors font-medium"
+                          >
+                            {t("actions.finish")}
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     <div className="grid gap-3">
-                      {workout.exercises.map((exercise) => (
+                      {(expanded[workout.id]
+                        ? workout.exercises
+                        : workout.exercises.slice(0, 3)
+                      ).map((exercise) => (
                         <div
                           key={exercise.id}
                           className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"
                         >
                           <div>
                             <div className="font-medium text-slate-900 dark:text-white">
-                              {exercise.name}
+                              {getLocalizedExerciseName(exercise)}
                             </div>
                             <div className="text-sm text-slate-500 dark:text-slate-400">
                               {exercise.sets} {t("workout.sets")} ×{" "}
                               {exercise.reps} {t("workout.reps")}
                               {exercise.weight &&
                                 ` @ ${exercise.weight}${t("workout.weight")}`}
+                              {exercise.duration &&
+                                ` ${exercise.duration}${t("workout.duration")}`}
+                              {exercise.restTime &&
+                                ` • ${t("workout.restTime")}: ${
+                                  exercise.restTime
+                                }s`}
+                              {getLocalizedExerciseNotes(exercise) &&
+                                ` • ${getLocalizedExerciseNotes(exercise)}`}
                             </div>
                           </div>
                         </div>
                       ))}
+                      {!expanded[workout.id] &&
+                        workout.exercises.length > 3 && (
+                          <div className="text-center text-sm text-slate-500 dark:text-slate-400 py-2">
+                            +{workout.exercises.length - 3}{" "}
+                            {t("workout.moreExercises")}
+                          </div>
+                        )}
+                      <div className="flex justify-end">
+                        <button
+                          onClick={() => toggleExpanded(workout.id)}
+                          className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                        >
+                          {expanded[workout.id]
+                            ? t("actions.hideDetails")
+                            : t("actions.showDetails")}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -734,7 +1065,7 @@ export default function WorkoutsPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-                        {template.name}
+                        {getLocalizedTemplateName(template)}
                       </h3>
                       <p className="text-sm text-slate-500 dark:text-slate-400">
                         ~{template.estimatedDuration}
@@ -749,7 +1080,10 @@ export default function WorkoutsPage() {
                         key={index}
                         className="text-sm text-slate-600 dark:text-slate-400"
                       >
-                        • {exercise.name}
+                        •{" "}
+                        {exercise.nameEn && locale === "en"
+                          ? exercise.nameEn
+                          : exercise.name}
                       </div>
                     ))}
                     {template.exercises.length > 3 && (
@@ -788,14 +1122,14 @@ export default function WorkoutsPage() {
                   >
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-medium text-slate-900 dark:text-white">
-                        {template.name}
+                        {getLocalizedTemplateName(template)}
                       </h4>
                       <span
                         className={`px-2 py-1 rounded-lg text-xs font-medium ${getWorkoutTypeColor(
                           template.type
                         )}`}
                       >
-                        {template.type}
+                        {t(`types.${template.type}` as any)}
                       </span>
                     </div>
                     <div className="text-sm text-slate-500 dark:text-slate-400">
@@ -818,6 +1152,22 @@ export default function WorkoutsPage() {
             </div>
           </div>
         )}
+        {/* Plan Workout Modal */}
+        <PlanWorkoutModal
+          isOpen={showWorkoutModal}
+          onClose={() => setShowWorkoutModal(false)}
+          onPlan={handleCreatePlannedWorkout}
+        />
+        {/* Edit Workout Modal */}
+        <EditWorkoutModal
+          isOpen={showEditModal}
+          onClose={() => {
+            setShowEditModal(false);
+            setEditingWorkout(null);
+          }}
+          workout={editingWorkout}
+          onUpdate={handleUpdateWorkout}
+        />
       </div>
     </div>
   );

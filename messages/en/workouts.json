@@ -10,14 +10,27 @@
     "total": "total",
     "perWorkout": "per workout",
     "hours": "h",
-    "minutes": "m"
+    "minutes": "m",
+    "of": "of"
   },
   "actions": {
     "startWorkout": "Start workout",
     "planWorkout": "Plan workout",
     "useTemplate": "Use template",
     "start": "Start",
-    "cancel": "Cancel"
+    "finish": "Finish",
+    "cancel": "Cancel",
+    "showDetails": "Show details",
+    "hideDetails": "Hide details",
+    "addExercise": "Add exercise",
+    "edit": "Edit",
+    "delete": "Delete",
+    "update": "Update",
+    "pause": "Pause",
+    "resume": "Resume",
+    "editWorkout": "Edit workout",
+    "confirmDelete": "Are you sure you want to delete this workout?",
+    "save": "Save"
   },
   "tabs": {
     "recent": "Recent",
@@ -38,13 +51,27 @@
     "restTime": "rest",
     "plannedFor": "Planned for",
     "moreExercises": "more exercises",
-    "estimatedDuration": "estimated time"
+    "estimatedDuration": "estimated time",
+    "inProgress": "in progress",
+    "enterDuration": "Enter workout duration",
+    "exerciseName": "Exercise name",
+    "name": "Workout name",
+    "type": "Workout type",
+    "notes": "Notes"
   },
   "types": {
     "strength": "Strength",
     "cardio": "Cardio",
     "flexibility": "Flexibility",
     "mixed": "Mixed"
+  },
+  "workoutNames": {
+    "pullDay": "Pull Day - Back, biceps",
+    "pushDay": "Push Day - Chest, triceps",
+    "legDay": "Leg Day - Quads, hamstrings",
+    "cardioSession": "Cardio Session",
+    "flexibilityRoutine": "Flexibility Routine",
+    "fullBodyWorkout": "Full Body Workout"
   },
   "modals": {
     "selectTemplate": "Select workout template",

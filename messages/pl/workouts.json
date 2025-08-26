@@ -10,14 +10,27 @@
     "total": "łącznie",
     "perWorkout": "na trening",
     "hours": "h",
-    "minutes": "m"
+    "minutes": "m",
+    "of": "z"
   },
   "actions": {
     "startWorkout": "Rozpocznij trening",
     "planWorkout": "Zaplanuj trening",
     "useTemplate": "Użyj szablonu",
     "start": "Rozpocznij",
-    "cancel": "Anuluj"
+    "finish": "Zakończ",
+    "cancel": "Anuluj",
+    "showDetails": "Pokaż szczegóły",
+    "hideDetails": "Ukryj szczegóły",
+    "addExercise": "Dodaj ćwiczenie",
+    "edit": "Edytuj",
+    "delete": "Usuń",
+    "update": "Aktualizuj",
+    "pause": "Pauza",
+    "resume": "Wznów",
+    "editWorkout": "Edytuj trening",
+    "confirmDelete": "Czy na pewno chcesz usunąć ten trening?",
+    "save": "Zapisz"
   },
   "tabs": {
     "recent": "Ostatnie",
@@ -38,13 +51,27 @@
     "restTime": "przerwa",
     "plannedFor": "Zaplanowany na",
     "moreExercises": "więcej ćwiczeń",
-    "estimatedDuration": "szacowany czas"
+    "estimatedDuration": "szacowany czas",
+    "inProgress": "w trakcie",
+    "enterDuration": "Podaj czas treningu",
+    "exerciseName": "Nazwa ćwiczenia",
+    "name": "Nazwa treningu",
+    "type": "Typ treningu",
+    "notes": "Notatki"
   },
   "types": {
     "strength": "Siłowy",
     "cardio": "Cardio",
     "flexibility": "Rozciąganie",
     "mixed": "Mieszany"
+  },
+  "workoutNames": {
+    "pullDay": "Pull Day - Plecy, biceps",
+    "pushDay": "Push Day - Klatka, triceps",
+    "legDay": "Leg Day - Uda, łydki",
+    "cardioSession": "Sesja cardio",
+    "flexibilityRoutine": "Rutyna rozciągania",
+    "fullBodyWorkout": "Trening całego ciała"
   },
   "modals": {
     "selectTemplate": "Wybierz szablon treningu",
