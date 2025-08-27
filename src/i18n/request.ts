@@ -24,8 +24,7 @@ export default getRequestConfig(async () => {
       .default,
     Footer: (await import(`../../messages/${locale}/components/footer.json`))
       .default,
-    sidebar: (await import(`../../messages/${locale}/components/sidebar.json`))
-      .default,
+    sidebar: (await import(`../../messages/${locale}/sidebar.json`)).default,
     contextSwitcher: (
       await import(`../../messages/${locale}/components/context-switcher.json`)
     ).default,
@@ -75,6 +74,7 @@ export default getRequestConfig(async () => {
     Calendar: (await import(`../../messages/${locale}/calendar.json`)).default,
     community: (await import(`../../messages/${locale}/community.json`))
       .default,
+    clients: (await import(`../../messages/${locale}/clients.json`)).default,
     roleUtils: (await import(`../../messages/${locale}/roleUtils.json`))
       .default,
     dashboard: (await import(`../../messages/${locale}/dashboard.json`))

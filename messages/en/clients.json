@@ -1,0 +1,50 @@
+{
+  "title": "Clients",
+  "description": "Manage your clients and track their progress",
+  "addClient": "Add Client",
+  "stats": {
+    "totalClients": "Total Clients",
+    "activeClients": "Active Clients",
+    "sessionsToday": "Sessions Today",
+    "avgProgress": "Avg Progress"
+  },
+  "searchPlaceholder": "Search clients by name or email...",
+  "filters": {
+    "allStatuses": "All Statuses",
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "allTypes": "All Types",
+    "nutrition": "Nutrition",
+    "training": "Training",
+    "both": "Both"
+  },
+  "table": {
+    "client": "Client",
+    "type": "Type",
+    "status": "Status",
+    "progress": "Progress",
+    "lastActivity": "Last Activity",
+    "nextSession": "Next Session",
+    "actions": "Actions"
+  },
+  "types": {
+    "nutrition": "Nutrition",
+    "training": "Training",
+    "both": "Both"
+  },
+  "statuses": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending"
+  },
+  "progress": {
+    "workouts": "workouts",
+    "meals": "meals"
+  },
+  "actions": {
+    "view": "View",
+    "edit": "Edit",
+    "remove": "Remove"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "dashboard": "Dashboard",
+  "workouts": "Treningi",
+  "nutrition": "Żywienie",
+  "progress": "Postęp",
+  "calendar": "Kalendarz",
+  "community": "Społeczność",
+  "profile": "Profil",
+  "clients": "Klienci",
+  "plans": "Plany",
+  "analytics": "Analizy",
+  "messaging": "Wiadomości",
+  "expand": "Rozwiń",
+  "collapse": "Zwiń",
+  "switchMode": "Zmień tryb",
+  "settings": "Ustawienia",
+  "logout": "Wyloguj"
+}

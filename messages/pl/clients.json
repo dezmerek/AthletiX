@@ -1,0 +1,50 @@
+{
+  "title": "Klienci",
+  "description": "Zarządzaj swoimi klientami i śledź ich postęp",
+  "addClient": "Dodaj klienta",
+  "stats": {
+    "totalClients": "Łącznie klientów",
+    "activeClients": "Aktywni klienci",
+    "sessionsToday": "Sesje dzisiaj",
+    "avgProgress": "Średni postęp"
+  },
+  "searchPlaceholder": "Szukaj klientów po nazwie lub emailu...",
+  "filters": {
+    "allStatuses": "Wszystkie statusy",
+    "active": "Aktywny",
+    "inactive": "Nieaktywny",
+    "pending": "Oczekujący",
+    "allTypes": "Wszystkie typy",
+    "nutrition": "Żywienie",
+    "training": "Trening",
+    "both": "Oba"
+  },
+  "table": {
+    "client": "Klient",
+    "type": "Typ",
+    "status": "Status",
+    "progress": "Postęp",
+    "lastActivity": "Ostatnia aktywność",
+    "nextSession": "Następna sesja",
+    "actions": "Akcje"
+  },
+  "types": {
+    "nutrition": "Żywienie",
+    "training": "Trening",
+    "both": "Oba"
+  },
+  "statuses": {
+    "active": "Aktywny",
+    "inactive": "Nieaktywny",
+    "pending": "Oczekujący"
+  },
+  "progress": {
+    "workouts": "treningów",
+    "meals": "posiłków"
+  },
+  "actions": {
+    "view": "Zobacz",
+    "edit": "Edytuj",
+    "remove": "Usuń"
+  }
+}

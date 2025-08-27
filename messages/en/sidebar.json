@@ -1,0 +1,18 @@
+{
+  "dashboard": "Dashboard",
+  "workouts": "Workouts",
+  "nutrition": "Nutrition",
+  "progress": "Progress",
+  "calendar": "Calendar",
+  "community": "Community",
+  "profile": "Profile",
+  "clients": "Clients",
+  "plans": "Plans",
+  "analytics": "Analytics",
+  "messaging": "Messaging",
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "switchMode": "Switch Mode",
+  "settings": "Settings",
+  "logout": "Logout"
+}
