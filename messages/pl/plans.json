@@ -1,0 +1,47 @@
+{
+  "title": "Plany",
+  "description": "Twórz i zarządzaj planami treningowymi oraz dietetycznymi dla swoich klientów",
+  "createPlan": "Utwórz Plan",
+  "stats": {
+    "totalPlans": "Łącznie Planów",
+    "activePlans": "Aktywne Plany",
+    "avgProgress": "Średni Postęp",
+    "avgDuration": "Średni Czas Trwania"
+  },
+  "searchPlaceholder": "Szukaj planów po nazwie lub kliencie...",
+  "filters": {
+    "allTypes": "Wszystkie Typy",
+    "nutrition": "Żywienie",
+    "training": "Trening",
+    "both": "Oba",
+    "allStatuses": "Wszystkie Statusy",
+    "active": "Aktywny",
+    "draft": "Szkic",
+    "completed": "Ukończony",
+    "archived": "Zarchiwizowany"
+  },
+  "types": {
+    "nutrition": "Żywienie",
+    "training": "Trening",
+    "both": "Oba"
+  },
+  "statuses": {
+    "active": "Aktywny",
+    "draft": "Szkic",
+    "completed": "Ukończony",
+    "archived": "Zarchiwizowany"
+  },
+  "progress": "Postęp",
+  "duration": "Czas trwania",
+  "weeks": "tygodni",
+  "updated": "Zaktualizowano",
+  "actions": {
+    "view": "Zobacz",
+    "edit": "Edytuj"
+  },
+  "noPlans": {
+    "title": "Nie znaleziono planów",
+    "description": "Utwórz swój pierwszy plan, aby rozpocząć zarządzanie klientami",
+    "createFirst": "Utwórz Pierwszy Plan"
+  }
+}

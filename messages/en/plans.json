@@ -1,0 +1,47 @@
+{
+  "title": "Plans",
+  "description": "Create and manage training and nutrition plans for your clients",
+  "createPlan": "Create Plan",
+  "stats": {
+    "totalPlans": "Total Plans",
+    "activePlans": "Active Plans",
+    "avgProgress": "Avg Progress",
+    "avgDuration": "Avg Duration"
+  },
+  "searchPlaceholder": "Search plans by name or client...",
+  "filters": {
+    "allTypes": "All Types",
+    "nutrition": "Nutrition",
+    "training": "Training",
+    "both": "Both",
+    "allStatuses": "All Statuses",
+    "active": "Active",
+    "draft": "Draft",
+    "completed": "Completed",
+    "archived": "Archived"
+  },
+  "types": {
+    "nutrition": "Nutrition",
+    "training": "Training",
+    "both": "Both"
+  },
+  "statuses": {
+    "active": "Active",
+    "draft": "Draft",
+    "completed": "Completed",
+    "archived": "Archived"
+  },
+  "progress": "Progress",
+  "duration": "Duration",
+  "weeks": "weeks",
+  "updated": "Updated",
+  "actions": {
+    "view": "View",
+    "edit": "Edit"
+  },
+  "noPlans": {
+    "title": "No plans found",
+    "description": "Create your first plan to get started with client management",
+    "createFirst": "Create First Plan"
+  }
+}
