@@ -72,7 +72,8 @@
     "delete": "Delete",
     "edit": "Edit",
     "copy": "Copy",
-    "share": "Share"
+    "share": "Share",
+    "reset": "Reset"
   },
   "modals": {
     "addFoodTitle": "Add Food",

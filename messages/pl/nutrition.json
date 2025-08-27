@@ -72,7 +72,8 @@
     "delete": "Usuń",
     "edit": "Edytuj",
     "copy": "Kopiuj",
-    "share": "Udostępnij"
+    "share": "Udostępnij",
+    "reset": "Resetuj"
   },
   "modals": {
     "addFoodTitle": "Dodaj jedzenie",
