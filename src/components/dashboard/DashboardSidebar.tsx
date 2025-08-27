@@ -215,7 +215,7 @@ export default function DashboardSidebar() {
         </svg>
       ),
       label: t("community"),
-      context: "user",
+      context: "all", // Społeczność dostępna dla wszystkich kontekstów
     },
     {
       href: "/dashboard/profile",
