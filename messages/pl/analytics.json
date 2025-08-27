@@ -1,0 +1,52 @@
+{
+  "title": "Analiza",
+  "description": "Śledź postępy klientów, analizuj wyniki i generuj wnioski",
+  "periods": {
+    "7d": "Ostatnie 7 dni",
+    "30d": "Ostatnie 30 dni",
+    "90d": "Ostatnie 90 dni",
+    "1y": "Ostatni rok"
+  },
+  "metrics": {
+    "clients": "Klienci",
+    "progress": "Postęp",
+    "revenue": "Przychody",
+    "totalClients": "Łącznie Klientów",
+    "activeClients": "Aktywni Klienci",
+    "avgProgress": "Średni Postęp"
+  },
+  "charts": {
+    "monthlyProgress": "Miesięczny Postęp",
+    "monthlyRevenue": "Miesięczne Przychody"
+  },
+  "clientProgress": {
+    "title": "Przegląd Postępów Klientów",
+    "description": "Śledź indywidualne postępy klientów i metryki wydajności",
+    "table": {
+      "client": "Klient",
+      "type": "Typ",
+      "weight": "Waga",
+      "progress": "Postęp",
+      "activity": "Aktywność",
+      "lastActivity": "Ostatnia Aktywność"
+    },
+    "workouts": "treningów",
+    "meals": "posiłków"
+  },
+  "types": {
+    "nutrition": "Żywienie",
+    "training": "Trening",
+    "both": "Oba"
+  },
+  "quickActions": {
+    "generateReport": "Generuj Raport",
+    "generateReportDesc": "Twórz szczegółowe raporty wydajności dla klientów",
+    "generate": "Generuj",
+    "clientInsights": "Wnioski Klienta",
+    "clientInsightsDesc": "Zobacz szczegółowe analizy dla poszczególnych klientów",
+    "view": "Zobacz",
+    "scheduleReview": "Zaplanuj Przegląd",
+    "scheduleReviewDesc": "Zarezerwuj sesje przeglądu postępów klientów",
+    "schedule": "Zaplanuj"
+  }
+}

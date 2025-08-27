@@ -1,0 +1,52 @@
+{
+  "title": "Analytics",
+  "description": "Track client progress, analyze performance, and generate insights",
+  "periods": {
+    "7d": "Last 7 days",
+    "30d": "Last 30 days",
+    "90d": "Last 90 days",
+    "1y": "Last year"
+  },
+  "metrics": {
+    "clients": "Clients",
+    "progress": "Progress",
+    "revenue": "Revenue",
+    "totalClients": "Total Clients",
+    "activeClients": "Active Clients",
+    "avgProgress": "Avg Progress"
+  },
+  "charts": {
+    "monthlyProgress": "Monthly Progress",
+    "monthlyRevenue": "Monthly Revenue"
+  },
+  "clientProgress": {
+    "title": "Client Progress Overview",
+    "description": "Track individual client progress and performance metrics",
+    "table": {
+      "client": "Client",
+      "type": "Type",
+      "weight": "Weight",
+      "progress": "Progress",
+      "activity": "Activity",
+      "lastActivity": "Last Activity"
+    },
+    "workouts": "workouts",
+    "meals": "meals"
+  },
+  "types": {
+    "nutrition": "Nutrition",
+    "training": "Training",
+    "both": "Both"
+  },
+  "quickActions": {
+    "generateReport": "Generate Report",
+    "generateReportDesc": "Create detailed performance reports for clients",
+    "generate": "Generate",
+    "clientInsights": "Client Insights",
+    "clientInsightsDesc": "View detailed analytics for individual clients",
+    "view": "View",
+    "scheduleReview": "Schedule Review",
+    "scheduleReviewDesc": "Book client progress review sessions",
+    "schedule": "Schedule"
+  }
+}

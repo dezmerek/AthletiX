@@ -76,6 +76,8 @@ export default getRequestConfig(async () => {
       .default,
     clients: (await import(`../../messages/${locale}/clients.json`)).default,
     plans: (await import(`../../messages/${locale}/plans.json`)).default,
+    analytics: (await import(`../../messages/${locale}/analytics.json`))
+      .default,
     roleUtils: (await import(`../../messages/${locale}/roleUtils.json`))
       .default,
     dashboard: (await import(`../../messages/${locale}/dashboard.json`))
