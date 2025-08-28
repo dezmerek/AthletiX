@@ -55,6 +55,27 @@
     "welcome": {
       "title": "Witaj, {userName}!",
       "subtitle": "Panel profesjonalisty - zarządzaj klientami i programami treningowymi"
+    },
+    "kpis": {
+      "activeClients": "Aktywni klienci",
+      "sessionsThisWeek": "Sesje w tym tygodniu",
+      "avgSatisfaction": "Śr. satysfakcja",
+      "newPlans": "Nowe plany w tym tygodniu",
+      "monthlyRevenue": "Przychód miesięczny"
+    },
+    "quickActions": {
+      "title": "Szybkie akcje",
+      "newPlan": "Utwórz plan",
+      "newMessage": "Wiadomość do klienta",
+      "scheduleSession": "Zaplanuj sesję"
+    },
+    "upcoming": {
+      "title": "Nadchodzące sesje",
+      "empty": "Brak nadchodzących sesji"
+    },
+    "messages": {
+      "title": "Ostatnie wiadomości",
+      "empty": "Brak nowych wiadomości"
     }
   },
   "admin": {

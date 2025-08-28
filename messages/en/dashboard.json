@@ -55,6 +55,27 @@
     "welcome": {
       "title": "Welcome, {userName}!",
       "subtitle": "Professional Panel - manage clients and training programs"
+    },
+    "kpis": {
+      "activeClients": "Active Clients",
+      "sessionsThisWeek": "Sessions this week",
+      "avgSatisfaction": "Avg. satisfaction",
+      "newPlans": "New plans this week",
+      "monthlyRevenue": "Monthly revenue"
+    },
+    "quickActions": {
+      "title": "Quick actions",
+      "newPlan": "Create plan",
+      "newMessage": "Message client",
+      "scheduleSession": "Schedule session"
+    },
+    "upcoming": {
+      "title": "Upcoming sessions",
+      "empty": "No upcoming sessions"
+    },
+    "messages": {
+      "title": "Recent messages",
+      "empty": "No recent messages"
     }
   },
   "admin": {
