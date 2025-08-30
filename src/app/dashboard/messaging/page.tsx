@@ -53,7 +53,7 @@ export default function MessagingPage() {
   const handleUserSelect = (user: User) => {
     setSelectedUser(user);
     setSelectedConversation(null);
-    getMessages(user.email);
+    getMessages(user._id);
     setShowSearch(false);
     setSearchQuery("");
   };
@@ -61,17 +61,18 @@ export default function MessagingPage() {
   const handleConversationSelect = (conversation: Conversation) => {
     setSelectedConversation(conversation);
     setSelectedUser({
+      _id: conversation.userId,
       name: conversation.userName,
       email: conversation.userEmail,
     });
-    getMessages(conversation.userEmail);
+    getMessages(conversation.userId);
     setShowSearch(false);
   };
 
   const handleSendMessage = async () => {
     if (!selectedUser || !newMessage.trim()) return;
 
-    const success = await sendMessage(selectedUser.email, newMessage);
+    const success = await sendMessage(selectedUser._id, newMessage);
     if (success) {
       setNewMessage("");
     }
@@ -235,11 +236,10 @@ export default function MessagingPage() {
                 ) : (
                   conversations.map((conversation) => (
                     <button
-                      key={conversation.userEmail}
+                      key={conversation.userId}
                       onClick={() => handleConversationSelect(conversation)}
                       className={`w-full text-left p-4 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-b border-slate-100 dark:border-slate-700 ${
-                        selectedConversation?.userEmail ===
-                        conversation.userEmail
+                        selectedConversation?.userId === conversation.userId
                           ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
                           : ""
                       }`}
@@ -327,14 +327,14 @@ export default function MessagingPage() {
                         <div
                           key={message._id}
                           className={`flex ${
-                            message.senderId === currentUser?.email
+                            message.senderId === currentUser?._id
                               ? "justify-end"
                               : "justify-start"
                           }`}
                         >
                           <div
                             className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                              message.senderId === currentUser?.email
+                              message.senderId === currentUser?._id
                                 ? "bg-blue-600 text-white"
                                 : "bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white"
                             }`}
@@ -342,7 +342,7 @@ export default function MessagingPage() {
                             <div className="text-sm">{message.content}</div>
                             <div
                               className={`text-xs mt-1 ${
-                                message.senderId === currentUser?.email
+                                message.senderId === currentUser?._id
                                   ? "text-blue-100"
                                   : "text-slate-500 dark:text-slate-400"
                               }`}

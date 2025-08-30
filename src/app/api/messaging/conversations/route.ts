@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import connectMongoose from "@/lib/mongoose";
 import Message from "@/models/Message";
 import User from "@/models/User";
+import mongoose from "mongoose";
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,7 +14,7 @@ export async function GET(request: NextRequest) {
 
     await connectMongoose();
 
-    const currentUserId = session.user.email;
+    const currentUserId = new mongoose.Types.ObjectId(session.user.id);
 
     // Get all conversations for current user
     const conversations = await Message.aggregate([
@@ -59,11 +60,12 @@ export async function GET(request: NextRequest) {
     // Get user details for each conversation
     const conversationsWithUsers = await Promise.all(
       conversations.map(async (conv) => {
-        const user = await User.findOne({ email: conv._id }).select(
-          "name email"
+        const user = await User.findById(conv._id.toString()).select(
+          "_id name email"
         );
         return {
-          userEmail: user?.email || conv._id,
+          userId: user?._id?.toString() || conv._id,
+          userEmail: user?.email || "Unknown User",
           userName: user?.name || "Unknown User",
           lastMessage: conv.lastMessage,
           unreadCount: conv.unreadCount,

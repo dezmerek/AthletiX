@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import connectMongoose from "@/lib/mongoose";
 import Message from "@/models/Message";
+import mongoose from "mongoose";
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,13 +23,19 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const currentUserId = session.user.email;
+    const currentUserId = session.user.id;
 
     // Get messages between current user and other user
     const messages = await Message.find({
       $or: [
-        { senderId: currentUserId, receiverId: otherUserId },
-        { senderId: otherUserId, receiverId: currentUserId },
+        {
+          senderId: currentUserId,
+          receiverId: new mongoose.Types.ObjectId(otherUserId),
+        },
+        {
+          senderId: new mongoose.Types.ObjectId(otherUserId),
+          receiverId: currentUserId,
+        },
       ],
     })
       .sort({ timestamp: 1 })
@@ -38,7 +45,7 @@ export async function GET(request: NextRequest) {
     if (messages.length > 0) {
       await Message.updateMany(
         {
-          senderId: otherUserId,
+          senderId: new mongoose.Types.ObjectId(otherUserId),
           receiverId: currentUserId,
           isRead: false,
         },
@@ -74,11 +81,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const currentUserId = session.user.email;
+    const currentUserId = session.user.id;
 
     const message = new Message({
       senderId: currentUserId,
-      receiverId,
+      receiverId: new mongoose.Types.ObjectId(receiverId),
       content: content.trim(),
       timestamp: new Date(),
       isRead: false,

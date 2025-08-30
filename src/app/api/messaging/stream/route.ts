@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import connectMongoose from "@/lib/mongoose";
 import Message from "@/models/Message";
 import User from "@/models/User";
+import mongoose from "mongoose";
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,7 +14,7 @@ export async function GET(request: NextRequest) {
 
     await connectMongoose();
 
-    const currentUserEmail = session.user.email;
+    const currentUserId = session.user.id;
 
     // Set headers for Server-Sent Events
     const headers = {
@@ -38,7 +39,7 @@ export async function GET(request: NextRequest) {
           try {
             // Check for new messages for the current user
             const newMessages = await Message.find({
-              receiverId: currentUserEmail,
+              receiverId: currentUserId,
               isRead: false,
             })
               .sort({ timestamp: -1 })
@@ -48,12 +49,12 @@ export async function GET(request: NextRequest) {
               // Get sender names for messages
               const messagesWithNames = await Promise.all(
                 newMessages.map(async (msg) => {
-                  const sender = await User.findOne({
-                    email: msg.senderId,
-                  }).select("name");
+                  const sender = await User.findById(
+                    new mongoose.Types.ObjectId(msg.senderId)
+                  ).select("name");
                   return {
                     ...msg.toObject(),
-                    senderName: sender?.name || msg.senderId,
+                    senderName: sender?.name || msg.senderId.toString(),
                   };
                 })
               );
@@ -68,10 +69,7 @@ export async function GET(request: NextRequest) {
 
             // Check for conversation updates (new messages in existing conversations)
             const recentMessages = await Message.find({
-              $or: [
-                { senderId: currentUserEmail },
-                { receiverId: currentUserEmail },
-              ],
+              $or: [{ senderId: currentUserId }, { receiverId: currentUserId }],
             })
               .sort({ timestamp: -1 })
               .limit(5);

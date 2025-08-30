@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 
 export interface User {
+  _id: string;
   name?: string;
   email: string;
 }
@@ -16,8 +17,9 @@ export interface Message {
 }
 
 export interface Conversation {
-  userEmail: string;
+  userId: string;
   userName?: string;
+  userEmail: string;
   lastMessage: Message;
   unreadCount: number;
 }
@@ -206,7 +208,7 @@ export const useMessaging = () => {
                 if (messages.length > 0) {
                   // Refresh current conversation messages
                   const currentReceiver =
-                    messages[0]?.receiverId === session.user?.email
+                    messages[0]?.receiverId === session.user?.id
                       ? messages[0]?.senderId
                       : messages[0]?.receiverId;
                   if (currentReceiver) {
@@ -271,6 +273,7 @@ export const useMessaging = () => {
     removeNotification,
     currentUser: session?.user
       ? {
+          _id: session.user.id || "",
           name: session.user.name || undefined,
           email: session.user.email || "",
         }

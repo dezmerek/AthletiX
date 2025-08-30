@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import connectMongoose from "@/lib/mongoose";
 import User from "@/models/User";
+import mongoose from "mongoose";
 
 export async function GET(request: NextRequest) {
   try {
@@ -23,9 +24,9 @@ export async function GET(request: NextRequest) {
 
     const users = await User.find({
       $or: [{ name: searchRegex }, { email: searchRegex }],
-      email: { $ne: session.user.email }, // Exclude current user
+      _id: { $ne: session.user.id }, // Exclude current user
     })
-      .select("name email")
+      .select("_id name email")
       .limit(10);
 
     return NextResponse.json({ users });
