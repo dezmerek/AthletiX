@@ -1,38 +1,12 @@
 {
   "title": "Wiadomości",
-  "description": "Komunikuj się ze swoimi klientami i zarządzaj konwersacjami",
-  "newConversation": "Nowa Konwersacja",
-  "searchPlaceholder": "Szukaj konwersacji...",
-  "filters": {
-    "allStatuses": "Wszystkie Statusy",
-    "active": "Aktywny",
-    "archived": "Zarchiwizowany",
-    "pending": "Oczekujący",
-    "allTypes": "Wszystkie Typy",
-    "nutrition": "Żywienie",
-    "training": "Trening",
-    "both": "Oba"
-  },
-  "types": {
-    "nutrition": "Żywienie",
-    "training": "Trening",
-    "both": "Oba"
-  },
-  "statuses": {
-    "active": "Aktywny",
-    "archived": "Zarchiwizowany",
-    "pending": "Oczekujący"
-  },
+  "description": "Komunikuj się z innymi użytkownikami i zarządzaj konwersacjami",
+  "newMessage": "Nowa wiadomość",
+  "searchPlaceholder": "Szukaj użytkowników...",
+  "noConversations": "Brak konwersacji",
+  "noMessages": "Brak wiadomości",
+  "selectConversation": "Wybierz konwersację",
+  "selectConversationDesc": "Wybierz konwersację z listy lub rozpocznij nową",
   "messagePlaceholder": "Wpisz wiadomość...",
-  "send": "Wyślij",
-  "roles": {
-    "trainer": "Trener",
-    "dietitian": "Dietetyk",
-    "both": "Trener & Dietetyk"
-  },
-  "noConversation": {
-    "title": "Nie wybrano konwersacji",
-    "description": "Wybierz konwersację z listy, aby rozpocząć czat",
-    "startChat": "Rozpocznij Nowy Czat"
-  }
+  "send": "Wyślij"
 }

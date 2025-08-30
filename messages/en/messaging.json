@@ -1,38 +1,12 @@
 {
-  "title": "Messaging",
-  "description": "Communicate with your clients and manage conversations",
-  "newConversation": "New Conversation",
-  "searchPlaceholder": "Search conversations...",
-  "filters": {
-    "allStatuses": "All Statuses",
-    "active": "Active",
-    "archived": "Archived",
-    "pending": "Pending",
-    "allTypes": "All Types",
-    "nutrition": "Nutrition",
-    "training": "Training",
-    "both": "Both"
-  },
-  "types": {
-    "nutrition": "Nutrition",
-    "training": "Training",
-    "both": "Both"
-  },
-  "statuses": {
-    "active": "Active",
-    "archived": "Archived",
-    "pending": "Pending"
-  },
-  "messagePlaceholder": "Type your message...",
-  "send": "Send",
-  "roles": {
-    "trainer": "Trainer",
-    "dietitian": "Dietitian",
-    "both": "Trainer & Dietitian"
-  },
-  "noConversation": {
-    "title": "No conversation selected",
-    "description": "Choose a conversation from the list to start chatting",
-    "startChat": "Start New Chat"
-  }
+  "title": "Messages",
+  "description": "Communicate with other users and manage conversations",
+  "newMessage": "New Message",
+  "searchPlaceholder": "Search users...",
+  "noConversations": "No conversations",
+  "noMessages": "No messages",
+  "selectConversation": "Select conversation",
+  "selectConversationDesc": "Choose a conversation from the list or start a new one",
+  "messagePlaceholder": "Type a message...",
+  "send": "Send"
 }
