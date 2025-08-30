@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useMessaging, User, Conversation } from "@/hooks/useMessaging";
-import MessageNotification from "@/components/messaging/MessageNotification";
 
 export default function MessagingPage() {
   const { data: session } = useSession();
@@ -20,10 +19,8 @@ export default function MessagingPage() {
     getMessages,
     sendMessage,
     clearError,
-    removeNotification,
     currentUser,
     isConnected,
-    notifications,
   } = useMessaging();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,6 +46,21 @@ export default function MessagingPage() {
       // Clear search results
     }
   }, [searchQuery, searchUsers]);
+
+  // Handle conversation parameter from URL (for notifications)
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const conversationId = urlParams.get("conversation");
+
+    if (conversationId && conversations.length > 0) {
+      const conversation = conversations.find(
+        (conv) => conv.userId === conversationId
+      );
+      if (conversation) {
+        handleConversationSelect(conversation);
+      }
+    }
+  }, [conversations]);
 
   const handleUserSelect = (user: User) => {
     setSelectedUser(user);
@@ -431,16 +443,6 @@ export default function MessagingPage() {
             </div>
           </div>
         )}
-
-        {/* Message Notifications */}
-        {notifications.map((notification) => (
-          <MessageNotification
-            key={notification.id}
-            message={notification.message}
-            senderName={notification.senderName}
-            onClose={() => removeNotification(notification.id)}
-          />
-        ))}
       </div>
     </div>
   );

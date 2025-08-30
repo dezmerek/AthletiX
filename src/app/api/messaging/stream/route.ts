@@ -16,6 +16,12 @@ export async function GET(request: NextRequest) {
 
     const currentUserId = session.user.id;
 
+    // Track which messages have already been sent as notifications
+    const sentNotificationIds = new Set<string>();
+
+    // Track which senders have already been notified (to prevent multiple notifications per sender)
+    const notifiedSenders = new Set<string>();
+
     // Set headers for Server-Sent Events
     const headers = {
       "Content-Type": "text/event-stream",
@@ -46,25 +52,65 @@ export async function GET(request: NextRequest) {
               .limit(10);
 
             if (newMessages.length > 0) {
-              // Get sender names for messages
-              const messagesWithNames = await Promise.all(
-                newMessages.map(async (msg) => {
-                  const sender = await User.findById(
-                    new mongoose.Types.ObjectId(msg.senderId)
-                  ).select("name");
-                  return {
-                    ...msg.toObject(),
-                    senderName: sender?.name || msg.senderId.toString(),
-                  };
-                })
+              // Filter out messages that have already been sent as notifications
+              const unsentMessages = newMessages.filter(
+                (msg) => !sentNotificationIds.has(msg._id.toString())
               );
 
-              const data = `data: ${JSON.stringify({
-                type: "new_messages",
-                messages: messagesWithNames,
-                count: messagesWithNames.length,
-              })}\n\n`;
-              controller.enqueue(new TextEncoder().encode(data));
+              if (unsentMessages.length > 0) {
+                // Group messages by sender and only send the latest one per sender
+                const messagesBySender = new Map();
+
+                unsentMessages.forEach((msg) => {
+                  const senderId = msg.senderId.toString();
+                  if (
+                    !messagesBySender.has(senderId) ||
+                    new Date(msg.timestamp) >
+                      new Date(messagesBySender.get(senderId).timestamp)
+                  ) {
+                    messagesBySender.set(senderId, msg);
+                  }
+                });
+
+                // Only send notifications for senders that haven't been notified yet
+                const newSenders = Array.from(messagesBySender.keys()).filter(
+                  (senderId) => !notifiedSenders.has(senderId)
+                );
+
+                if (newSenders.length > 0) {
+                  // Get sender names for the latest messages only
+                  const latestMessagesWithNames = await Promise.all(
+                    newSenders.map((senderId) => {
+                      const msg = messagesBySender.get(senderId);
+                      return User.findById(
+                        new mongoose.Types.ObjectId(senderId)
+                      )
+                        .select("name")
+                        .then((sender) => ({
+                          ...msg.toObject(),
+                          senderName: sender?.name || senderId,
+                        }));
+                    })
+                  );
+
+                  // Mark these senders as notified
+                  newSenders.forEach((senderId) => {
+                    notifiedSenders.add(senderId);
+                  });
+
+                  // Mark ALL messages from these senders as sent
+                  unsentMessages.forEach((msg) => {
+                    sentNotificationIds.add(msg._id.toString());
+                  });
+
+                  const data = `data: ${JSON.stringify({
+                    type: "new_messages",
+                    messages: latestMessagesWithNames,
+                    count: latestMessagesWithNames.length,
+                  })}\n\n`;
+                  controller.enqueue(new TextEncoder().encode(data));
+                }
+              }
             }
 
             // Check for conversation updates (new messages in existing conversations)
@@ -80,6 +126,19 @@ export async function GET(request: NextRequest) {
                 messages: recentMessages,
               })}\n\n`;
               controller.enqueue(new TextEncoder().encode(data));
+            }
+
+            // Clean up sent notification IDs for read messages
+            const readMessages = await Message.find({
+              receiverId: currentUserId,
+              isRead: true,
+            });
+
+            if (readMessages.length > 0) {
+              readMessages.forEach((msg) => {
+                sentNotificationIds.delete(msg._id.toString());
+                notifiedSenders.delete(msg.senderId.toString());
+              });
             }
           } catch (error) {
             console.error("Error in messaging stream:", error);

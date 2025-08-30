@@ -7,6 +7,7 @@ interface NotificationContextType {
   markAsRead: (notificationId: string) => void;
   markAllAsRead: () => void;
   addNotification: (notification: Notification) => void;
+  removeNotification: (notificationIdPattern: string) => void;
   refresh: () => void;
 }
 
@@ -23,6 +24,7 @@ export function NotificationProvider({
     markAsRead,
     markAllAsRead,
     addNotification,
+    removeNotification,
     refresh,
   } = useNotifications({
     enabled: true,
@@ -40,6 +42,14 @@ export function NotificationProvider({
       refresh();
     };
 
+    const handleRemoveNotification = (
+      event: CustomEvent<{ notificationId: string }>
+    ) => {
+      // Remove notification by ID pattern (for message notifications)
+      const notificationId = event.detail.notificationId;
+      removeNotification(notificationId);
+    };
+
     window.addEventListener(
       "new-notification",
       handleNewNotification as EventListener
@@ -47,6 +57,10 @@ export function NotificationProvider({
     window.addEventListener(
       "refresh-notifications",
       handleRefreshNotifications
+    );
+    window.addEventListener(
+      "remove-notification",
+      handleRemoveNotification as EventListener
     );
 
     return () => {
@@ -58,8 +72,12 @@ export function NotificationProvider({
         "refresh-notifications",
         handleRefreshNotifications
       );
+      window.removeEventListener(
+        "remove-notification",
+        handleRemoveNotification as EventListener
+      );
     };
-  }, [addNotification, refresh]);
+  }, [addNotification, removeNotification, refresh]);
 
   const value: NotificationContextType = {
     notifications,
@@ -67,6 +85,7 @@ export function NotificationProvider({
     markAsRead,
     markAllAsRead,
     addNotification,
+    removeNotification,
     refresh,
   };
 

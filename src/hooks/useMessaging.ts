@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
+import { triggerNotification } from "@/contexts/NotificationContext";
 
 export interface User {
   _id: string;
@@ -32,13 +33,6 @@ export const useMessaging = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [notifications, setNotifications] = useState<
-    Array<{
-      id: string;
-      message: string;
-      senderName?: string;
-    }>
-  >([]);
 
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -143,10 +137,6 @@ export const useMessaging = () => {
 
   const clearError = useCallback(() => setError(null), []);
 
-  const removeNotification = useCallback((id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  }, []);
-
   // Initialize real-time connection
   useEffect(() => {
     if (!session?.user?.email) return;
@@ -178,25 +168,36 @@ export const useMessaging = () => {
                 // Update conversations to show new message count
                 getConversations();
 
-                // Add notifications for new messages
+                // Add notifications for new messages - backend already groups by sender
                 if (data.messages && data.messages.length > 0) {
                   data.messages.forEach((msg: any) => {
-                    const notificationId = `msg-${msg._id}-${Date.now()}`;
-                    setNotifications((prev) => [
-                      ...prev,
-                      {
-                        id: notificationId,
-                        message: msg.content,
-                        senderName: msg.senderName || msg.senderId,
-                      },
-                    ]);
+                    // Check if we already have a notification for this sender
+                    const existingNotificationId = `msg-${msg.senderId}`;
 
-                    // Auto-remove notification after 10 seconds
+                    // Remove any existing notification for this sender first
+                    const event = new CustomEvent("remove-notification", {
+                      detail: { notificationId: existingNotificationId },
+                    });
+                    window.dispatchEvent(event);
+
+                    // Small delay to ensure removal completes before adding new
                     setTimeout(() => {
-                      setNotifications((prev) =>
-                        prev.filter((n) => n.id !== notificationId)
-                      );
-                    }, 10000);
+                      triggerNotification({
+                        _id: existingNotificationId,
+                        type: "message",
+                        title: `Nowa wiadomość od ${
+                          msg.senderName || "Użytkownika"
+                        }`,
+                        message: msg.content,
+                        isRead: false,
+                        senderName: msg.senderName || msg.senderId,
+                        metadata: {
+                          conversationId: msg.receiverId,
+                          senderId: msg.senderId,
+                        },
+                        createdAt: new Date().toISOString(),
+                      });
+                    }, 100);
                   });
                 }
                 break;
@@ -270,7 +271,6 @@ export const useMessaging = () => {
     getMessages,
     sendMessage,
     clearError,
-    removeNotification,
     currentUser: session?.user
       ? {
           _id: session.user.id || "",
@@ -279,6 +279,5 @@ export const useMessaging = () => {
         }
       : null,
     isConnected,
-    notifications,
   };
 };

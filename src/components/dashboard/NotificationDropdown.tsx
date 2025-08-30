@@ -90,6 +90,24 @@ export default function NotificationDropdown({
             </svg>
           </div>
         );
+      case "message":
+        return (
+          <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+            <svg
+              className="w-4 h-4 text-green-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
+          </div>
+        );
       default:
         return (
           <div className="w-8 h-8 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center">
@@ -164,7 +182,17 @@ export default function NotificationDropdown({
             {notifications.map((notification) => (
               <div
                 key={notification._id}
-                onClick={() => markAsRead(notification._id)}
+                onClick={() => {
+                  markAsRead(notification._id);
+                  // Handle message notification click
+                  if (
+                    notification.type === "message" &&
+                    notification.metadata?.conversationId
+                  ) {
+                    // Navigate to messaging page with the conversation
+                    window.location.href = `/dashboard/messaging?conversation=${notification.metadata.conversationId}`;
+                  }
+                }}
                 className={`p-4 cursor-pointer transition-colors ${
                   notification.isRead
                     ? "hover:bg-slate-50 dark:hover:bg-slate-700/50"

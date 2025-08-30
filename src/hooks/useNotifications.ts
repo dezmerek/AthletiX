@@ -3,7 +3,13 @@ import { useSession } from "next-auth/react";
 
 export interface Notification {
   _id: string;
-  type: "like" | "comment" | "comment_like" | "follow" | "post_mention";
+  type:
+    | "like"
+    | "comment"
+    | "comment_like"
+    | "follow"
+    | "post_mention"
+    | "message";
   title: string;
   message: string;
   isRead: boolean;
@@ -14,6 +20,8 @@ export interface Notification {
   metadata?: {
     postContent?: string;
     commentContent?: string;
+    conversationId?: string;
+    senderId?: string;
   };
   createdAt: string;
 }
@@ -276,6 +284,13 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
     }
   }, []);
 
+  // Remove notification by ID pattern (for message notifications)
+  const removeNotification = useCallback((notificationIdPattern: string) => {
+    setNotifications((prev) =>
+      prev.filter((n) => !n._id.startsWith(notificationIdPattern))
+    );
+  }, []);
+
   // Request notification permission
   useEffect(() => {
     if ("Notification" in window && Notification.permission === "default") {
@@ -295,6 +310,7 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
     markAllAsRead,
     refresh,
     fetchUnreadOnly,
-    addNotification, // Dodajemy nową funkcję
+    addNotification,
+    removeNotification,
   };
 }
