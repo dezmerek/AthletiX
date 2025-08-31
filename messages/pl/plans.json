@@ -3,10 +3,11 @@
   "description": "Twórz i zarządzaj planami treningowymi oraz dietetycznymi dla swoich klientów",
   "createPlan": "Utwórz Plan",
   "stats": {
-    "totalPlans": "Łącznie Planów",
+    "totalPlans": "Wszystkie Plany",
     "activePlans": "Aktywne Plany",
     "avgProgress": "Średni Postęp",
-    "avgDuration": "Średni Czas Trwania"
+    "trainingPlans": "Plany Treningowe",
+    "nutritionPlans": "Plany Żywieniowe"
   },
   "searchPlaceholder": "Szukaj planów po nazwie lub kliencie...",
   "filters": {
@@ -16,6 +17,7 @@
     "both": "Oba",
     "allStatuses": "Wszystkie Statusy",
     "active": "Aktywny",
+    "inactive": "Nieaktywny",
     "draft": "Szkic",
     "completed": "Ukończony",
     "archived": "Zarchiwizowany"
@@ -35,9 +37,166 @@
   "duration": "Czas trwania",
   "weeks": "tygodni",
   "updated": "Zaktualizowano",
+  "weight": {
+    "current": "Aktualna Waga",
+    "target": "Docelowa Waga",
+    "notSet": "Nie ustawiono"
+  },
+  "dates": {
+    "start": "Start",
+    "end": "Koniec"
+  },
   "actions": {
     "view": "Zobacz",
-    "edit": "Edytuj"
+    "edit": "Edytuj",
+    "remove": "Usuń"
+  },
+  "confirmRemove": "Czy na pewno chcesz usunąć ten plan?",
+  "noResultsFound": "Nie znaleziono planów pasujących do kryteriów",
+  "noPlansYet": "Nie utworzono jeszcze żadnych planów",
+  "tryDifferentFilters": "Spróbuj dostosować wyszukiwanie lub filtry",
+  "startCreatingPlans": "Zacznij tworzyć plany dla swoich klientów",
+  "createFirstPlan": "Utwórz Pierwszy Plan",
+  "createPlanModal": {
+    "title": "Utwórz Nowy Plan",
+    "client": "Klient",
+    "selectClient": "Wybierz klienta",
+    "searchClientPlaceholder": "Wyszukaj klienta po imieniu lub emailu...",
+    "trainerTargetWeight": "Docelowa Waga Klienta (Ustalona przez Trenera)",
+    "trainerTargetWeightPlaceholder": "Wprowadź wagę docelową w kg",
+    "trainerTargetWeightDescription": "Ustaw cel wagowy dla planu tego klienta",
+    "optional": "Opcjonalne",
+    "clientInfo": "Informacje o Kliencie",
+    "planName": "Nazwa Planu",
+    "planNamePlaceholder": "Wprowadź nazwę planu",
+    "planType": "Typ Planu",
+    "startDate": "Data Rozpoczęcia",
+    "endDate": "Data Zakończenia (Opcjonalnie)",
+    "description": "Opis",
+    "descriptionPlaceholder": "Wprowadź opis planu",
+    "currentWeight": "Aktualna Waga",
+    "targetWeight": "Docelowa Waga",
+    "strengthGoals": "Cele Siłowe",
+    "enduranceGoals": "Cele Wytrzymałościowe",
+    "flexibilityGoals": "Cele Elastyczności",
+    "nutritionGoals": "Cele Żywieniowe",
+    "addGoal": "Dodaj Cel",
+    "strengthGoalPlaceholder": "Wprowadź cel siłowy",
+    "enduranceGoalPlaceholder": "Wprowadź cel wytrzymałościowy",
+    "flexibilityGoalPlaceholder": "Wprowadź cel elastyczności",
+    "nutritionGoalPlaceholder": "Wprowadź cel żywieniowy",
+    "notSet": "Nie ustawiono",
+    "cancel": "Anuluj",
+    "create": "Utwórz Plan",
+    "creating": "Tworzenie...",
+    "types": {
+      "nutrition": "Żywienie",
+      "training": "Trening",
+      "both": "Oba"
+    },
+    "validation": {
+      "requiredFields": "Proszę wypełnić wszystkie wymagane pola"
+    },
+    "error": {
+      "createFailed": "Nie udało się utworzyć planu"
+    }
+  },
+  "editPlanModal": {
+    "title": "Edytuj Plan",
+    "clientInfo": "Informacje o Kliencie",
+    "planName": "Nazwa Planu",
+    "planNamePlaceholder": "Wprowadź nazwę planu",
+    "planType": "Typ Planu",
+    "planStatus": "Status Planu",
+    "startDate": "Data Rozpoczęcia",
+    "endDate": "Data Zakończenia (Opcjonalnie)",
+    "description": "Opis",
+    "descriptionPlaceholder": "Wprowadź opis planu",
+    "currentWeight": "Aktualna Waga",
+    "targetWeight": "Docelowa Waga",
+    "strengthGoals": "Cele Siłowe",
+    "enduranceGoals": "Cele Wytrzymałościowe",
+    "flexibilityGoals": "Cele Elastyczności",
+    "nutritionGoals": "Cele Żywieniowe",
+    "addGoal": "Dodaj Cel",
+    "strengthGoalPlaceholder": "Wprowadź cel siłowy",
+    "enduranceGoalPlaceholder": "Wprowadź cel wytrzymałościowy",
+    "flexibilityGoalPlaceholder": "Wprowadź cel elastyczności",
+    "nutritionGoalPlaceholder": "Wprowadź cel żywieniowy",
+    "cancel": "Anuluj",
+    "update": "Zaktualizuj Plan",
+    "updating": "Aktualizowanie...",
+    "types": {
+      "nutrition": "Żywienie",
+      "training": "Trening",
+      "both": "Oba"
+    },
+    "statuses": {
+      "active": "Aktywny",
+      "inactive": "Nieaktywny",
+      "draft": "Szkic"
+    },
+    "validation": {
+      "requiredFields": "Proszę wypełnić wszystkie wymagane pola"
+    },
+    "error": {
+      "updateFailed": "Nie udało się zaktualizować planu"
+    },
+    "note": {
+      "title": "Uwaga",
+      "description": "Zmiany zostaną zastosowane natychmiast"
+    }
+  },
+  "details": {
+    "title": "Szczegóły Planu",
+    "clientInfo": "Informacje o Kliencie",
+    "clientName": "Nazwa Klienta",
+    "status": "Status",
+    "clientType": "Typ Klienta",
+    "dates": "Daty",
+    "startDate": "Data Rozpoczęcia",
+    "endDate": "Data Zakończenia",
+    "description": "Opis",
+    "goals": "Cele",
+    "weightGoals": "Cele Wagowe",
+    "currentWeight": "Aktualna Waga",
+    "targetWeight": "Docelowa Waga",
+    "otherGoals": "Inne Cele",
+    "strength": "Siła",
+    "endurance": "Wytrzymałość",
+    "flexibility": "Elastyczność",
+    "nutrition": "Żywienie",
+    "strengthGoals": "Cele Siłowe",
+    "enduranceGoals": "Cele Wytrzymałościowe",
+    "flexibilityGoals": "Cele Elastyczności",
+    "nutritionGoals": "Cele Żywieniowe",
+    "currentProgress": "Aktualny Postęp",
+    "timestamps": "Znaczniki Czasu",
+    "created": "Utworzono",
+    "updated": "Zaktualizowano",
+    "notSet": "Nie ustawiono",
+    "close": "Zamknij",
+    "types": {
+      "nutrition": "Żywienie",
+      "training": "Trening",
+      "both": "Oba"
+    },
+    "statuses": {
+      "active": "Aktywny",
+      "inactive": "Nieaktywny",
+      "draft": "Szkic"
+    }
+  },
+  "deleteModal": {
+    "title": "Usuń Plan",
+    "description": "Czy na pewno chcesz usunąć ten plan? Tej operacji nie można cofnąć.",
+    "client": "Klient",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "deleting": "Usuwanie...",
+    "error": {
+      "deleteFailed": "Nie udało się usunąć planu"
+    }
   },
   "noPlans": {
     "title": "Nie znaleziono planów",

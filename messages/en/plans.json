@@ -6,7 +6,8 @@
     "totalPlans": "Total Plans",
     "activePlans": "Active Plans",
     "avgProgress": "Avg Progress",
-    "avgDuration": "Avg Duration"
+    "trainingPlans": "Training Plans",
+    "nutritionPlans": "Nutrition Plans"
   },
   "searchPlaceholder": "Search plans by name or client...",
   "filters": {
@@ -35,9 +36,166 @@
   "duration": "Duration",
   "weeks": "weeks",
   "updated": "Updated",
+  "weight": {
+    "current": "Current Weight",
+    "target": "Target Weight",
+    "notSet": "Not set"
+  },
+  "dates": {
+    "start": "Start",
+    "end": "End"
+  },
   "actions": {
     "view": "View",
-    "edit": "Edit"
+    "edit": "Edit",
+    "remove": "Remove"
+  },
+  "confirmRemove": "Are you sure you want to remove this plan?",
+  "noResultsFound": "No plans found matching your criteria",
+  "noPlansYet": "No plans created yet",
+  "tryDifferentFilters": "Try adjusting your search or filters",
+  "startCreatingPlans": "Start creating plans for your clients",
+  "createFirstPlan": "Create Your First Plan",
+  "createPlanModal": {
+    "title": "Create New Plan",
+    "client": "Client",
+    "selectClient": "Select a client",
+    "searchClientPlaceholder": "Search for a client by name or email...",
+    "trainerTargetWeight": "Client Target Weight (Set by Trainer)",
+    "trainerTargetWeightPlaceholder": "Enter target weight in kg",
+    "trainerTargetWeightDescription": "Set the target weight goal for this client's plan",
+    "optional": "Optional",
+    "clientInfo": "Client Information",
+    "planName": "Plan Name",
+    "planNamePlaceholder": "Enter plan name",
+    "planType": "Plan Type",
+    "startDate": "Start Date",
+    "endDate": "End Date (Optional)",
+    "description": "Description",
+    "descriptionPlaceholder": "Enter plan description",
+    "currentWeight": "Current Weight",
+    "targetWeight": "Target Weight",
+    "strengthGoals": "Strength Goals",
+    "enduranceGoals": "Endurance Goals",
+    "flexibilityGoals": "Flexibility Goals",
+    "nutritionGoals": "Nutrition Goals",
+    "addGoal": "Add Goal",
+    "strengthGoalPlaceholder": "Enter strength goal",
+    "enduranceGoalPlaceholder": "Enter endurance goal",
+    "flexibilityGoalPlaceholder": "Enter flexibility goal",
+    "nutritionGoalPlaceholder": "Enter nutrition goal",
+    "notSet": "Not set",
+    "cancel": "Cancel",
+    "create": "Create Plan",
+    "creating": "Creating...",
+    "types": {
+      "nutrition": "Nutrition",
+      "training": "Training",
+      "both": "Both"
+    },
+    "validation": {
+      "requiredFields": "Please fill in all required fields"
+    },
+    "error": {
+      "createFailed": "Failed to create plan"
+    }
+  },
+  "editPlanModal": {
+    "title": "Edit Plan",
+    "clientInfo": "Client Information",
+    "planName": "Plan Name",
+    "planNamePlaceholder": "Enter plan name",
+    "planType": "Plan Type",
+    "planStatus": "Plan Status",
+    "startDate": "Start Date",
+    "endDate": "End Date (Optional)",
+    "description": "Description",
+    "descriptionPlaceholder": "Enter plan description",
+    "currentWeight": "Current Weight",
+    "targetWeight": "Target Weight",
+    "strengthGoals": "Strength Goals",
+    "enduranceGoals": "Endurance Goals",
+    "flexibilityGoals": "Flexibility Goals",
+    "nutritionGoals": "Nutrition Goals",
+    "addGoal": "Add Goal",
+    "strengthGoalPlaceholder": "Enter strength goal",
+    "enduranceGoalPlaceholder": "Enter endurance goal",
+    "flexibilityGoalPlaceholder": "Enter flexibility goal",
+    "nutritionGoalPlaceholder": "Enter nutrition goal",
+    "cancel": "Cancel",
+    "update": "Update Plan",
+    "updating": "Updating...",
+    "types": {
+      "nutrition": "Nutrition",
+      "training": "Training",
+      "both": "Both"
+    },
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "draft": "Draft"
+    },
+    "validation": {
+      "requiredFields": "Please fill in all required fields"
+    },
+    "error": {
+      "updateFailed": "Failed to update plan"
+    },
+    "note": {
+      "title": "Note",
+      "description": "Changes will be applied immediately"
+    }
+  },
+  "details": {
+    "title": "Plan Details",
+    "clientInfo": "Client Information",
+    "clientName": "Client Name",
+    "status": "Status",
+    "clientType": "Client Type",
+    "dates": "Dates",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "description": "Description",
+    "goals": "Goals",
+    "weightGoals": "Weight Goals",
+    "currentWeight": "Current Weight",
+    "targetWeight": "Target Weight",
+    "otherGoals": "Other Goals",
+    "strength": "Strength",
+    "endurance": "Endurance",
+    "flexibility": "Flexibility",
+    "nutrition": "Nutrition",
+    "strengthGoals": "Strength Goals",
+    "enduranceGoals": "Endurance Goals",
+    "flexibilityGoals": "Flexibility Goals",
+    "nutritionGoals": "Nutrition Goals",
+    "currentProgress": "Current Progress",
+    "timestamps": "Timestamps",
+    "created": "Created",
+    "updated": "Updated",
+    "notSet": "Not set",
+    "close": "Close",
+    "types": {
+      "nutrition": "Nutrition",
+      "training": "Training",
+      "both": "Both"
+    },
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "draft": "Draft"
+    }
+  },
+  "deleteModal": {
+    "title": "Delete Plan",
+    "description": "Are you sure you want to delete this plan? This action cannot be undone.",
+    "client": "Client",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "error": {
+      "deleteFailed": "Failed to delete plan"
+    }
   },
   "noPlans": {
     "title": "No plans found",

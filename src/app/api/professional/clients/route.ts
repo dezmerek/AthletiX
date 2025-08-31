@@ -56,17 +56,47 @@ export async function GET() {
       )
       .toArray();
 
-    // Połącz dane klientów z relacjami
+    // Pobierz plany dla każdego klienta
+    const plans = await db
+      .collection("plans")
+      .find({
+        professionalId: new ObjectId(session.user.id),
+        clientId: { $in: clientIds },
+      })
+      .toArray();
+
+    // Połącz dane klientów z relacjami i planami
     const clientsWithDetails = clients.map((client) => {
       const relation = clientRelations.find(
         (rel) => rel.clientId.toString() === client._id.toString()
       );
+
+      // Znajdź plany dla tego klienta
+      const clientPlans = plans.filter(
+        (plan) => plan.clientId.toString() === client._id.toString()
+      );
+
+      // Oblicz statystyki planów
+      const activePlans = clientPlans.filter(
+        (plan) => plan.status === "active"
+      ).length;
+      const totalPlans = clientPlans.length;
+      const lastPlanDate =
+        clientPlans.length > 0
+          ? Math.max(...clientPlans.map((p) => new Date(p.updatedAt).getTime()))
+          : null;
+
       return {
         ...client,
         status: relation?.status || "active",
         type: relation?.type || "both",
         addedAt: relation?.createdAt,
         notes: relation?.notes,
+        plans: {
+          total: totalPlans,
+          active: activePlans,
+          lastUpdated: lastPlanDate ? new Date(lastPlanDate) : null,
+        },
       };
     });
 

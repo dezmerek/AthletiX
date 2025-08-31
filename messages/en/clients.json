@@ -23,11 +23,10 @@
     "client": "Client",
     "type": "Type",
     "status": "Status",
-    "progress": "Progress",
-    "lastActivity": "Last Activity",
-    "nextSession": "Next Session",
+    "plans": "Plans",
+    "totalPlans": "plans",
+    "active": "active",
     "addedDate": "Added Date",
-    "notes": "Notes",
     "actions": "Actions"
   },
   "types": {

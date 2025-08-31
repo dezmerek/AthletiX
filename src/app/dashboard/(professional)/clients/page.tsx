@@ -23,6 +23,10 @@ interface Client {
   nextSession?: string;
   addedAt: string;
   notes?: string;
+  plans?: {
+    total: number;
+    active: number;
+  };
 }
 
 export default function ClientsPage() {
@@ -432,6 +436,9 @@ export default function ClientsPage() {
                       {t("table.status")}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                      {t("table.plans")}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       {t("table.addedDate")}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
@@ -487,6 +494,16 @@ export default function ClientsPage() {
                         >
                           {t(`statuses.${client.status}`)}
                         </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                        <div className="flex flex-col">
+                          <span className="font-medium">
+                            {client.plans?.total || 0} {t("table.totalPlans")}
+                          </span>
+                          <span className="text-xs text-slate-400">
+                            {client.plans?.active || 0} {t("table.active")}
+                          </span>
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
                         {new Date(client.addedAt).toLocaleDateString()}
