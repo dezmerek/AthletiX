@@ -18,6 +18,7 @@ interface Plan {
   goals: {
     weight?: number;
     targetWeight?: number;
+    trainerTargetWeight?: string;
     strength?: string[];
     endurance?: string[];
     flexibility?: string[];
@@ -135,15 +136,35 @@ export default function PlansPage() {
 
     const currentWeight = plan.clientProfile.weight;
     const targetWeight = plan.clientProfile.targetWeight;
-    const startWeight = plan.goals.weight || currentWeight;
 
-    if (startWeight === targetWeight) return 100;
+    // Sprawdzamy czy plan ma wagę docelową ustaloną przez trenera
+    const trainerTargetWeight = plan.goals.trainerTargetWeight;
 
-    const totalChange = Math.abs(targetWeight - startWeight);
-    const currentChange = Math.abs(targetWeight - currentWeight);
-    const progress = ((totalChange - currentChange) / totalChange) * 100;
+    // Jeśli trener ustawił wagę docelową, używamy jej
+    if (trainerTargetWeight) {
+      const targetWeightToUse = parseFloat(trainerTargetWeight);
 
-    return Math.max(0, Math.min(100, Math.round(progress)));
+      // Jeśli aktualna waga jest równa docelowej, postęp to 100%
+      if (currentWeight === targetWeightToUse) return 100;
+
+      // Obliczamy postęp na podstawie wagi aktualnej vs docelowej
+      // Zakładamy, że waga początkowa to aktualna waga klienta
+      const startWeight = plan.clientProfile.weight;
+      const totalChange = Math.abs(targetWeightToUse - startWeight);
+
+      if (totalChange === 0) return 100;
+
+      const currentChange = Math.abs(targetWeightToUse - currentWeight);
+      const progress = ((totalChange - currentChange) / totalChange) * 100;
+
+      return Math.max(0, Math.min(100, Math.round(progress)));
+    }
+
+    // Jeśli trener nie ustawił wagi docelowej, używamy wagi z profilu klienta
+    if (currentWeight === targetWeight) return 100;
+
+    // Domyślnie postęp to 0% (klient nie rozpoczął jeszcze planu)
+    return 0;
   };
 
   // Modal handlers

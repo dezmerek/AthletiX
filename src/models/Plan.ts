@@ -12,6 +12,7 @@ export interface IPlan extends Document {
   goals: {
     weight?: number;
     targetWeight?: number;
+    trainerTargetWeight?: string;
     strength?: string[];
     endurance?: string[];
     flexibility?: string[];
@@ -110,6 +111,7 @@ const PlanSchema = new Schema<IPlan>(
     goals: {
       weight: Number,
       targetWeight: Number,
+      trainerTargetWeight: String,
       strength: [String],
       endurance: [String],
       flexibility: [String],
@@ -256,4 +258,3 @@ PlanSchema.index({ startDate: 1, endDate: 1 });
 
 export default mongoose.models.Plan ||
   mongoose.model<IPlan>("Plan", PlanSchema);
-

@@ -26,6 +26,7 @@ interface Client {
   plans?: {
     total: number;
     active: number;
+    avgProgress?: number;
   };
 }
 
@@ -331,7 +332,16 @@ export default function ClientsPage() {
                   {t("stats.avgProgress")}
                 </p>
                 <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                  78%
+                  {clients.length > 0
+                    ? Math.round(
+                        clients.reduce(
+                          (sum, client) =>
+                            sum + (client.plans?.avgProgress || 0),
+                          0
+                        ) / clients.length
+                      )
+                    : 0}
+                  %
                 </p>
               </div>
             </div>

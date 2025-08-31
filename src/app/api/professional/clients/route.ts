@@ -56,13 +56,31 @@ export async function GET() {
       )
       .toArray();
 
-    // Pobierz plany dla każdego klienta
+    // Pobierz plany dla każdego klienta z danymi o postępach
     const plans = await db
       .collection("plans")
-      .find({
-        professionalId: new ObjectId(session.user.id),
-        clientId: { $in: clientIds },
-      })
+      .aggregate([
+        {
+          $match: {
+            professionalId: new ObjectId(session.user.id),
+            clientId: { $in: clientIds },
+          },
+        },
+        {
+          $lookup: {
+            from: "userprofiles",
+            localField: "clientId",
+            foreignField: "userId",
+            as: "clientProfile",
+          },
+        },
+        {
+          $unwind: {
+            path: "$clientProfile",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      ])
       .toArray();
 
     // Połącz dane klientów z relacjami i planami
@@ -86,6 +104,54 @@ export async function GET() {
           ? Math.max(...clientPlans.map((p) => new Date(p.updatedAt).getTime()))
           : null;
 
+      // Oblicz średni postęp dla wszystkich planów klienta
+      const calculateProgress = (plan: any) => {
+        if (!plan.clientProfile?.weight || !plan.clientProfile?.targetWeight) {
+          return 0;
+        }
+
+        const currentWeight = plan.clientProfile.weight;
+        const targetWeight = plan.clientProfile.targetWeight;
+
+        // Sprawdzamy czy plan ma wagę docelową ustaloną przez trenera
+        const trainerTargetWeight = plan.goals?.trainerTargetWeight;
+
+        // Jeśli trener ustawił wagę docelową, używamy jej
+        if (trainerTargetWeight) {
+          const targetWeightToUse = parseFloat(trainerTargetWeight);
+
+          // Jeśli aktualna waga jest równa docelowej, postęp to 100%
+          if (currentWeight === targetWeightToUse) return 100;
+
+          // Obliczamy postęp na podstawie wagi aktualnej vs docelowej
+          const startWeight = plan.clientProfile.weight;
+          const totalChange = Math.abs(targetWeightToUse - startWeight);
+
+          if (totalChange === 0) return 100;
+
+          const currentChange = Math.abs(targetWeightToUse - currentWeight);
+          const progress = ((totalChange - currentChange) / totalChange) * 100;
+
+          return Math.max(0, Math.min(100, Math.round(progress)));
+        }
+
+        // Jeśli trener nie ustawił wagi docelowej, używamy wagi z profilu klienta
+        if (currentWeight === targetWeight) return 100;
+
+        // Domyślnie postęp to 0% (klient nie rozpoczął jeszcze planu)
+        return 0;
+      };
+
+      const avgProgress =
+        clientPlans.length > 0
+          ? Math.round(
+              clientPlans.reduce(
+                (sum, plan) => sum + calculateProgress(plan),
+                0
+              ) / clientPlans.length
+            )
+          : 0;
+
       return {
         ...client,
         status: relation?.status || "active",
@@ -97,6 +163,7 @@ export async function GET() {
           active: activePlans,
           lastUpdated: lastPlanDate ? new Date(lastPlanDate) : null,
         },
+        avgProgress,
       };
     });
 
