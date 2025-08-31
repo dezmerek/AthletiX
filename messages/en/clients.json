@@ -26,6 +26,8 @@
     "progress": "Progress",
     "lastActivity": "Last Activity",
     "nextSession": "Next Session",
+    "addedDate": "Added Date",
+    "notes": "Notes",
     "actions": "Actions"
   },
   "types": {
@@ -43,8 +45,48 @@
     "meals": "meals"
   },
   "actions": {
-    "view": "View",
+    "view": "Details",
     "edit": "Edit",
     "remove": "Remove"
+  },
+  "noResultsFound": "No results found",
+  "tryDifferentFilters": "Try adjusting your search or filters",
+  "noClientsYet": "No clients yet",
+  "startAddingClients": "Start building your client base by adding your first client",
+  "addFirstClient": "Add Your First Client",
+  "confirmRemove": "Are you sure you want to remove this client?",
+  "addClientModal": {
+    "title": "Add New Client",
+    "searchLabel": "Search for users",
+    "searchPlaceholder": "Search by name or email...",
+    "searchResults": "Search Results",
+    "clientType": "Client Type",
+    "notes": "Notes",
+    "notesPlaceholder": "Add any notes about this client...",
+    "cancel": "Cancel",
+    "add": "Add Client",
+    "adding": "Adding...",
+    "noName": "No Name"
+  },
+  "editClientModal": {
+    "title": "Edit Client",
+    "clientType": "Client Type",
+    "status": "Status",
+    "notes": "Notes",
+    "notesPlaceholder": "Add any notes about this client...",
+    "cancel": "Cancel",
+    "update": "Update Client",
+    "updating": "Updating..."
+  },
+  "details": {
+    "title": "Client Details",
+    "status": "Status",
+    "clientType": "Client Type",
+    "progress": "Progress",
+    "notes": "Notes",
+    "noNotes": "No notes available",
+    "addedDate": "Added Date",
+    "nextSession": "Next Session",
+    "close": "Close"
   }
 }

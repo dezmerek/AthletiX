@@ -1,23 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import AddClientModal from "@/components/dashboard/AddClientModal";
+import ClientDetailsModal from "@/components/dashboard/ClientDetailsModal";
+import EditClientModal from "@/components/dashboard/EditClientModal";
 
 interface Client {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   avatar?: string;
   status: "active" | "inactive" | "pending";
   type: "nutrition" | "training" | "both";
-  lastActivity: string;
-  progress: {
+  lastActivity?: string;
+  progress?: {
     weight?: number;
     targetWeight?: number;
     workoutsCompleted: number;
     nutritionLogged: number;
   };
   nextSession?: string;
+  addedAt: string;
+  notes?: string;
 }
 
 export default function ClientsPage() {
@@ -30,68 +35,107 @@ export default function ClientsPage() {
     "all" | "nutrition" | "training" | "both"
   >("all");
   const [showAddClientModal, setShowAddClientModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [clients, setClients] = useState<Client[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // Mock data - w prawdziwej aplikacji to będzie z API
-  const [clients] = useState<Client[]>([
-    {
-      id: "1",
-      name: "Anna Kowalska",
-      email: "anna.kowalska@email.com",
-      status: "active",
-      type: "both",
-      lastActivity: "2024-01-15",
-      progress: {
-        weight: 68,
-        targetWeight: 65,
-        workoutsCompleted: 12,
-        nutritionLogged: 8,
-      },
-      nextSession: "2024-01-18",
-    },
-    {
-      id: "2",
-      name: "Piotr Nowak",
-      email: "piotr.nowak@email.com",
-      status: "active",
-      type: "training",
-      lastActivity: "2024-01-14",
-      progress: {
-        weight: 85,
-        targetWeight: 80,
-        workoutsCompleted: 8,
-        nutritionLogged: 0,
-      },
-      nextSession: "2024-01-17",
-    },
-    {
-      id: "3",
-      name: "Maria Wiśniewska",
-      email: "maria.wisniewska@email.com",
-      status: "pending",
-      type: "nutrition",
-      lastActivity: "2024-01-10",
-      progress: {
-        weight: 72,
-        targetWeight: 70,
-        workoutsCompleted: 0,
-        nutritionLogged: 5,
-      },
-    },
-    {
-      id: "4",
-      name: "Tomasz Zieliński",
-      email: "tomasz.zielinski@email.com",
-      status: "inactive",
-      type: "both",
-      lastActivity: "2024-01-05",
-      progress: {
-        weight: 78,
-        targetWeight: 75,
-        workoutsCompleted: 3,
-        nutritionLogged: 2,
-      },
-    },
-  ]);
+  // Pobierz klientów z API
+  const fetchClients = async () => {
+    try {
+      setIsLoading(true);
+      setError("");
+
+      const response = await fetch("/api/professional/clients");
+      if (response.ok) {
+        const data = await response.json();
+        setClients(data.clients || []);
+      } else {
+        setError("Failed to fetch clients");
+      }
+    } catch {
+      setError("Error fetching clients");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchClients();
+  }, []);
+
+  // Dodaj nowego klienta
+  const handleClientAdded = (newClient: {
+    _id: string;
+    name: string;
+    email: string;
+    image?: string;
+    type: string;
+    status: string;
+    addedAt: string | Date;
+    notes?: string;
+  }) => {
+    console.log("handleClientAdded called with:", newClient);
+
+    // Dodaj nowego klienta do lokalnego stanu
+    const client: Client = {
+      _id: newClient._id,
+      name: newClient.name,
+      email: newClient.email,
+      avatar: newClient.image,
+      status: newClient.status as "active" | "inactive" | "pending",
+      type: newClient.type as "nutrition" | "training" | "both",
+      addedAt:
+        typeof newClient.addedAt === "string"
+          ? newClient.addedAt
+          : newClient.addedAt.toISOString(),
+      notes: newClient.notes,
+    };
+
+    console.log("Created client object:", client);
+    setClients((prev) => [client, ...prev]);
+    setShowAddClientModal(false);
+  };
+
+  // Obsługa przycisków akcji
+  const handleViewDetails = (client: Client) => {
+    setSelectedClient(client);
+    setShowDetailsModal(true);
+  };
+
+  const handleEditClient = (client: Client) => {
+    setSelectedClient(client);
+    setShowEditModal(true);
+  };
+
+  const handleRemoveClient = async (client: Client) => {
+    if (!confirm(t("confirmRemove"))) return;
+
+    try {
+      const response = await fetch(`/api/professional/clients/${client._id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setClients((prev) => prev.filter((c) => c._id !== client._id));
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || "Failed to remove client");
+      }
+    } catch {
+      setError("Error removing client");
+    }
+  };
+
+  const handleClientUpdated = (updatedClient: Client) => {
+    setClients((prev) =>
+      prev.map((c) => (c._id === updatedClient._id ? updatedClient : c))
+    );
+    setShowEditModal(false);
+    setSelectedClient(null);
+  };
 
   const filteredClients = clients.filter((client) => {
     const matchesSearch =
@@ -130,6 +174,18 @@ export default function ClientsPage() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
       <div className="max-w-7xl mx-auto">
@@ -150,6 +206,13 @@ export default function ClientsPage() {
             {t("addClient")}
           </button>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <p className="text-red-600 dark:text-red-400">{error}</p>
+          </div>
+        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -285,7 +348,11 @@ export default function ClientsPage() {
             </div>
             <select
               value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value as any)}
+              onChange={(e) =>
+                setFilterStatus(
+                  e.target.value as "all" | "active" | "inactive" | "pending"
+                )
+              }
               className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg dark:bg-slate-700 dark:text-white"
             >
               <option value="all">{t("filters.allStatuses")}</option>
@@ -295,7 +362,11 @@ export default function ClientsPage() {
             </select>
             <select
               value={filterType}
-              onChange={(e) => setFilterType(e.target.value as any)}
+              onChange={(e) =>
+                setFilterType(
+                  e.target.value as "all" | "nutrition" | "training" | "both"
+                )
+              }
               className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg dark:bg-slate-700 dark:text-white"
             >
               <option value="all">{t("filters.allTypes")}</option>
@@ -308,126 +379,176 @@ export default function ClientsPage() {
 
         {/* Clients List */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-slate-50 dark:bg-slate-700/50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    {t("table.client")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    {t("table.type")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    {t("table.status")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    {t("table.progress")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    {t("table.lastActivity")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    {t("table.nextSession")}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    {t("table.actions")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                {filteredClients.map((client) => (
-                  <tr
-                    key={client.id}
-                    className="hover:bg-slate-50 dark:hover:bg-slate-700/50"
+          {filteredClients.length === 0 ? (
+            <div className="p-12 text-center">
+              <div className="text-slate-400 dark:text-slate-500 mb-4">
+                <svg
+                  className="w-16 h-16 mx-auto"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1}
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">
+                {searchQuery || filterStatus !== "all" || filterType !== "all"
+                  ? t("noResultsFound")
+                  : t("noClientsYet")}
+              </h3>
+              <p className="text-slate-500 dark:text-slate-400 mb-6">
+                {searchQuery || filterStatus !== "all" || filterType !== "all"
+                  ? t("tryDifferentFilters")
+                  : t("startAddingClients")}
+              </p>
+              {!searchQuery &&
+                filterStatus === "all" &&
+                filterType === "all" && (
+                  <button
+                    onClick={() => setShowAddClientModal(true)}
+                    className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors font-medium"
                   >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-600 flex items-center justify-center">
-                          {client.avatar ? (
-                            <img
-                              src={client.avatar}
-                              alt={client.name}
-                              className="w-10 h-10 rounded-full"
-                            />
-                          ) : (
-                            <span className="text-slate-600 dark:text-slate-400 font-medium">
-                              {client.name.charAt(0).toUpperCase()}
-                            </span>
-                          )}
-                        </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-slate-900 dark:text-white">
-                            {client.name}
-                          </div>
-                          <div className="text-sm text-slate-500 dark:text-slate-400">
-                            {client.email}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getTypeColor(
-                          client.type
-                        )}`}
-                      >
-                        {t(`types.${client.type}`)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                          client.status
-                        )}`}
-                      >
-                        {t(`statuses.${client.status}`)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-slate-900 dark:text-white">
-                        {client.progress.weight && (
-                          <div>
-                            {client.progress.weight}kg →{" "}
-                            {client.progress.targetWeight}kg
-                          </div>
-                        )}
-                        <div className="text-slate-500 dark:text-slate-400">
-                          {client.progress.workoutsCompleted}{" "}
-                          {t("progress.workouts")},{" "}
-                          {client.progress.nutritionLogged}{" "}
-                          {t("progress.meals")}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
-                      {new Date(client.lastActivity).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
-                      {client.nextSession
-                        ? new Date(client.nextSession).toLocaleDateString()
-                        : "-"}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        <button className="text-emerald-600 hover:text-emerald-900 dark:text-emerald-400 dark:hover:text-emerald-300">
-                          {t("actions.view")}
-                        </button>
-                        <button className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
-                          {t("actions.edit")}
-                        </button>
-                        <button className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
-                          {t("actions.remove")}
-                        </button>
-                      </div>
-                    </td>
+                    {t("addFirstClient")}
+                  </button>
+                )}
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-slate-50 dark:bg-slate-700/50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                      {t("table.client")}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                      {t("table.type")}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                      {t("table.status")}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                      {t("table.addedDate")}
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                      {t("table.actions")}
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                  {filteredClients.map((client) => (
+                    <tr
+                      key={client._id}
+                      className="hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-600 flex items-center justify-center">
+                            {client.avatar ? (
+                              <img
+                                src={client.avatar}
+                                alt={client.name}
+                                className="w-10 h-10 rounded-full"
+                              />
+                            ) : (
+                              <span className="text-slate-600 dark:text-slate-400 font-medium">
+                                {client.name.charAt(0).toUpperCase()}
+                              </span>
+                            )}
+                          </div>
+                          <div className="ml-4">
+                            <div className="text-sm font-medium text-slate-900 dark:text-white">
+                              {client.name}
+                            </div>
+                            <div className="text-sm text-slate-500 dark:text-slate-400">
+                              {client.email}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getTypeColor(
+                            client.type
+                          )}`}
+                        >
+                          {t(`types.${client.type}`)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
+                            client.status
+                          )}`}
+                        >
+                          {t(`statuses.${client.status}`)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                        {new Date(client.addedAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleViewDetails(client)}
+                            className="text-emerald-600 hover:text-emerald-900 dark:text-emerald-400 dark:hover:text-emerald-300"
+                          >
+                            {t("actions.view")}
+                          </button>
+                          <button
+                            onClick={() => handleEditClient(client)}
+                            className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                          >
+                            {t("actions.edit")}
+                          </button>
+                          <button
+                            onClick={() => handleRemoveClient(client)}
+                            className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                          >
+                            {t("actions.remove")}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Add Client Modal */}
+      <AddClientModal
+        isOpen={showAddClientModal}
+        onClose={() => setShowAddClientModal(false)}
+        onClientAdded={handleClientAdded}
+      />
+
+      {/* Client Details Modal */}
+      <ClientDetailsModal
+        isOpen={showDetailsModal}
+        onClose={() => {
+          setShowDetailsModal(false);
+          setSelectedClient(null);
+        }}
+        client={selectedClient}
+      />
+
+      {/* Edit Client Modal */}
+      <EditClientModal
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setSelectedClient(null);
+        }}
+        client={selectedClient}
+        onClientUpdated={handleClientUpdated}
+      />
     </div>
   );
 }

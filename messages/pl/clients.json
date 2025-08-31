@@ -1,21 +1,21 @@
 {
   "title": "Klienci",
-  "description": "Zarządzaj swoimi klientami i śledź ich postęp",
-  "addClient": "Dodaj klienta",
+  "description": "Zarządzaj swoimi klientami i śledź ich postępy",
+  "addClient": "Dodaj Klienta",
   "stats": {
-    "totalClients": "Łącznie klientów",
-    "activeClients": "Aktywni klienci",
-    "sessionsToday": "Sesje dzisiaj",
-    "avgProgress": "Średni postęp"
+    "totalClients": "Wszyscy Klienci",
+    "activeClients": "Aktywni Klienci",
+    "sessionsToday": "Sesje Dziś",
+    "avgProgress": "Średni Postęp"
   },
-  "searchPlaceholder": "Szukaj klientów po nazwie lub emailu...",
+  "searchPlaceholder": "Szukaj klientów po imieniu lub email...",
   "filters": {
-    "allStatuses": "Wszystkie statusy",
+    "allStatuses": "Wszystkie Statusy",
     "active": "Aktywny",
     "inactive": "Nieaktywny",
     "pending": "Oczekujący",
-    "allTypes": "Wszystkie typy",
-    "nutrition": "Żywienie",
+    "allTypes": "Wszystkie Typy",
+    "nutrition": "Odżywianie",
     "training": "Trening",
     "both": "Oba"
   },
@@ -24,12 +24,14 @@
     "type": "Typ",
     "status": "Status",
     "progress": "Postęp",
-    "lastActivity": "Ostatnia aktywność",
-    "nextSession": "Następna sesja",
+    "lastActivity": "Ostatnia Aktywność",
+    "nextSession": "Następna Sesja",
+    "addedDate": "Data Dodania",
+    "notes": "Notatki",
     "actions": "Akcje"
   },
   "types": {
-    "nutrition": "Żywienie",
+    "nutrition": "Odżywianie",
     "training": "Trening",
     "both": "Oba"
   },
@@ -43,8 +45,48 @@
     "meals": "posiłków"
   },
   "actions": {
-    "view": "Zobacz",
+    "view": "Szczegóły",
     "edit": "Edytuj",
     "remove": "Usuń"
+  },
+  "noResultsFound": "Nie znaleziono wyników",
+  "tryDifferentFilters": "Spróbuj dostosować wyszukiwanie lub filtry",
+  "noClientsYet": "Brak klientów",
+  "startAddingClients": "Zacznij budować swoją bazę klientów dodając pierwszego klienta",
+  "addFirstClient": "Dodaj Pierwszego Klienta",
+  "confirmRemove": "Czy na pewno chcesz usunąć tego klienta?",
+  "addClientModal": {
+    "title": "Dodaj Nowego Klienta",
+    "searchLabel": "Szukaj użytkowników",
+    "searchPlaceholder": "Szukaj po imieniu lub email...",
+    "searchResults": "Wyniki Wyszukiwania",
+    "clientType": "Typ Klienta",
+    "notes": "Notatki",
+    "notesPlaceholder": "Dodaj notatki o tym kliencie...",
+    "cancel": "Anuluj",
+    "add": "Dodaj Klienta",
+    "adding": "Dodawanie...",
+    "noName": "Brak Imienia"
+  },
+  "editClientModal": {
+    "title": "Edytuj Klienta",
+    "clientType": "Typ Klienta",
+    "status": "Status",
+    "notes": "Notatki",
+    "notesPlaceholder": "Dodaj notatki o tym kliencie...",
+    "cancel": "Anuluj",
+    "update": "Aktualizuj Klienta",
+    "updating": "Aktualizowanie..."
+  },
+  "details": {
+    "title": "Szczegóły Klienta",
+    "status": "Status",
+    "clientType": "Typ Klienta",
+    "progress": "Postęp",
+    "notes": "Notatki",
+    "noNotes": "Brak notatek",
+    "addedDate": "Data Dodania",
+    "nextSession": "Następna Sesja",
+    "close": "Zamknij"
   }
 }
