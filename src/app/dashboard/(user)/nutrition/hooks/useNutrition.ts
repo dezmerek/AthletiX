@@ -1,125 +1,151 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { FoodItem, MealEntry, WaterIntake } from "../types/nutrition";
 
 export function useNutrition() {
+  // Domyślne dane dla dzisiejszego dnia
+  const today = new Date().toISOString().split("T")[0];
+
+  // Najpierw zdefiniuj useState
   const [waterIntake, setWaterIntake] = useState<WaterIntake>({
     current: 0,
     goal: 2000, // 2000ml = 8 szklanek po 250ml
     glasses: [],
   });
 
-  const [meals, setMeals] = useState<MealEntry[]>([
-    {
-      id: "1",
-      date: "2024-01-15",
-      mealType: "breakfast",
-      foods: [
-        {
-          id: "1",
-          name: "Płatki owsiane",
-          calories: 389,
-          protein: 16.9,
-          carbs: 66.3,
-          fats: 6.9,
-          serving: "100g",
-          quantity: 50,
-        },
-        {
-          id: "2",
-          name: "Banan",
-          calories: 89,
-          protein: 1.1,
-          carbs: 22.8,
-          fats: 0.3,
-          serving: "100g",
-          quantity: 120,
-        },
-      ],
-      totalCalories: 0,
-    },
-    {
-      id: "2",
-      date: "2024-01-15",
-      mealType: "lunch",
-      foods: [
-        {
-          id: "3",
-          name: "Pierś z kurczaka",
-          calories: 165,
-          protein: 31,
-          carbs: 0,
-          fats: 3.6,
-          serving: "100g",
-          quantity: 150,
-        },
-        {
-          id: "4",
-          name: "Ryż brązowy",
-          calories: 112,
-          protein: 2.6,
-          carbs: 22,
-          fats: 0.9,
-          serving: "100g",
-          quantity: 100,
-        },
-      ],
-      totalCalories: 0,
-    },
-    {
-      id: "3",
-      date: "2024-01-15",
-      mealType: "dinner",
-      foods: [
-        {
-          id: "5",
-          name: "Łosoś",
-          calories: 208,
-          protein: 25,
-          carbs: 0,
-          fats: 12,
-          serving: "100g",
-          quantity: 120,
-        },
-        {
-          id: "6",
-          name: "Brokuły",
-          calories: 34,
-          protein: 2.8,
-          carbs: 7,
-          fats: 0.4,
-          serving: "100g",
-          quantity: 150,
-        },
-      ],
-      totalCalories: 0,
-    },
-  ]);
+  const [meals, setMeals] = useState<MealEntry[]>([]);
 
-  // Calculate daily totals
-  const dailyTotals = meals.reduce(
-    (totals, meal) => {
-      const mealTotals = meal.foods.reduce(
-        (mealTotal, food) => {
-          const quantityRatio = food.quantity / 100;
+  // Wczytaj dane z bazy danych przy starcie
+  useEffect(() => {
+    const fetchNutritionData = async () => {
+      try {
+        const response = await fetch("/api/user/nutrition");
+        if (response.ok) {
+          const data = await response.json();
+          setMeals(data.meals || []);
+          setWaterIntake(
+            data.waterIntake || {
+              current: 0,
+              goal: 2000,
+              glasses: [],
+            }
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching nutrition data:", error);
+      }
+    };
+
+    fetchNutritionData();
+  }, []);
+
+  // Zapisz dane w bazie danych za każdym razem gdy się zmienią
+  useEffect(() => {
+    const saveNutritionData = async () => {
+      try {
+        await fetch("/api/user/nutrition", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            meals,
+            waterIntake,
+          }),
+        });
+      } catch (error) {
+        console.error("Error saving nutrition data:", error);
+      }
+    };
+
+    // Zapisz tylko jeśli są jakieś dane (nie przy pierwszym renderze)
+    if (meals.length > 0 || waterIntake.current > 0) {
+      saveNutritionData();
+    }
+  }, [meals, waterIntake]);
+
+  // Pobierz unikalne daty z posiłków
+  const getUniqueDates = useCallback(() => {
+    const dates = [...new Set(meals.map((meal) => meal.date))];
+    return dates.sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+  }, [meals]);
+
+  // Pobierz posiłki dla konkretnej daty
+  const getMealsByDate = useCallback(
+    (date: string) => {
+      return meals.filter((meal) => meal.date === date);
+    },
+    [meals]
+  );
+
+  // Pobierz posiłki dla konkretnego typu i daty
+  const getMealsByTypeAndDate = useCallback(
+    (mealType: "breakfast" | "lunch" | "dinner", date: string) => {
+      return meals.filter(
+        (meal) => meal.mealType === mealType && meal.date === date
+      );
+    },
+    [meals]
+  );
+
+  // Pobierz posiłki dla konkretnego typu (wszystkie daty)
+  const getMealsByType = useCallback(
+    (mealType: "breakfast" | "lunch" | "dinner") => {
+      return meals.filter((meal) => meal.mealType === mealType);
+    },
+    [meals]
+  );
+
+  // Pobierz kalorie dla konkretnego typu posiłku i daty
+  const getMealCalories = useCallback(
+    (mealType: "breakfast" | "lunch" | "dinner", date: string = today) => {
+      const meal = meals.find(
+        (m) => m.mealType === mealType && m.date === date
+      );
+      if (!meal) return 0;
+
+      return meal.foods.reduce((total, food) => {
+        const quantityRatio = food.quantity / 100;
+        return total + food.calories * quantityRatio;
+      }, 0);
+    },
+    [meals, today]
+  );
+
+  // Pobierz dzienne podsumowanie dla konkretnej daty
+  const getDailyTotals = useCallback(
+    (date: string = today) => {
+      const dayMeals = meals.filter((meal) => meal.date === date);
+
+      return dayMeals.reduce(
+        (totals, meal) => {
+          const mealTotals = meal.foods.reduce(
+            (mealTotal, food) => {
+              const quantityRatio = food.quantity / 100;
+              return {
+                calories: mealTotal.calories + food.calories * quantityRatio,
+                protein: mealTotal.protein + food.protein * quantityRatio,
+                carbs: mealTotal.carbs + food.carbs * quantityRatio,
+                fats: mealTotal.fats + food.fats * quantityRatio,
+              };
+            },
+            { calories: 0, protein: 0, carbs: 0, fats: 0 }
+          );
+
           return {
-            calories: mealTotal.calories + food.calories * quantityRatio,
-            protein: mealTotal.protein + food.protein * quantityRatio,
-            carbs: mealTotal.carbs + food.carbs * quantityRatio,
-            fats: mealTotal.fats + food.fats * quantityRatio,
+            calories: totals.calories + mealTotals.calories,
+            protein: totals.protein + mealTotals.protein,
+            carbs: totals.carbs + mealTotals.carbs,
+            fats: totals.fats + mealTotals.fats,
           };
         },
         { calories: 0, protein: 0, carbs: 0, fats: 0 }
       );
-
-      return {
-        calories: totals.calories + mealTotals.calories,
-        protein: totals.protein + mealTotals.protein,
-        carbs: totals.carbs + mealTotals.carbs,
-        fats: totals.fats + mealTotals.fats,
-      };
     },
-    { calories: 0, protein: 0, carbs: 0, fats: 0 }
+    [meals, today]
   );
+
+  // Oblicz dzienne podsumowanie dla wszystkich dni
+  const dailyTotals = getDailyTotals(today);
 
   // Nutrition goals (example values)
   const nutritionGoals = {
@@ -129,37 +155,21 @@ export function useNutrition() {
     fats: 65,
   };
 
-  const getMealsByType = useCallback(
-    (mealType: "breakfast" | "lunch" | "dinner") => {
-      return meals.filter((meal) => meal.mealType === mealType);
-    },
-    [meals]
-  );
-
-  const getMealCalories = useCallback(
-    (mealType: "breakfast" | "lunch" | "dinner") => {
-      const meal = meals.find((m) => m.mealType === mealType);
-      if (!meal) return 0;
-
-      return meal.foods.reduce((total, food) => {
-        const quantityRatio = food.quantity / 100;
-        return total + food.calories * quantityRatio;
-      }, 0);
-    },
-    [meals]
-  );
-
   const addFoodToMeal = useCallback(
-    (mealType: "breakfast" | "lunch" | "dinner", food: FoodItem) => {
+    (
+      mealType: "breakfast" | "lunch" | "dinner",
+      food: FoodItem,
+      date: string = today
+    ) => {
       setMeals((prevMeals) => {
         const existingMeal = prevMeals.find(
-          (meal) => meal.mealType === mealType
+          (meal) => meal.mealType === mealType && meal.date === date
         );
 
         if (existingMeal) {
           // Update existing meal
           return prevMeals.map((meal) =>
-            meal.mealType === mealType
+            meal.mealType === mealType && meal.date === date
               ? {
                   ...meal,
                   foods: [...meal.foods, food],
@@ -167,10 +177,10 @@ export function useNutrition() {
               : meal
           );
         } else {
-          // Create new meal
+          // Create new meal for this date
           const newMeal: MealEntry = {
             id: Date.now().toString(),
-            date: new Date().toISOString().split("T")[0],
+            date: date,
             mealType,
             foods: [food],
             totalCalories: 0,
@@ -179,14 +189,18 @@ export function useNutrition() {
         }
       });
     },
-    []
+    [today]
   );
 
   const removeFoodFromMeal = useCallback(
-    (mealType: "breakfast" | "lunch" | "dinner", foodId: string) => {
+    (
+      mealType: "breakfast" | "lunch" | "dinner",
+      foodId: string,
+      date: string = today
+    ) => {
       setMeals((prevMeals) =>
         prevMeals.map((meal) =>
-          meal.mealType === mealType
+          meal.mealType === mealType && meal.date === date
             ? {
                 ...meal,
                 foods: meal.foods.filter((food) => food.id !== foodId),
@@ -195,18 +209,19 @@ export function useNutrition() {
         )
       );
     },
-    []
+    [today]
   );
 
   const editFoodInMeal = useCallback(
     (
       mealType: "breakfast" | "lunch" | "dinner",
       foodId: string,
-      updatedFood: FoodItem
+      updatedFood: FoodItem,
+      date: string = today
     ) => {
       setMeals((prevMeals) =>
         prevMeals.map((meal) =>
-          meal.mealType === mealType
+          meal.mealType === mealType && meal.date === date
             ? {
                 ...meal,
                 foods: meal.foods.map((food) =>
@@ -217,7 +232,7 @@ export function useNutrition() {
         )
       );
     },
-    []
+    [today]
   );
 
   const addWater = useCallback(() => {
@@ -249,7 +264,11 @@ export function useNutrition() {
     dailyTotals,
     nutritionGoals,
     getMealsByType,
+    getMealsByTypeAndDate,
+    getMealsByDate,
     getMealCalories,
+    getDailyTotals,
+    getUniqueDates,
     addFoodToMeal,
     removeFoodFromMeal,
     editFoodInMeal,

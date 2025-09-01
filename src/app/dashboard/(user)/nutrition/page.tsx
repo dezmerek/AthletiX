@@ -8,16 +8,17 @@ import WaterTracker from "./components/WaterTracker";
 import MacroDistribution from "./components/MacroDistribution";
 import NutritionTips from "./components/NutritionTips";
 import AddFoodModal from "./components/AddFoodModal";
-import { useNutrition, FoodItem } from "./hooks/useNutrition";
+import { useNutrition } from "./hooks/useNutrition";
+import { FoodItem } from "./types/nutrition";
 
 export default function NutritionPage() {
   const t = useTranslations("nutrition");
   const {
     waterIntake,
-    dailyTotals,
     nutritionGoals,
-    getMealsByType,
+    getMealsByTypeAndDate,
     getMealCalories,
+    getDailyTotals,
     addFoodToMeal,
     removeFoodFromMeal,
     editFoodInMeal,
@@ -30,6 +31,34 @@ export default function NutritionPage() {
   const [selectedMealType, setSelectedMealType] = useState<
     "breakfast" | "lunch" | "dinner"
   >("breakfast");
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+
+  // Generuj daty wstecz i do przodu (ostatnie 7 dni + następne 3 dni)
+  const generateDateRange = () => {
+    const dates = [];
+    const today = new Date();
+
+    // Ostatnie 7 dni (wstecz)
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      dates.push(date.toISOString().split("T")[0]);
+    }
+
+    // Następne 3 dni (do przodu)
+    for (let i = 1; i <= 3; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      dates.push(date.toISOString().split("T")[0]);
+    }
+
+    return dates;
+  };
+
+  const availableDates = generateDateRange();
+  const currentDayTotals = getDailyTotals(selectedDate);
 
   const handleAddFood = (mealType: "breakfast" | "lunch" | "dinner") => {
     setSelectedMealType(mealType);
@@ -37,14 +66,14 @@ export default function NutritionPage() {
   };
 
   const handleAddFoodToMeal = (food: FoodItem) => {
-    addFoodToMeal(selectedMealType, food);
+    addFoodToMeal(selectedMealType, food, selectedDate);
   };
 
   const handleRemoveFood = (
     mealType: "breakfast" | "lunch" | "dinner",
     foodId: string
   ) => {
-    removeFoodFromMeal(mealType, foodId);
+    removeFoodFromMeal(mealType, foodId, selectedDate);
   };
 
   const handleEditFood = (
@@ -52,7 +81,11 @@ export default function NutritionPage() {
     foodId: string,
     updatedFood: FoodItem
   ) => {
-    editFoodInMeal(mealType, foodId, updatedFood);
+    editFoodInMeal(mealType, foodId, updatedFood, selectedDate);
+  };
+
+  const handleDateChange = (date: string) => {
+    setSelectedDate(date);
   };
 
   return (
@@ -68,20 +101,66 @@ export default function NutritionPage() {
           </p>
         </div>
 
-        {/* Statistics Cards */}
+        {/* Statistics Cards for Selected Date */}
         <NutritionStats
-          dailyTotals={dailyTotals}
+          dailyTotals={currentDayTotals}
           nutritionGoals={nutritionGoals}
         />
 
+        {/* Date Selector */}
+        <div className="mb-6 bg-white dark:bg-slate-800 rounded-lg p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+              Wybierz dzień
+            </h2>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {availableDates.map((date) => (
+              <button
+                key={date}
+                onClick={() => handleDateChange(date)}
+                className={`px-4 py-2 rounded-lg border transition-colors ${
+                  selectedDate === date
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600"
+                }`}
+              >
+                {new Date(date).toLocaleDateString("pl-PL", {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                })}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content - Meals */}
+          {/* Main Content - Meals for Selected Date */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Selected Date Header */}
+            <div className="bg-white dark:bg-slate-800 rounded-lg p-4 shadow-sm">
+              <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
+                {new Date(selectedDate).toLocaleDateString("pl-PL", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </h3>
+              <p className="text-slate-600 dark:text-slate-400 mt-1">
+                Łącznie: {Math.round(currentDayTotals.calories)} kcal
+              </p>
+            </div>
+
             {/* Breakfast */}
             <MealCard
               mealType="breakfast"
-              foods={getMealsByType("breakfast").flatMap((meal) => meal.foods)}
-              totalCalories={getMealCalories("breakfast")}
+              foods={getMealsByTypeAndDate("breakfast", selectedDate).flatMap(
+                (meal) => meal.foods
+              )}
+              totalCalories={getMealCalories("breakfast", selectedDate)}
               onAddFood={handleAddFood}
               onRemoveFood={handleRemoveFood}
               onEditFood={handleEditFood}
@@ -90,8 +169,10 @@ export default function NutritionPage() {
             {/* Lunch */}
             <MealCard
               mealType="lunch"
-              foods={getMealsByType("lunch").flatMap((meal) => meal.foods)}
-              totalCalories={getMealCalories("lunch")}
+              foods={getMealsByTypeAndDate("lunch", selectedDate).flatMap(
+                (meal) => meal.foods
+              )}
+              totalCalories={getMealCalories("lunch", selectedDate)}
               onAddFood={handleAddFood}
               onRemoveFood={handleRemoveFood}
               onEditFood={handleEditFood}
@@ -100,8 +181,10 @@ export default function NutritionPage() {
             {/* Dinner */}
             <MealCard
               mealType="dinner"
-              foods={getMealsByType("dinner").flatMap((meal) => meal.foods)}
-              totalCalories={getMealCalories("dinner")}
+              foods={getMealsByTypeAndDate("dinner", selectedDate).flatMap(
+                (meal) => meal.foods
+              )}
+              totalCalories={getMealCalories("dinner", selectedDate)}
               onAddFood={handleAddFood}
               onRemoveFood={handleRemoveFood}
               onEditFood={handleEditFood}
@@ -118,8 +201,8 @@ export default function NutritionPage() {
               onSetGoal={setWaterGoal}
             />
 
-            {/* Macro Distribution */}
-            <MacroDistribution dailyTotals={dailyTotals} />
+            {/* Macro Distribution for Selected Date */}
+            <MacroDistribution dailyTotals={currentDayTotals} />
 
             {/* Quick Tips */}
             <NutritionTips />
