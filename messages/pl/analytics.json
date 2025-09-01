@@ -1,19 +1,45 @@
 {
-  "title": "Analiza",
-  "description": "Śledź postępy klientów, analizuj wyniki i generuj wnioski",
+  "title": "Panel Analityczny",
+  "description": "Kompleksowe spostrzeżenia dotyczące wydajności Twojego biznesu fitness",
+  "timeRange": "Zakres Czasowy",
+  "timeRanges": {
+    "week": "Tydzień",
+    "month": "Miesiąc",
+    "quarter": "Kwartał",
+    "year": "Rok"
+  },
   "periods": {
     "7d": "Ostatnie 7 dni",
     "30d": "Ostatnie 30 dni",
     "90d": "Ostatnie 90 dni",
     "1y": "Ostatni rok"
   },
+  "noData": "Brak dostępnych danych analitycznych",
   "metrics": {
     "clients": "Klienci",
-    "progress": "Postęp",
-    "revenue": "Przychody",
     "totalClients": "Łącznie Klientów",
     "activeClients": "Aktywni Klienci",
-    "avgProgress": "Średni Postęp"
+    "activePlans": "Aktywne Plany",
+    "successRate": "Wskaźnik Sukcesu",
+    "avgProgress": "Średni Postęp",
+    "retentionRate": "Wskaźnik Retencji",
+    "newThisMonth": "Nowi w Tym Miesiącu",
+    "avgWeightLoss": "Średnia Utrata Wagi",
+    "avgMuscleGain": "Średni Przyrost Mięśni",
+    "avgWorkoutsPerWeek": "Średnio Treningów/Tydzień",
+    "avgNutritionLogs": "Średnio Logów Żywienia",
+    "monthlyGrowth": "Wzrost Miesięczny",
+    "avgClientValue": "Średnia Wartość Klienta",
+    "projectedRevenue": "Przewidywany Przychód",
+    "revenue": "Przychody",
+    "progress": "Postęp",
+    "weightChange": "Zmiana Wagi"
+  },
+  "sections": {
+    "clientPerformance": "Wydajność Klientów",
+    "engagement": "Metryki Zaangażowania",
+    "topPerformers": "Najlepsi Wykonawcy",
+    "revenueInsights": "Spostrzeżenia Przychodowe"
   },
   "charts": {
     "monthlyProgress": "Miesięczny Postęp",
@@ -22,6 +48,8 @@
   "clientProgress": {
     "title": "Przegląd Postępów Klientów",
     "description": "Śledź indywidualne postępy klientów i metryki wydajności",
+    "workouts": "treningów",
+    "meals": "posiłków",
     "table": {
       "client": "Klient",
       "type": "Typ",
@@ -29,14 +57,18 @@
       "progress": "Postęp",
       "activity": "Aktywność",
       "lastActivity": "Ostatnia Aktywność"
-    },
-    "workouts": "treningów",
-    "meals": "posiłków"
+    }
   },
   "types": {
     "nutrition": "Żywienie",
     "training": "Trening",
     "both": "Oba"
+  },
+  "status": {
+    "excellent": "Doskonały",
+    "good": "Dobry",
+    "average": "Średni",
+    "needsImprovement": "Wymaga Poprawy"
   },
   "quickActions": {
     "generateReport": "Generuj Raport",

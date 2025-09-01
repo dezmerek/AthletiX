@@ -1,19 +1,45 @@
 {
-  "title": "Analytics",
-  "description": "Track client progress, analyze performance, and generate insights",
+  "title": "Analytics Dashboard",
+  "description": "Comprehensive insights into your fitness business performance",
+  "timeRange": "Time Range",
+  "timeRanges": {
+    "week": "Week",
+    "month": "Month",
+    "quarter": "Quarter",
+    "year": "Year"
+  },
   "periods": {
     "7d": "Last 7 days",
     "30d": "Last 30 days",
     "90d": "Last 90 days",
     "1y": "Last year"
   },
+  "noData": "No analytics data available",
   "metrics": {
     "clients": "Clients",
-    "progress": "Progress",
-    "revenue": "Revenue",
     "totalClients": "Total Clients",
     "activeClients": "Active Clients",
-    "avgProgress": "Avg Progress"
+    "activePlans": "Active Plans",
+    "successRate": "Success Rate",
+    "avgProgress": "Average Progress",
+    "retentionRate": "Retention Rate",
+    "newThisMonth": "New This Month",
+    "avgWeightLoss": "Average Weight Loss",
+    "avgMuscleGain": "Average Muscle Gain",
+    "avgWorkoutsPerWeek": "Average Workouts/Week",
+    "avgNutritionLogs": "Average Nutrition Logs",
+    "monthlyGrowth": "Monthly Growth",
+    "avgClientValue": "Average Client Value",
+    "projectedRevenue": "Projected Revenue",
+    "revenue": "Revenue",
+    "progress": "Progress",
+    "weightChange": "Weight Change"
+  },
+  "sections": {
+    "clientPerformance": "Client Performance",
+    "engagement": "Engagement Metrics",
+    "topPerformers": "Top Performers",
+    "revenueInsights": "Revenue Insights"
   },
   "charts": {
     "monthlyProgress": "Monthly Progress",
@@ -22,6 +48,8 @@
   "clientProgress": {
     "title": "Client Progress Overview",
     "description": "Track individual client progress and performance metrics",
+    "workouts": "workouts",
+    "meals": "meals",
     "table": {
       "client": "Client",
       "type": "Type",
@@ -29,21 +57,25 @@
       "progress": "Progress",
       "activity": "Activity",
       "lastActivity": "Last Activity"
-    },
-    "workouts": "workouts",
-    "meals": "meals"
+    }
   },
   "types": {
     "nutrition": "Nutrition",
     "training": "Training",
     "both": "Both"
   },
+  "status": {
+    "excellent": "Excellent",
+    "good": "Good",
+    "average": "Average",
+    "needsImprovement": "Needs Improvement"
+  },
   "quickActions": {
     "generateReport": "Generate Report",
     "generateReportDesc": "Create detailed performance reports for clients",
     "generate": "Generate",
     "clientInsights": "Client Insights",
-    "clientInsightsDesc": "View detailed analytics for individual clients",
+    "clientInsightsDesc": "View detailed analysis for individual clients",
     "view": "View",
     "scheduleReview": "Schedule Review",
     "scheduleReviewDesc": "Book client progress review sessions",
