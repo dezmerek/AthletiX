@@ -11,7 +11,7 @@ import {
 } from "@/utils/roleUtils";
 
 interface Context {
-  id: "user" | "professional" | "admin";
+  id: "user" | "professional" | "admin" | "business";
   name: string;
   role: string;
   icon?: string;
@@ -21,8 +21,10 @@ interface ContextSwitcherProps {
   userRole?: string | string[] | null;
   isPremiumPersonal?: boolean;
   isPremiumProfessional?: boolean;
-  activeContext?: "user" | "professional" | "admin" | null;
-  onContextChange?: (context: "user" | "professional" | "admin") => void;
+  activeContext?: "user" | "professional" | "admin" | "business" | null;
+  onContextChange?: (
+    context: "user" | "professional" | "admin" | "business"
+  ) => void;
 }
 
 export default function ContextSwitcher({
@@ -34,7 +36,7 @@ export default function ContextSwitcher({
 }: ContextSwitcherProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeContext, setActiveContext] = useState<
-    "user" | "professional" | "admin" | null
+    "user" | "professional" | "admin" | "business" | null
   >(propActiveContext);
   const [availableContexts, setAvailableContexts] = useState<Context[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -110,6 +112,15 @@ export default function ContextSwitcher({
       });
     }
 
+    // Add business context only if user is business owner
+    if (Array.isArray(userRole) && userRole.includes("business_owner")) {
+      contexts.push({
+        id: "business",
+        name: "Tryb Business",
+        role: "Właściciel firmy",
+      });
+    }
+
     setAvailableContexts(contexts);
   }, [userRole, isPremiumPersonal, isPremiumProfessional, t, tRole]);
 
@@ -145,7 +156,7 @@ export default function ContextSwitcher({
   }, [isOpen]);
 
   const handleContextSwitch = (
-    contextId: "user" | "professional" | "admin"
+    contextId: "user" | "professional" | "admin" | "business"
   ) => {
     setActiveContext(contextId);
     onContextChange?.(contextId);

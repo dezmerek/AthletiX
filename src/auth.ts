@@ -22,14 +22,15 @@ declare module "next-auth" {
       createdAt: Date | null;
       updatedAt: Date | null;
       role?:
-        | ("user" | "professional" | "admin")[]
+        | ("user" | "professional" | "admin" | "business_owner")[]
         | "user"
         | "professional"
         | "admin"
+        | "business_owner"
         | null;
       isPremiumPersonal?: boolean;
       isPremiumProfessional?: boolean;
-      activeContext?: "user" | "professional" | "admin";
+      activeContext?: "user" | "professional" | "admin" | "business";
     };
   }
 
@@ -42,14 +43,15 @@ declare module "next-auth" {
     createdAt: Date;
     updatedAt: Date;
     role?:
-      | ("user" | "professional" | "admin")[]
+      | ("user" | "professional" | "admin" | "business_owner")[]
       | "user"
       | "professional"
       | "admin"
+      | "business_owner"
       | null;
     isPremiumPersonal?: boolean;
     isPremiumProfessional?: boolean;
-    activeContext?: "user" | "professional";
+    activeContext?: "user" | "professional" | "admin" | "business";
   }
 }
 
@@ -62,14 +64,15 @@ declare module "next-auth/jwt" {
     createdAt: Date;
     updatedAt: Date;
     role?:
-      | ("user" | "professional" | "admin")[]
+      | ("user" | "professional" | "admin" | "business_owner")[]
       | "user"
       | "professional"
       | "admin"
+      | "business_owner"
       | null;
     isPremiumPersonal?: boolean;
     isPremiumProfessional?: boolean;
-    activeContext?: "user" | "professional";
+    activeContext?: "user" | "professional" | "admin" | "business";
   }
 }
 
@@ -224,10 +227,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         createdAt: token.createdAt as Date,
         updatedAt: token.updatedAt as Date,
         role: token.role as
-          | ("user" | "professional" | "admin")[]
+          | ("user" | "professional" | "admin" | "business_owner")[]
           | "user"
           | "professional"
           | "admin"
+          | "business_owner"
           | undefined,
         isPremiumPersonal: token.isPremiumPersonal as boolean | undefined,
         isPremiumProfessional: token.isPremiumProfessional as
@@ -236,6 +240,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         activeContext: token.activeContext as
           | "user"
           | "professional"
+          | "admin"
+          | "business"
           | undefined,
       };
       return session;
@@ -256,7 +262,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       const isLoggedIn = !!auth?.user;
       const isOnDashboard = nextUrl.pathname.startsWith("/dashboard");
       const isOnAuth = nextUrl.pathname.startsWith("/auth");
-
       if (isOnDashboard) {
         if (isLoggedIn) return true;
         return false;

@@ -15,7 +15,7 @@ interface SidebarItem {
   icon: React.ReactElement;
   label: string;
   badge?: string;
-  context: "user" | "professional" | "admin" | "all"; // Określa dla jakiego kontekstu dostępny
+  context: "user" | "professional" | "admin" | "business" | "all"; // Określa dla jakiego kontekstu dostępny
 }
 
 export default function DashboardSidebar() {
@@ -415,7 +415,7 @@ export default function DashboardSidebar() {
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2zm0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
           />
         </svg>
       ),
@@ -440,16 +440,13 @@ export default function DashboardSidebar() {
       // Always show items for "all" contexts
       if (item.context === "all") return true;
 
+      // Business items are only visible for business_owner
+      if (item.context === "business") {
+        return hasRole(user, "business_owner");
+      }
+
       // Check if item is available for current context
       if (item.context === user.activeContext) return true;
-
-      // Business items are only visible in business context
-      if (item.context === "business") {
-        // User must have business_owner role AND be in business context
-        return (
-          hasRole(user, "business_owner") && user.activeContext === "business"
-        );
-      }
 
       // Admin can see everything regardless of context
       if (hasRole(user, "admin") && item.context === "admin") return true;

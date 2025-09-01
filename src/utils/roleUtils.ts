@@ -4,7 +4,7 @@
 
 export interface UserRoleData {
   role?: string | string[] | null;
-  activeContext?: "user" | "professional" | "admin" | null;
+  activeContext?: "user" | "professional" | "admin" | "business" | null;
   isPremiumPersonal?: boolean;
   isPremiumProfessional?: boolean;
 }
@@ -37,12 +37,18 @@ export function getRoleDisplayName(
     case "admin":
       return t("administrator");
 
+    case "business":
+      return "Właściciel firmy";
+
     default:
       // No active context set - check if admin, otherwise use first available role
       if (roles.includes("admin")) {
         return t("administrator");
       }
       // No active context set
+      if (roles.includes("business_owner")) {
+        return "Właściciel firmy";
+      }
       if (roles.includes("professional")) {
         return user.isPremiumProfessional
           ? t("professionalPro")
@@ -123,6 +129,13 @@ export function getContextBadgeStyle(user: UserRoleData): {
         bgColor: "bg-blue-100 dark:bg-blue-900/20",
         textColor: "text-blue-600 dark:text-blue-400",
         badgeText: "User",
+      };
+
+    case "business":
+      return {
+        bgColor: "bg-orange-100 dark:bg-orange-900/20",
+        textColor: "text-orange-600 dark:text-orange-400",
+        badgeText: "Business",
       };
 
     default:
