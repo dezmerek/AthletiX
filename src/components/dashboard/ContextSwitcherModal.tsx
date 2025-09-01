@@ -11,7 +11,7 @@ import {
 } from "@/utils/roleUtils";
 
 interface Context {
-  id: "user" | "professional" | "admin";
+  id: "user" | "professional" | "admin" | "business";
   name: string;
   role: string;
   icon?: string;
@@ -20,11 +20,13 @@ interface Context {
 interface ContextSwitcherModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onContextChange?: (contextId: "user" | "professional" | "admin") => void;
+  onContextChange?: (
+    contextId: "user" | "professional" | "admin" | "business"
+  ) => void;
   userRole?: string | string[] | null;
   isPremiumPersonal?: boolean;
   isPremiumProfessional?: boolean;
-  activeContext?: "user" | "professional" | "admin" | null;
+  activeContext?: "user" | "professional" | "admin" | "business" | null;
 }
 
 export default function ContextSwitcherModal({
@@ -106,6 +108,15 @@ export default function ContextSwitcherModal({
       });
     }
 
+    // Add business context only if user is business owner
+    if (Array.isArray(userRole) && userRole.includes("business_owner")) {
+      contexts.push({
+        id: "business",
+        name: "Tryb Business",
+        role: "Właściciel firmy",
+      });
+    }
+
     setAvailableContexts(contexts);
   }, [userRole, isPremiumPersonal, isPremiumProfessional, t, tRole]);
 
@@ -137,7 +148,7 @@ export default function ContextSwitcherModal({
   }, [isOpen, onClose]);
 
   const handleContextSwitch = (
-    contextId: "user" | "professional" | "admin"
+    contextId: "user" | "professional" | "admin" | "business"
   ) => {
     onContextChange?.(contextId);
     onClose();

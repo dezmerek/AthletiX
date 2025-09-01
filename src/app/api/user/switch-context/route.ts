@@ -15,11 +15,12 @@ export async function POST(request: NextRequest) {
 
     if (
       !activeContext ||
-      !["user", "professional", "admin"].includes(activeContext)
+      !["user", "professional", "admin", "business"].includes(activeContext)
     ) {
       return NextResponse.json(
         {
-          error: "Invalid context. Must be 'user', 'professional', or 'admin'",
+          error:
+            "Invalid context. Must be 'user', 'professional', 'admin', or 'business'",
         },
         { status: 400 }
       );
@@ -62,6 +63,21 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           {
             error: "You don't have permission to switch to admin context",
+          },
+          { status: 403 }
+        );
+      }
+    }
+
+    // Check if user can switch to business context
+    if (activeContext === "business") {
+      const roles = Array.isArray(user.role) ? user.role : [user.role];
+      const canActAsBusiness = roles.includes("business_owner");
+
+      if (!canActAsBusiness) {
+        return NextResponse.json(
+          {
+            error: "You don't have permission to switch to business context",
           },
           { status: 403 }
         );

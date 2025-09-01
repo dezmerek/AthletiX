@@ -63,7 +63,7 @@ export default function DashboardSidebar() {
   }, []);
 
   const handleContextChange = async (
-    contextId: "user" | "professional" | "admin"
+    contextId: "user" | "professional" | "admin" | "business"
   ) => {
     try {
       const response = await fetch("/api/user/switch-context", {
@@ -320,6 +320,109 @@ export default function DashboardSidebar() {
     },
 
     // ===== KONIEC SEKCJI DLA PROFESJONALISTÓW =====
+
+    // ===== SEKCJE DLA BUSINESS OWNER =====
+    {
+      href: "/dashboard/business",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+          />
+        </svg>
+      ),
+      label: "Business",
+      context: "business", // Business tylko dla business owner
+    },
+    {
+      href: "/dashboard/business/members",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+          />
+        </svg>
+      ),
+      label: "Członkowie",
+      context: "business",
+    },
+    {
+      href: "/dashboard/business/staff",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+          />
+        </svg>
+      ),
+      label: "Personel",
+      context: "business",
+    },
+    {
+      href: "/dashboard/business/finances",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+          />
+        </svg>
+      ),
+      label: "Finanse",
+      context: "business",
+    },
+    {
+      href: "/dashboard/business/analytics",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+          />
+        </svg>
+      ),
+      label: "Analityka Biznesowa",
+      context: "business",
+    },
+    // ===== KONIEC SEKCJI DLA BUSINESS OWNER =====
   ];
 
   const isActive = (href: string) => {
@@ -339,6 +442,14 @@ export default function DashboardSidebar() {
 
       // Check if item is available for current context
       if (item.context === user.activeContext) return true;
+
+      // Business items are only visible in business context
+      if (item.context === "business") {
+        // User must have business_owner role AND be in business context
+        return (
+          hasRole(user, "business_owner") && user.activeContext === "business"
+        );
+      }
 
       // Admin can see everything regardless of context
       if (hasRole(user, "admin") && item.context === "admin") return true;
