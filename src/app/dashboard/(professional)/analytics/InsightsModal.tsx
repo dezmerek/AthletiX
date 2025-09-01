@@ -63,14 +63,7 @@ export default function InsightsModal({ open, onClose, rows }: Props) {
                   </span>
                   <span className="font-medium">{client.progress}%</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600 dark:text-slate-400">
-                    Treningi:
-                  </span>
-                  <span className="font-medium">
-                    {client.workoutsCompleted}
-                  </span>
-                </div>
+
                 <div className="flex justify-between">
                   <span className="text-slate-600 dark:text-slate-400">
                     Posiłki:

@@ -46,6 +46,16 @@ interface ClientProgressViewProps {
   clientName: string;
   className?: string;
   showHeader?: boolean;
+  lastWorkouts?: {
+    id: string;
+    name: string;
+    type: string;
+    date: string;
+    duration: number;
+    calories: number;
+    exercisesCount: number;
+    status: string;
+  }[];
 }
 
 export default function ClientProgressView({
@@ -53,6 +63,7 @@ export default function ClientProgressView({
   clientName,
   className = "",
   showHeader = true,
+  lastWorkouts,
 }: ClientProgressViewProps) {
   const [progressData, setProgressData] = useState<ClientProgressData | null>(
     null
@@ -179,45 +190,40 @@ export default function ClientProgressView({
       )}
 
       {/* Ostatnie treningi */}
-      {progressData?.workouts && progressData.workouts.length > 0 && (
+      {lastWorkouts && lastWorkouts.length > 0 && (
         <div className="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg">
           <h4 className="font-medium text-slate-900 dark:text-white mb-3">
             💪 Ostatnie treningi (ostatnie 5)
           </h4>
           <div className="space-y-3">
-            {progressData.workouts
-              .slice(-5)
-              .reverse()
-              .map((workout, index) => (
-                <div
-                  key={index}
-                  className="border-l-4 border-blue-500 pl-3 bg-white dark:bg-slate-600 p-3 rounded"
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <div className="font-medium text-slate-900 dark:text-white">
-                        {workout.type}
-                      </div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">
-                        {new Date(workout.date).toLocaleDateString("pl-PL", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })}
-                      </div>
+            {lastWorkouts.map((workout, index) => (
+              <div
+                key={workout.id}
+                className="border-l-4 border-blue-500 pl-3 bg-white dark:bg-slate-600 p-3 rounded"
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <div className="font-medium text-slate-900 dark:text-white">
+                      {workout.name}
                     </div>
-                    <div className="text-right text-sm text-slate-600 dark:text-slate-400">
-                      <div className="font-medium">{workout.duration} min</div>
-                      <div>{workout.caloriesBurned} kcal</div>
+                    <div className="text-sm text-slate-600 dark:text-slate-400">
+                      {new Date(workout.date).toLocaleDateString("pl-PL", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })}
                     </div>
                   </div>
-                  {workout.exercises && workout.exercises.length > 0 && (
-                    <div className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                      Ćwiczenia: {workout.exercises.length}
-                    </div>
-                  )}
+                  <div className="text-right text-sm text-slate-600 dark:text-slate-400">
+                    <div className="font-medium">{workout.duration} min</div>
+                    <div>{workout.calories} kcal</div>
+                  </div>
                 </div>
-              ))}
+                <div className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                  Ćwiczenia: {workout.exercisesCount}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}

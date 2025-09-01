@@ -72,6 +72,20 @@ interface ProfessionalPlan {
       }[];
       notes?: string;
     }[];
+    trainingDays?: {
+      day: number;
+      name: string;
+      exercises: {
+        name: string;
+        sets: number;
+        reps: number;
+        weight?: number;
+        duration?: number;
+        restTime: number;
+        notes?: string;
+      }[];
+      notes?: string;
+    }[];
   };
   nutritionPlan?: {
     dailyCalories: number;
@@ -99,6 +113,21 @@ interface ProfessionalPlan {
     name: string;
     email: string;
     image?: string;
+  };
+  // Nowe pola do śledzenia postępu
+  progress?: {
+    workoutsCompleted: number;
+    totalWorkouts: number;
+    lastWorkoutDate?: string;
+    currentStreak: number;
+    totalTimeSpent: number;
+    workoutHistory: {
+      workoutId: string;
+      name: string;
+      completedAt: string;
+      duration: number;
+      status: "completed" | "in-progress" | "skipped";
+    }[];
   };
   createdAt: string;
   updatedAt: string;
@@ -304,6 +333,17 @@ export default function WorkoutsPage() {
       setWorkouts((prev) => [mapped, ...prev]);
       setShowTemplateModal(false);
       setActiveTab("planned");
+
+      // Refresh professional plans to show updated progress
+      try {
+        const pRes = await fetch("/api/user/plans");
+        if (pRes.ok) {
+          const { plans } = await pRes.json();
+          setProfessionalPlans(plans || []);
+        }
+      } catch (error) {
+        console.error("Error refreshing plan progress:", error);
+      }
     } catch (e) {
       alert("Network error while creating workout from template");
       // eslint-disable-next-line no-console
@@ -359,6 +399,17 @@ export default function WorkoutsPage() {
       }
 
       setActiveTab("planned");
+
+      // Refresh professional plans to show updated progress
+      try {
+        const pRes = await fetch("/api/user/plans");
+        if (pRes.ok) {
+          const { plans } = await pRes.json();
+          setProfessionalPlans(plans || []);
+        }
+      } catch (error) {
+        console.error("Error refreshing plan progress:", error);
+      }
     } catch (e) {
       alert("Network error while converting plan to workouts");
       console.error(e);
@@ -366,17 +417,99 @@ export default function WorkoutsPage() {
   };
 
   const handleCompleteWorkout = async (workoutId: string, duration: number) => {
-    const res = await fetch(`/api/workouts/${workoutId}/complete`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ duration }),
-    });
-    if (!res.ok) return;
-    setWorkouts((prev) =>
-      prev.map((w) =>
-        w.id === workoutId ? { ...w, status: "completed", duration } : w
-      )
-    );
+    try {
+      // Complete the workout
+      const res = await fetch(`/api/workouts/${workoutId}/complete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ duration }),
+      });
+
+      if (!res.ok) return;
+
+      // Update local state
+      setWorkouts((prev) =>
+        prev.map((w) =>
+          w.id === workoutId ? { ...w, status: "completed", duration } : w
+        )
+      );
+
+      // Find if this workout is part of a professional plan
+      const workout = workouts.find((w) => w.id === workoutId);
+      if (workout && workout.notes && workout.notes.includes("Plan:")) {
+        // Extract plan name from notes (format: "Plan: {planName}")
+        const planName = workout.notes.replace("Plan: ", "");
+
+        // Find the corresponding plan
+        const plan = professionalPlans.find((p) => p.name === planName);
+        if (plan) {
+          // Update plan progress
+          await fetch(`/api/user/plans/${plan._id}/progress`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              workoutId,
+              workoutName: workout.name,
+              duration,
+              status: "completed",
+            }),
+          });
+
+          // Refresh professional plans to show updated progress
+          const pRes = await fetch("/api/user/plans");
+          if (pRes.ok) {
+            const { plans } = await pRes.json();
+            setProfessionalPlans(plans || []);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error completing workout:", error);
+    }
+  };
+
+  const handleSkipWorkout = async (workoutId: string) => {
+    try {
+      // Find the workout
+      const workout = workouts.find((w) => w.id === workoutId);
+      if (!workout) return;
+
+      // Update workout status to skipped
+      setWorkouts((prev) =>
+        prev.map((w) => (w.id === workoutId ? { ...w, status: "skipped" } : w))
+      );
+
+      // Find if this workout is part of a professional plan
+      if (workout.notes && workout.notes.includes("Plan:")) {
+        // Extract plan name from notes (format: "Plan: {planName}")
+        const planName = workout.notes.replace("Plan: ", "");
+
+        // Find the corresponding plan
+        const plan = professionalPlans.find((p) => p.name === planName);
+        if (plan) {
+          // Update plan progress
+          await fetch(`/api/user/plans/${plan._id}/progress`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              workoutId,
+              workoutName: workout.name,
+              duration: 0,
+              status: "skipped",
+            }),
+          });
+
+          // Refresh professional plans to show updated progress
+          const pRes = await fetch("/api/user/plans");
+          if (pRes.ok) {
+            const { plans } = await pRes.json();
+            setProfessionalPlans(plans || []);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error skipping workout:", error);
+    }
   };
 
   const handleStartPlannedWorkout = async (workoutId: string) => {
@@ -408,6 +541,17 @@ export default function WorkoutsPage() {
         )
       );
       setActiveTab("recent");
+
+      // Refresh professional plans to show updated progress
+      try {
+        const pRes = await fetch("/api/user/plans");
+        if (pRes.ok) {
+          const { plans } = await pRes.json();
+          setProfessionalPlans(plans || []);
+        }
+      } catch (error) {
+        console.error("Error refreshing plan progress:", error);
+      }
     } catch (e) {
       alert("Network error while starting workout");
       // eslint-disable-next-line no-console
@@ -467,6 +611,17 @@ export default function WorkoutsPage() {
       setWorkouts((prev) => [mapped, ...prev]);
       setShowWorkoutModal(false);
       setActiveTab("planned");
+
+      // Refresh professional plans to show updated progress
+      try {
+        const pRes = await fetch("/api/user/plans");
+        if (pRes.ok) {
+          const { plans } = await pRes.json();
+          setProfessionalPlans(plans || []);
+        }
+      } catch (error) {
+        console.error("Error refreshing plan progress:", error);
+      }
     } catch (e) {
       alert("Network error while planning workout");
       // eslint-disable-next-line no-console
@@ -530,6 +685,17 @@ export default function WorkoutsPage() {
       );
       setShowEditModal(false);
       setEditingWorkout(null);
+
+      // Refresh professional plans to show updated progress
+      try {
+        const pRes = await fetch("/api/user/plans");
+        if (pRes.ok) {
+          const { plans } = await pRes.json();
+          setProfessionalPlans(plans || []);
+        }
+      } catch (error) {
+        console.error("Error refreshing plan progress:", error);
+      }
     } catch (e) {
       alert("Network error while updating workout");
       console.error(e);
@@ -552,6 +718,17 @@ export default function WorkoutsPage() {
         return;
       }
       setWorkouts((prev) => prev.filter((w) => w.id !== workoutId));
+
+      // Refresh professional plans to show updated progress
+      try {
+        const pRes = await fetch("/api/user/plans");
+        if (pRes.ok) {
+          const { plans } = await pRes.json();
+          setProfessionalPlans(plans || []);
+        }
+      } catch (error) {
+        console.error("Error refreshing plan progress:", error);
+      }
     } catch (e) {
       alert("Network error while deleting workout");
       console.error(e);
@@ -606,6 +783,21 @@ export default function WorkoutsPage() {
       }
     };
     load();
+
+    // Refresh professional plans every 30 seconds to show real-time progress
+    const progressInterval = setInterval(async () => {
+      try {
+        const pRes = await fetch("/api/user/plans");
+        if (pRes.ok) {
+          const { plans } = await pRes.json();
+          setProfessionalPlans(plans || []);
+        }
+      } catch (error) {
+        console.error("Error refreshing plan progress:", error);
+      }
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(progressInterval);
   }, [locale]);
 
   const getWorkoutTypeIcon = (type: string) => {
@@ -1101,6 +1293,13 @@ export default function WorkoutsPage() {
                               {t("actions.edit")}
                             </button>
                             <button
+                              onClick={() => handleSkipWorkout(workout.id)}
+                              className="px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-colors"
+                              title="Pomiń trening"
+                            >
+                              ⏭️
+                            </button>
+                            <button
                               onClick={() => handleDeleteWorkout(workout.id)}
                               className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
                             >
@@ -1428,6 +1627,49 @@ export default function WorkoutsPage() {
                         </div>
                         <div className="text-sm text-slate-700 dark:text-slate-300">
                           {plan.nutritionPlan.dailyCalories} kcal/dzień
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Progress Section */}
+                    {plan.progress && (
+                      <div className="mb-4 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                        <div className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                          Postęp treningów:
+                        </div>
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                          <div>
+                            <span className="text-slate-600 dark:text-slate-400">
+                              Ukończone:
+                            </span>
+                            <span className="ml-2 font-medium text-emerald-600 dark:text-emerald-400">
+                              {plan.progress.workoutsCompleted}/
+                              {plan.progress.totalWorkouts ||
+                                (plan.trainingPlan?.workouts?.length || 0) +
+                                  (plan.trainingPlan?.trainingDays?.length ||
+                                    0)}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-slate-600 dark:text-slate-400">
+                              Seria:
+                            </span>
+                            <span className="ml-2 font-medium text-emerald-600 dark:text-emerald-400">
+                              {plan.progress.currentStreak} dni
+                            </span>
+                          </div>
+                          {plan.progress.lastWorkoutDate && (
+                            <div className="col-span-2">
+                              <span className="text-slate-600 dark:text-slate-400">
+                                Ostatni trening:
+                              </span>
+                              <span className="ml-2 font-medium text-slate-900 dark:text-white">
+                                {new Date(
+                                  plan.progress.lastWorkoutDate
+                                ).toLocaleDateString("pl-PL")}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}

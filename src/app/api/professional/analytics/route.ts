@@ -219,21 +219,19 @@ export async function GET(request: NextRequest) {
     // Top performers (klienci z najwyższym postępem) - enhanced with more data
     const topPerformers = await Promise.all(
       plans.map(async (plan) => {
-        // Get real workout data for this client
+        // Get real workout data for this client - ALL workouts, not just from startDate
         const clientWorkouts = await db
           .collection("workouts")
           .find({
             userId: plan.clientId,
-            createdAt: { $gte: startDate },
           })
           .toArray();
 
-        // Get real nutrition data for this client (if available)
+        // Get real nutrition data for this client (if available) - ALL nutrition logs
         const clientNutrition = await db
-          .collection("nutritionlogs")
+          .collection("dailynutritions")
           .find({
             userId: plan.clientId,
-            createdAt: { $gte: startDate },
           })
           .toArray();
 
@@ -250,22 +248,52 @@ export async function GET(request: NextRequest) {
           clientNutrition.length > 0
             ? clientNutrition.sort(
                 (a, b) =>
-                  new Date(b.createdAt).getTime() -
-                  new Date(a.createdAt).getTime()
+                  new Date(b.date).getTime() - new Date(a.date).getTime()
               )[0]
             : null;
 
         let lastActivity = plan.createdAt; // fallback to plan creation date
         if (lastWorkout && lastNutrition) {
           lastActivity =
-            new Date(lastWorkout.createdAt) > new Date(lastNutrition.createdAt)
+            new Date(lastWorkout.createdAt) > new Date(lastNutrition.date)
               ? lastWorkout.createdAt
-              : lastNutrition.createdAt;
+              : lastNutrition.date;
         } else if (lastWorkout) {
           lastActivity = lastWorkout.createdAt;
         } else if (lastNutrition) {
-          lastActivity = lastNutrition.createdAt;
+          lastActivity = lastNutrition.date;
         }
+
+        // Calculate workout statistics
+        const completedWorkouts = clientWorkouts.filter(
+          (w) => w.status === "completed"
+        );
+        const totalWorkoutTime = completedWorkouts.reduce(
+          (sum, w) => sum + (w.duration || 0),
+          0
+        );
+        const avgWorkoutTime =
+          completedWorkouts.length > 0
+            ? Math.round(totalWorkoutTime / completedWorkouts.length)
+            : 0;
+
+        // Get last 5 workouts for this client
+        const lastWorkouts = clientWorkouts
+          .sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
+          .slice(0, 5)
+          .map((workout) => ({
+            id: workout._id,
+            name: workout.name,
+            type: workout.type,
+            date: workout.createdAt,
+            duration: workout.duration || 0,
+            calories: 0, // TODO: Calculate calories from exercises
+            exercisesCount: workout.exercises?.length || 0,
+            status: workout.status,
+          }));
 
         return {
           _id: plan.client?._id || plan._id,
@@ -282,8 +310,12 @@ export async function GET(request: NextRequest) {
           planType: plan.type || "both",
           createdAt: plan.createdAt,
           workoutsCompleted: clientWorkouts.length,
+          completedWorkouts: completedWorkouts.length,
+          totalWorkoutTime: totalWorkoutTime,
+          avgWorkoutTime: avgWorkoutTime,
           nutritionLogged: clientNutrition.length,
           lastActivity: lastActivity,
+          lastWorkouts: lastWorkouts,
         };
       })
     );
@@ -293,12 +325,11 @@ export async function GET(request: NextRequest) {
       .sort((a, b) => b.progress - a.progress)
       .slice(0, 5);
 
-    // Pobierz dane o treningach i żywieniu dla rzeczywistych statystyk zaangażowania
+    // Pobierz dane o treningach i żywieniu dla rzeczywistych statystyk zaangażowania - ALL workouts
     const workouts = await db
       .collection("workouts")
       .find({
         userId: { $in: clientIds },
-        createdAt: { $gte: startDate },
       })
       .toArray();
 
@@ -306,6 +337,29 @@ export async function GET(request: NextRequest) {
       workouts.length > 0
         ? Math.round(
             (workouts.length /
+              (timeRange === "week"
+                ? 1
+                : timeRange === "month"
+                ? 4.33
+                : timeRange === "quarter"
+                ? 13
+                : 52)) *
+              10
+          ) / 10
+        : 0;
+
+    // Pobierz dane o żywieniu dla lepszych statystyk
+    const nutritionLogs = await db
+      .collection("dailynutritions")
+      .find({
+        userId: { $in: clientIds },
+      })
+      .toArray();
+
+    const avgNutritionLogsPerWeek =
+      nutritionLogs.length > 0
+        ? Math.round(
+            (nutritionLogs.length /
               (timeRange === "week"
                 ? 1
                 : timeRange === "month"
@@ -410,7 +464,7 @@ export async function GET(request: NextRequest) {
       },
       engagement: {
         avgWorkoutsPerWeek: avgWorkoutsPerWeek,
-        avgNutritionLogs: 0, // TODO: Implement nutrition logs
+        avgNutritionLogs: avgNutritionLogsPerWeek,
         mostActiveClients: sortedTopPerformers.slice(0, 3).map((p) => ({
           name: p.name,
           activity: p.progress,

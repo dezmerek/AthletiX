@@ -87,10 +87,14 @@ export default function AnalyticsPage() {
               : client.targetWeight || 65,
             progress: client.progress || 0,
             workoutsCompleted: client.workoutsCompleted || 0,
+            completedWorkouts: client.completedWorkouts || 0,
+            totalWorkoutTime: client.totalWorkoutTime || 0,
+            avgWorkoutTime: client.avgWorkoutTime || 0,
             nutritionLogged: client.nutritionLogged || 0,
             lastActivity: client.lastActivity
               ? new Date(client.lastActivity).toISOString().split("T")[0]
               : new Date().toISOString().split("T")[0],
+            lastWorkouts: client.lastWorkouts || [],
           })
         ) || [];
 
@@ -106,8 +110,33 @@ export default function AnalyticsPage() {
             targetWeight: 65,
             progress: 85,
             workoutsCompleted: 15,
+            completedWorkouts: 12,
+            totalWorkoutTime: 1800,
+            avgWorkoutTime: 45,
             nutritionLogged: 12,
             lastActivity: "2024-01-15",
+            lastWorkouts: [
+              {
+                id: "w1",
+                name: "Trening A - Plecy i biceps",
+                type: "strength",
+                date: "2024-01-15T10:00:00Z",
+                duration: 45,
+                calories: 0,
+                exercisesCount: 6,
+                status: "completed",
+              },
+              {
+                id: "w2",
+                name: "Trening B - Klatka i triceps",
+                type: "strength",
+                date: "2024-01-13T10:00:00Z",
+                duration: 50,
+                calories: 0,
+                exercisesCount: 5,
+                status: "completed",
+              },
+            ],
           },
           {
             id: "mock-2",
@@ -118,8 +147,33 @@ export default function AnalyticsPage() {
             targetWeight: 80,
             progress: 60,
             workoutsCompleted: 12,
+            completedWorkouts: 10,
+            totalWorkoutTime: 1200,
+            avgWorkoutTime: 40,
             nutritionLogged: 0,
             lastActivity: "2024-01-14",
+            lastWorkouts: [
+              {
+                id: "w3",
+                name: "Trening siłowy - Nogi",
+                type: "strength",
+                date: "2024-01-14T09:00:00Z",
+                duration: 60,
+                calories: 0,
+                exercisesCount: 8,
+                status: "completed",
+              },
+              {
+                id: "w4",
+                name: "Trening cardio",
+                type: "cardio",
+                date: "2024-01-12T08:00:00Z",
+                duration: 30,
+                calories: 0,
+                exercisesCount: 3,
+                status: "completed",
+              },
+            ],
           },
           {
             id: "mock-3",
@@ -130,8 +184,12 @@ export default function AnalyticsPage() {
             targetWeight: 64,
             progress: 50,
             workoutsCompleted: 0,
+            completedWorkouts: 0,
+            totalWorkoutTime: 0,
+            avgWorkoutTime: 0,
             nutritionLogged: 8,
             lastActivity: "2024-01-12",
+            lastWorkouts: [],
           },
         ];
         setClientProgress(mockClientProgress);

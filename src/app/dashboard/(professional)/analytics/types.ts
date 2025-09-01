@@ -19,8 +19,21 @@ export interface ClientProgress {
   targetWeight: number;
   progress: number;
   workoutsCompleted: number;
+  completedWorkouts: number;
+  totalWorkoutTime: number;
+  avgWorkoutTime: number;
   nutritionLogged: number;
   lastActivity: string;
+  lastWorkouts?: {
+    id: string;
+    name: string;
+    type: string;
+    date: string;
+    duration: number;
+    calories: number;
+    exercisesCount: number;
+    status: string;
+  }[];
 }
 
 export interface MonthlyStats {

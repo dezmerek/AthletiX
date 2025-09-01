@@ -46,11 +46,12 @@ function ClientProgressModal({
           </button>
         </div>
 
-        {/* Użyj komponentu ClientProgressView */}
+        {/* Użyj komponentu ClientProgressView z danymi o treningach */}
         <ClientProgressView
           clientId={client.id}
           clientName={client.name}
           showHeader={false}
+          lastWorkouts={client.lastWorkouts}
         />
       </div>
     </div>
@@ -165,9 +166,7 @@ export default function ClientProgressTable({
               <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 {t("clientProgress.table.progress")}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                {t("clientProgress.table.activity")}
-              </th>
+
               <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 {t("clientProgress.table.lastActivity")}
               </th>
@@ -232,14 +231,7 @@ export default function ClientProgressTable({
                     </span>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-slate-900 dark:text-white">
-                    {client.workoutsCompleted} {t("clientProgress.workouts")}
-                  </div>
-                  <div className="text-sm text-slate-500 dark:text-slate-400">
-                    {client.nutritionLogged} {t("clientProgress.meals")}
-                  </div>
-                </td>
+
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
                   {new Date(client.lastActivity).toLocaleDateString()}
                 </td>
