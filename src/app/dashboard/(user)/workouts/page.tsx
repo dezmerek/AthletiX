@@ -39,6 +39,70 @@ interface WorkoutTemplate {
   estimatedDuration: number;
 }
 
+interface ProfessionalPlan {
+  _id: string;
+  name: string;
+  description?: string;
+  type: "training" | "nutrition" | "both";
+  status: "active" | "inactive" | "draft";
+  startDate: string;
+  endDate?: string;
+  goals: {
+    weight?: number;
+    targetWeight?: number;
+    trainerTargetWeight?: string;
+    strength?: string[];
+    endurance?: string[];
+    flexibility?: string[];
+    nutrition?: string[];
+  };
+  trainingPlan?: {
+    workouts: {
+      day: number;
+      name: string;
+      exercises: {
+        name: string;
+        sets: number;
+        reps: number;
+        weight?: number;
+        duration?: number;
+        rest: number;
+        notes?: string;
+      }[];
+      notes?: string;
+    }[];
+  };
+  nutritionPlan?: {
+    dailyCalories: number;
+    macronutrients: {
+      protein: number;
+      carbs: number;
+      fats: number;
+    };
+    meals: {
+      day: number;
+      meals: {
+        type: "breakfast" | "lunch" | "dinner" | "snack";
+        name: string;
+        calories: number;
+        protein: number;
+        carbs: number;
+        fats: number;
+        ingredients?: string[];
+        notes?: string;
+      }[];
+    }[];
+  };
+  professional: {
+    _id: string;
+    name: string;
+    email: string;
+    image?: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
 export default function WorkoutsPage() {
   const t = useTranslations("workouts");
   const locale = useLocale();
@@ -48,6 +112,9 @@ export default function WorkoutsPage() {
   const [workoutTemplates, setWorkoutTemplates] = useState<WorkoutTemplate[]>(
     []
   );
+  const [professionalPlans, setProfessionalPlans] = useState<
+    ProfessionalPlan[]
+  >([]);
 
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
@@ -55,7 +122,7 @@ export default function WorkoutsPage() {
 
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
   const [activeTab, setActiveTab] = useState<
-    "recent" | "planned" | "templates"
+    "recent" | "planned" | "templates" | "plans"
   >("recent");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [activeTimer, setActiveTimer] = useState<{
@@ -235,6 +302,55 @@ export default function WorkoutsPage() {
     } catch (e) {
       alert("Network error while creating workout from template");
       // eslint-disable-next-line no-console
+      console.error(e);
+    }
+  };
+
+  const handleConvertPlanToWorkouts = async (plan: ProfessionalPlan) => {
+    try {
+      const res = await fetch(
+        `/api/user/plans/${plan._id}/convert-to-workouts`,
+        {
+          method: "POST",
+        }
+      );
+      if (!res.ok) {
+        let message = `Failed to convert plan to workouts (${res.status})`;
+        try {
+          const j = await res.json();
+          if (j?.error) message = j.error;
+        } catch {}
+        alert(message);
+        return;
+      }
+      const data = await res.json();
+      alert(`Successfully converted plan to ${data.workouts} workouts!`);
+
+      // Refresh workouts
+      const wRes = await fetch("/api/workouts");
+      if (wRes.ok) {
+        const { workouts } = await wRes.json();
+        setWorkouts(
+          (workouts || []).map((w: any) => ({
+            id: w._id,
+            name: w.name,
+            nameEn: w.nameEn,
+            date: new Date(w.date).toISOString().split("T")[0],
+            type: w.type,
+            duration: w.duration,
+            status: w.status,
+            exercises: (w.exercises || []).map((e: any) => ({
+              id: e._id,
+              ...e,
+            })),
+            notes: w.notes,
+          }))
+        );
+      }
+
+      setActiveTab("planned");
+    } catch (e) {
+      alert("Network error while converting plan to workouts");
       console.error(e);
     }
   };
@@ -433,11 +549,12 @@ export default function WorkoutsPage() {
   };
 
   useEffect(() => {
-    // initial fetch of workouts and templates
+    // initial fetch of workouts, templates, and professional plans
     const load = async () => {
-      const [wRes, tRes] = await Promise.all([
+      const [wRes, tRes, pRes] = await Promise.all([
         fetch("/api/workouts"),
         fetch(`/api/workouts/templates?lang=${encodeURIComponent(locale)}`),
+        fetch("/api/user/plans"),
       ]);
       if (wRes.ok) {
         const { workouts } = await wRes.json();
@@ -471,6 +588,11 @@ export default function WorkoutsPage() {
             exercises: t.exercises || [],
           }))
         );
+      }
+      if (pRes.ok) {
+        const { plans } = await pRes.json();
+        console.log("API professional plans response:", plans);
+        setProfessionalPlans(plans || []);
       }
     };
     load();
@@ -731,21 +853,24 @@ export default function WorkoutsPage() {
         {/* Navigation Tabs */}
         <div className="bg-white dark:bg-slate-800 rounded-xl p-1 mb-8 shadow-lg border border-slate-200 dark:border-slate-700">
           <div className="flex space-x-1">
-            {(["recent", "planned", "templates"] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors ${
-                  activeTab === tab
-                    ? "bg-blue-600 text-white"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700"
-                }`}
-              >
-                {tab === "recent" && t("tabs.recent")}
-                {tab === "planned" && t("tabs.planned")}
-                {tab === "templates" && t("tabs.templates")}
-              </button>
-            ))}
+            {(["recent", "planned", "templates", "plans"] as const).map(
+              (tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors ${
+                    activeTab === tab
+                      ? "bg-blue-600 text-white"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700"
+                  }`}
+                >
+                  {tab === "recent" && t("tabs.recent")}
+                  {tab === "planned" && t("tabs.planned")}
+                  {tab === "templates" && t("tabs.templates")}
+                  {tab === "plans" && "Plany Trenera"}
+                </button>
+              )
+            )}
           </div>
         </div>
         {/* Content based on active tab */}{" "}
@@ -1103,6 +1228,194 @@ export default function WorkoutsPage() {
                 </div>
               ))}
             </div>
+          </div>
+        )}{" "}
+        {activeTab === "plans" && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+              Plany od Trenera
+            </h2>
+            <p className="text-slate-600 dark:text-slate-400">
+              Plany treningowe i żywieniowe stworzone przez Twojego trenera
+              personalnego
+            </p>
+
+            {professionalPlans.length === 0 ? (
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-lg border border-slate-200 dark:border-slate-700 text-center">
+                <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg
+                    className="w-8 h-8 text-slate-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                  Brak planów od trenera
+                </h3>
+                <p className="text-slate-600 dark:text-slate-400">
+                  Twój trener jeszcze nie stworzył dla Ciebie żadnych planów
+                  treningowych lub żywieniowych.
+                </p>
+              </div>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {professionalPlans.map((plan) => (
+                  <div
+                    key={plan._id}
+                    className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-700"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/20 rounded-lg flex items-center justify-center">
+                          <svg
+                            className="w-6 h-6 text-emerald-600 dark:text-emerald-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                            {plan.name}
+                          </h3>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                            od {plan.professional.name}
+                          </p>
+                        </div>
+                      </div>
+                      <span
+                        className={`px-2 py-1 rounded-lg text-xs font-medium ${
+                          plan.status === "active"
+                            ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400"
+                            : plan.status === "inactive"
+                            ? "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-400"
+                            : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400"
+                        }`}
+                      >
+                        {plan.status === "active"
+                          ? "Aktywny"
+                          : plan.status === "inactive"
+                          ? "Nieaktywny"
+                          : "Szkic"}
+                      </span>
+                    </div>
+
+                    {plan.description && (
+                      <p className="text-slate-600 dark:text-slate-400 mb-4 text-sm">
+                        {plan.description}
+                      </p>
+                    )}
+
+                    <div className="space-y-3 mb-4">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-slate-600 dark:text-slate-400">
+                          Typ:
+                        </span>
+                        <span className="font-medium text-slate-900 dark:text-white">
+                          {plan.type === "training"
+                            ? "Trening"
+                            : plan.type === "nutrition"
+                            ? "Żywienie"
+                            : "Oba"}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-slate-600 dark:text-slate-400">
+                          Data rozpoczęcia:
+                        </span>
+                        <span className="font-medium text-slate-900 dark:text-white">
+                          {new Date(plan.startDate).toLocaleDateString("pl-PL")}
+                        </span>
+                      </div>
+                      {plan.endDate && (
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-slate-600 dark:text-slate-400">
+                            Data zakończenia:
+                          </span>
+                          <span className="font-medium text-slate-900 dark:text-white">
+                            {new Date(plan.endDate).toLocaleDateString("pl-PL")}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {plan.trainingPlan && plan.trainingPlan.workouts && (
+                      <div className="mb-4">
+                        <div className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                          Treningi ({plan.trainingPlan.workouts.length}):
+                        </div>
+                        <div className="space-y-1">
+                          {plan.trainingPlan.workouts
+                            .slice(0, 3)
+                            .map((workout, index) => (
+                              <div
+                                key={index}
+                                className="text-sm text-slate-700 dark:text-slate-300"
+                              >
+                                • {workout.name} ({workout.exercises.length}{" "}
+                                ćwiczeń)
+                              </div>
+                            ))}
+                          {plan.trainingPlan.workouts.length > 3 && (
+                            <div className="text-sm text-slate-500 dark:text-slate-400">
+                              +{plan.trainingPlan.workouts.length - 3} więcej...
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {plan.nutritionPlan && (
+                      <div className="mb-4">
+                        <div className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                          Żywienie:
+                        </div>
+                        <div className="text-sm text-slate-700 dark:text-slate-300">
+                          {plan.nutritionPlan.dailyCalories} kcal/dzień
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex space-x-2">
+                      {plan.trainingPlan && plan.trainingPlan.workouts && (
+                        <button
+                          onClick={() => handleConvertPlanToWorkouts(plan)}
+                          className="flex-1 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors font-medium text-sm"
+                        >
+                          Konwertuj na treningi
+                        </button>
+                      )}
+                      <button
+                        onClick={() => {
+                          // TODO: Implement plan details view
+                          alert(
+                            "Funkcja podglądu planu będzie dostępna wkrótce"
+                          );
+                        }}
+                        className="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg transition-colors font-medium text-sm"
+                      >
+                        Zobacz
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}{" "}
         {/* Template Selection Modal */}

@@ -171,7 +171,11 @@ export async function POST(request: NextRequest) {
 
     if (!clientId || !name || !type || !startDate) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        {
+          error: "Missing required fields",
+          details: "Wymagane pola: clientId, name, type, startDate",
+          received: { clientId, name, type, startDate },
+        },
         { status: 400 }
       );
     }
@@ -179,17 +183,40 @@ export async function POST(request: NextRequest) {
     const client = await clientPromise;
     const db = client.db();
 
-    // Sprawdź czy klient istnieje i należy do profesjonalisty
-    const clientRelation = await db.collection("professionalClients").findOne({
+    // Sprawdź czy klient istnieje
+    const clientUser = await db.collection("users").findOne({
+      _id: new ObjectId(clientId),
+    });
+
+    if (!clientUser) {
+      return NextResponse.json({ error: "Client not found" }, { status: 404 });
+    }
+
+    // Sprawdź czy relacja klient-profesjonalista istnieje
+    let clientRelation = await db.collection("professionalClients").findOne({
       professionalId: new ObjectId(session.user.id),
       clientId: new ObjectId(clientId),
     });
 
+    // Jeśli relacja nie istnieje, utwórz ją automatycznie
     if (!clientRelation) {
-      return NextResponse.json(
-        { error: "Client not found or not authorized" },
-        { status: 404 }
-      );
+      const newRelation = {
+        professionalId: new ObjectId(session.user.id),
+        clientId: new ObjectId(clientId),
+        type: "both", // Domyślny typ
+        notes: "Automatycznie utworzone przy tworzeniu planu",
+        status: "active",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      const result = await db
+        .collection("professionalClients")
+        .insertOne(newRelation);
+      clientRelation = {
+        _id: result.insertedId,
+        ...newRelation,
+      };
     }
 
     // Utwórz nowy plan
@@ -269,6 +296,8 @@ export async function POST(request: NextRequest) {
       {
         message: "Plan created successfully",
         plan: createdPlan[0],
+        clientRelationCreated:
+          !clientRelation._id || clientRelation._id === result.insertedId,
       },
       { status: 201 }
     );
