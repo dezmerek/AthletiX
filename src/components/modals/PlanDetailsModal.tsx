@@ -56,27 +56,51 @@ interface Plan {
       notes?: string;
     }[];
   };
-  // Pola dla żywienia - kompatybilne z ProfessionalPlan
+  // Pola dla żywienia - kompatybilne z CreatePlanModal
   nutritionPlan?: {
     dailyCalories: number;
-    macronutrients: {
+    macros: {
       protein: number;
       carbs: number;
       fats: number;
     };
-    meals: {
-      day: number;
-      meals: {
-        type: "breakfast" | "lunch" | "dinner" | "snack";
-        name: string;
-        calories: number;
-        protein: number;
-        carbs: number;
-        fats: number;
-        ingredients?: string[];
-        notes?: string;
-      }[];
-    }[];
+    mealPlan: {
+      [day: string]: {
+        breakfast: {
+          name: string;
+          calories: number;
+          protein: number;
+          carbs: number;
+          fats: number;
+          notes?: string;
+        }[];
+        lunch: {
+          name: string;
+          calories: number;
+          protein: number;
+          carbs: number;
+          fats: number;
+          notes?: string;
+        }[];
+        dinner: {
+          name: string;
+          calories: number;
+          protein: number;
+          carbs: number;
+          fats: number;
+          notes?: string;
+        }[];
+        snacks: {
+          name: string;
+          calories: number;
+          protein: number;
+          carbs: number;
+          fats: number;
+          notes?: string;
+        }[];
+      };
+    };
+    notes: string;
   };
   // Może być client lub professional
   client?: {
@@ -510,7 +534,7 @@ export default function PlanDetailsModal({
                       Białko
                     </h6>
                     <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">
-                      {plan.nutritionPlan.macronutrients.protein}g
+                      {plan.nutritionPlan.macros.protein}g
                     </p>
                   </div>
                   <div className="text-center">
@@ -518,7 +542,7 @@ export default function PlanDetailsModal({
                       Węglowodany
                     </h6>
                     <p className="text-lg font-semibold text-orange-600 dark:text-orange-400">
-                      {plan.nutritionPlan.macronutrients.carbs}g
+                      {plan.nutritionPlan.macros.carbs}g
                     </p>
                   </div>
                   <div className="text-center">
@@ -526,55 +550,190 @@ export default function PlanDetailsModal({
                       Tłuszcze
                     </h6>
                     <p className="text-lg font-semibold text-yellow-600 dark:text-yellow-400">
-                      {plan.nutritionPlan.macronutrients.fats}g
+                      {plan.nutritionPlan.macros.fats}g
                     </p>
                   </div>
                 </div>
 
+                {/* Plan Notes */}
+                {plan.nutritionPlan.notes && (
+                  <div className="mb-6">
+                    <h5 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
+                      Notatki do planu
+                    </h5>
+                    <p className="text-sm text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-600">
+                      {plan.nutritionPlan.notes}
+                    </p>
+                  </div>
+                )}
+
                 {/* Daily Meals */}
-                {plan.nutritionPlan.meals &&
-                  plan.nutritionPlan.meals.length > 0 && (
+                {plan.nutritionPlan.mealPlan &&
+                  Object.keys(plan.nutritionPlan.mealPlan).length > 0 && (
                     <div>
                       <h5 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
                         Plan posiłków
                       </h5>
                       <div className="space-y-3">
-                        {plan.nutritionPlan.meals.map((dayMeals, dayIndex) => (
-                          <div
-                            key={dayIndex}
-                            className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-600"
-                          >
-                            <h6 className="font-medium text-slate-900 dark:text-white mb-2">
-                              Dzień {dayMeals.day}
-                            </h6>
-                            <div className="space-y-2">
-                              {dayMeals.meals.map((meal, mealIndex) => (
-                                <div
-                                  key={mealIndex}
-                                  className="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-700 rounded"
-                                >
-                                  <div className="flex items-center space-x-2">
-                                    <span className="text-xs px-2 py-1 rounded-full bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300">
-                                      {meal.type === "breakfast"
-                                        ? "Śniadanie"
-                                        : meal.type === "lunch"
-                                        ? "Obiad"
-                                        : meal.type === "dinner"
-                                        ? "Kolacja"
-                                        : "Przekąska"}
-                                    </span>
-                                    <span className="text-sm font-medium text-slate-900 dark:text-white">
-                                      {meal.name}
-                                    </span>
+                        {Object.entries(plan.nutritionPlan.mealPlan).map(
+                          ([dayNumber, dayMeals]) => (
+                            <div
+                              key={dayNumber}
+                              className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-600"
+                            >
+                              <h6 className="font-medium text-slate-900 dark:text-white mb-2">
+                                Dzień {dayNumber}
+                              </h6>
+                              <div className="space-y-3">
+                                {/* Breakfast */}
+                                {dayMeals.breakfast.length > 0 && (
+                                  <div>
+                                    <h7 className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">
+                                      🍳 Śniadanie
+                                    </h7>
+                                    <div className="space-y-1">
+                                      {dayMeals.breakfast.map(
+                                        (meal, mealIndex) => (
+                                          <div
+                                            key={mealIndex}
+                                            className="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-700 rounded"
+                                          >
+                                            <div className="flex-1">
+                                              <span className="text-sm font-medium text-slate-900 dark:text-white">
+                                                {meal.name}
+                                              </span>
+                                              {meal.notes && (
+                                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                  {meal.notes}
+                                                </p>
+                                              )}
+                                            </div>
+                                            <div className="text-right text-sm text-slate-600 dark:text-slate-400">
+                                              <div>{meal.calories} kcal</div>
+                                              <div className="text-xs">
+                                                P: {meal.protein}g | W:{" "}
+                                                {meal.carbs}g | T: {meal.fats}g
+                                              </div>
+                                            </div>
+                                          </div>
+                                        )
+                                      )}
+                                    </div>
                                   </div>
-                                  <span className="text-sm text-slate-600 dark:text-slate-400">
-                                    {meal.calories} kcal
-                                  </span>
-                                </div>
-                              ))}
+                                )}
+
+                                {/* Lunch */}
+                                {dayMeals.lunch.length > 0 && (
+                                  <div>
+                                    <h7 className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">
+                                      🍽️ Obiad
+                                    </h7>
+                                    <div className="space-y-1">
+                                      {dayMeals.lunch.map((meal, mealIndex) => (
+                                        <div
+                                          key={mealIndex}
+                                          className="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-700 rounded"
+                                        >
+                                          <div className="flex-1">
+                                            <span className="text-sm font-medium text-slate-900 dark:text-white">
+                                              {meal.name}
+                                            </span>
+                                            {meal.notes && (
+                                              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                {meal.notes}
+                                              </p>
+                                            )}
+                                          </div>
+                                          <div className="text-right text-sm text-slate-600 dark:text-slate-400">
+                                            <div>{meal.calories} kcal</div>
+                                            <div className="text-xs">
+                                              P: {meal.protein}g | W:{" "}
+                                              {meal.carbs}g | T: {meal.fats}g
+                                            </div>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Dinner */}
+                                {dayMeals.dinner.length > 0 && (
+                                  <div>
+                                    <h7 className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">
+                                      🌙 Kolacja
+                                    </h7>
+                                    <div className="space-y-1">
+                                      {dayMeals.dinner.map(
+                                        (meal, mealIndex) => (
+                                          <div
+                                            key={mealIndex}
+                                            className="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-700 rounded"
+                                          >
+                                            <div className="flex-1">
+                                              <span className="text-sm font-medium text-slate-900 dark:text-white">
+                                                {meal.name}
+                                              </span>
+                                              {meal.notes && (
+                                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                  {meal.notes}
+                                                </p>
+                                              )}
+                                            </div>
+                                            <div className="text-right text-sm text-slate-600 dark:text-slate-400">
+                                              <div>{meal.calories} kcal</div>
+                                              <div className="text-xs">
+                                                P: {meal.protein}g | W:{" "}
+                                                {meal.carbs}g | T: {meal.fats}g
+                                              </div>
+                                            </div>
+                                          </div>
+                                        )
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Snacks */}
+                                {dayMeals.snacks.length > 0 && (
+                                  <div>
+                                    <h7 className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 block">
+                                      🍎 Przekąski
+                                    </h7>
+                                    <div className="space-y-1">
+                                      {dayMeals.snacks.map(
+                                        (meal, mealIndex) => (
+                                          <div
+                                            key={mealIndex}
+                                            className="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-700 rounded"
+                                          >
+                                            <div className="flex-1">
+                                              <span className="text-sm font-medium text-slate-900 dark:text-white">
+                                                {meal.name}
+                                              </span>
+                                              {meal.notes && (
+                                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                  {meal.notes}
+                                                </p>
+                                              )}
+                                            </div>
+                                            <div className="text-right text-sm text-slate-600 dark:text-slate-400">
+                                              <div>{meal.calories} kcal</div>
+                                              <div className="text-xs">
+                                                P: {meal.protein}g | W:{" "}
+                                                {meal.carbs}g | T: {meal.fats}g
+                                              </div>
+                                            </div>
+                                          </div>
+                                        )
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          )
+                        )}
                       </div>
                     </div>
                   )}

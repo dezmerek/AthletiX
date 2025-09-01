@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NutritionStats from "./components/NutritionStats";
 import MealCard from "./components/MealCard";
 import WaterTracker from "./components/WaterTracker";
@@ -10,6 +10,7 @@ import NutritionTips from "./components/NutritionTips";
 import AddFoodModal from "./components/AddFoodModal";
 import { useNutrition } from "./hooks/useNutrition";
 import { FoodItem } from "./types/nutrition";
+import PlanDetailsModal from "@/components/dashboard/PlanDetailsModal";
 
 export default function NutritionPage() {
   const t = useTranslations("nutrition");
@@ -28,12 +29,14 @@ export default function NutritionPage() {
   } = useNutrition();
 
   const [showAddFoodModal, setShowAddFoodModal] = useState(false);
+  const [showTrainerPlanModal, setShowTrainerPlanModal] = useState(false);
   const [selectedMealType, setSelectedMealType] = useState<
     "breakfast" | "lunch" | "dinner"
   >("breakfast");
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const [trainerPlan, setTrainerPlan] = useState<any>(null);
 
   // Generuj daty wstecz i do przodu (ostatnie 7 dni + następne 3 dni)
   const generateDateRange = () => {
@@ -59,6 +62,43 @@ export default function NutritionPage() {
 
   const availableDates = generateDateRange();
   const currentDayTotals = getDailyTotals(selectedDate);
+
+  // Pobierz plan od trenera
+  useEffect(() => {
+    const fetchTrainerPlan = async () => {
+      try {
+        console.log("Pobieranie planu od trenera...");
+        const response = await fetch("/api/user/plans");
+        console.log("Response status:", response.status);
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Otrzymane dane:", data);
+
+          if (data.plans && Array.isArray(data.plans)) {
+            const nutritionPlan = data.plans.find(
+              (plan: any) => plan.type === "nutrition" || plan.type === "both"
+            );
+            console.log("Znaleziony plan żywieniowy:", nutritionPlan);
+
+            if (nutritionPlan) {
+              setTrainerPlan(nutritionPlan);
+            } else {
+              console.log("Nie znaleziono planu żywieniowego");
+            }
+          } else {
+            console.log("Nieprawidłowa struktura danych:", data);
+          }
+        } else {
+          console.error("Błąd HTTP:", response.status, response.statusText);
+        }
+      } catch (error) {
+        console.error("Błąd podczas pobierania planu od trenera:", error);
+      }
+    };
+
+    fetchTrainerPlan();
+  }, []);
 
   const handleAddFood = (mealType: "breakfast" | "lunch" | "dinner") => {
     setSelectedMealType(mealType);
@@ -93,12 +133,41 @@ export default function NutritionPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
-            {t("title")}
-          </h1>
-          <p className="text-slate-600 dark:text-slate-400">
-            {t("description")}
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+                {t("title")}
+              </h1>
+              <p className="text-slate-600 dark:text-slate-400">
+                {t("description")}
+              </p>
+            </div>
+
+            {/* Plan od trenera button */}
+            <div className="text-right">
+              <button
+                onClick={() =>
+                  trainerPlan ? setShowTrainerPlanModal(true) : null
+                }
+                disabled={!trainerPlan}
+                className={`px-6 py-3 font-semibold rounded-lg shadow-lg transition-all duration-200 flex items-center space-x-2 ${
+                  trainerPlan
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:shadow-xl cursor-pointer"
+                    : "bg-slate-300 dark:bg-slate-600 text-slate-500 dark:text-slate-400 cursor-not-allowed"
+                }`}
+              >
+                <span>🍎</span>
+                <span>
+                  {trainerPlan ? "Plan od trenera" : "Brak planu od trenera"}
+                </span>
+              </button>
+              {!trainerPlan && (
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                  Twój trener jeszcze nie utworzył planu żywieniowego
+                </p>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Statistics Cards for Selected Date */}
@@ -216,6 +285,16 @@ export default function NutritionPage() {
           selectedMealType={selectedMealType}
           onAddFood={handleAddFoodToMeal}
         />
+
+        {/* Trainer Plan Modal */}
+        {trainerPlan && (
+          <PlanDetailsModal
+            isOpen={showTrainerPlanModal}
+            onClose={() => setShowTrainerPlanModal(false)}
+            plan={trainerPlan}
+            showOnlyNutrition={true}
+          />
+        )}
       </div>
     </div>
   );

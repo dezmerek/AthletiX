@@ -20,6 +20,33 @@ interface TrainingDay {
   notes?: string;
 }
 
+interface Meal {
+  name: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fats: number;
+  notes?: string;
+}
+
+interface NutritionPlan {
+  dailyCalories: number;
+  macros: {
+    protein: number;
+    carbs: number;
+    fats: number;
+  };
+  mealPlan: {
+    [day: string]: {
+      breakfast: Meal[];
+      lunch: Meal[];
+      dinner: Meal[];
+      snacks: Meal[];
+    };
+  };
+  notes: string;
+}
+
 interface Plan {
   _id: string;
   name: string;
@@ -42,6 +69,8 @@ interface Plan {
     frequency: number;
     trainingDays: TrainingDay[];
   };
+  // Nowe pola dla diety
+  nutritionPlan?: NutritionPlan;
   client: {
     _id: string;
     name: string;
@@ -137,6 +166,59 @@ export default function EditPlanModal({
           notes: "",
         },
       ],
+    },
+    nutritionPlan: {
+      dailyCalories: 2000,
+      macros: {
+        protein: 150,
+        carbs: 200,
+        fats: 67,
+      },
+      mealPlan: {
+        "1": {
+          breakfast: [
+            {
+              name: "Owsianka z bananem",
+              calories: 350,
+              protein: 12,
+              carbs: 60,
+              fats: 8,
+              notes: "Dodaj miód do smaku",
+            },
+          ],
+          lunch: [
+            {
+              name: "Kurczak z ryżem",
+              calories: 450,
+              protein: 35,
+              carbs: 45,
+              fats: 15,
+              notes: "Warzywa na parze",
+            },
+          ],
+          dinner: [
+            {
+              name: "Łosoś z ziemniakami",
+              calories: 400,
+              protein: 30,
+              carbs: 35,
+              fats: 18,
+              notes: "Sałatka z warzyw",
+            },
+          ],
+          snacks: [
+            {
+              name: "Jogurt grecki",
+              calories: 150,
+              protein: 15,
+              carbs: 8,
+              fats: 5,
+              notes: "Z orzechami",
+            },
+          ],
+        },
+      },
+      notes: "Plan zrównoważony, bogaty w białko dla budowy mięśni",
     },
   });
 
@@ -242,6 +324,59 @@ export default function EditPlanModal({
             },
           ],
         },
+        nutritionPlan: plan.nutritionPlan || {
+          dailyCalories: 2000,
+          macros: {
+            protein: 150,
+            carbs: 200,
+            fats: 67,
+          },
+          mealPlan: {
+            "1": {
+              breakfast: [
+                {
+                  name: "Owsianka z bananem",
+                  calories: 350,
+                  protein: 12,
+                  carbs: 60,
+                  fats: 8,
+                  notes: "Dodaj miód do smaku",
+                },
+              ],
+              lunch: [
+                {
+                  name: "Kurczak z ryżem",
+                  calories: 450,
+                  protein: 35,
+                  carbs: 45,
+                  fats: 15,
+                  notes: "Warzywa na parze",
+                },
+              ],
+              dinner: [
+                {
+                  name: "Łosoś z ziemniakami",
+                  calories: 400,
+                  protein: 30,
+                  carbs: 35,
+                  fats: 18,
+                  notes: "Sałatka z warzyw",
+                },
+              ],
+              snacks: [
+                {
+                  name: "Jogurt grecki",
+                  calories: 150,
+                  protein: 15,
+                  carbs: 8,
+                  fats: 5,
+                  notes: "Z orzechami",
+                },
+              ],
+            },
+          },
+          notes: "Plan zrównoważony, bogaty w białko dla budowy mięśni",
+        },
       });
     }
   }, [plan]);
@@ -319,6 +454,155 @@ export default function EditPlanModal({
     }));
   };
 
+  // Funkcje do zarządzania planem diety
+  const addNutritionDay = () => {
+    const newDayNumber =
+      Object.keys(formData.nutritionPlan.mealPlan).length + 1;
+    setFormData((prev) => ({
+      ...prev,
+      nutritionPlan: {
+        ...prev.nutritionPlan,
+        mealPlan: {
+          ...prev.nutritionPlan.mealPlan,
+          [newDayNumber.toString()]: {
+            breakfast: [
+              {
+                name: "Śniadanie",
+                calories: 400,
+                protein: 25,
+                carbs: 40,
+                fats: 15,
+                notes: "",
+              },
+            ],
+            lunch: [
+              {
+                name: "Obiad",
+                calories: 500,
+                protein: 35,
+                carbs: 50,
+                fats: 18,
+                notes: "",
+              },
+            ],
+            dinner: [
+              {
+                name: "Kolacja",
+                calories: 350,
+                protein: 25,
+                carbs: 30,
+                fats: 12,
+                notes: "",
+              },
+            ],
+            snacks: [
+              {
+                name: "Przekąska",
+                calories: 200,
+                protein: 15,
+                carbs: 20,
+                fats: 8,
+                notes: "",
+              },
+            ],
+          },
+        },
+      },
+    }));
+  };
+
+  const removeNutritionDay = (dayNumber: string) => {
+    if (Object.keys(formData.nutritionPlan.mealPlan).length > 1) {
+      setFormData((prev) => {
+        const newMealPlan = { ...prev.nutritionPlan.mealPlan };
+        delete newMealPlan[dayNumber];
+        return {
+          ...prev,
+          nutritionPlan: {
+            ...prev.nutritionPlan,
+            mealPlan: newMealPlan,
+          },
+        };
+      });
+    }
+  };
+
+  const addMeal = (
+    dayNumber: string,
+    mealType: "breakfast" | "lunch" | "dinner" | "snacks"
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      nutritionPlan: {
+        ...prev.nutritionPlan,
+        mealPlan: {
+          ...prev.nutritionPlan.mealPlan,
+          [dayNumber]: {
+            ...prev.nutritionPlan.mealPlan[dayNumber],
+            [mealType]: [
+              ...prev.nutritionPlan.mealPlan[dayNumber][mealType],
+              {
+                name: "Nowy posiłek",
+                calories: 200,
+                protein: 15,
+                carbs: 20,
+                fats: 8,
+                notes: "",
+              },
+            ],
+          },
+        },
+      },
+    }));
+  };
+
+  const removeMeal = (
+    dayNumber: string,
+    mealType: "breakfast" | "lunch" | "dinner" | "snacks",
+    mealIndex: number
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      nutritionPlan: {
+        ...prev.nutritionPlan,
+        mealPlan: {
+          ...prev.nutritionPlan.mealPlan,
+          [dayNumber]: {
+            ...prev.nutritionPlan.mealPlan[dayNumber],
+            [mealType]: prev.nutritionPlan.mealPlan[dayNumber][mealType].filter(
+              (_, index) => index !== mealIndex
+            ),
+          },
+        },
+      },
+    }));
+  };
+
+  const updateMeal = (
+    dayNumber: string,
+    mealType: "breakfast" | "lunch" | "dinner" | "snacks",
+    mealIndex: number,
+    field: keyof Meal,
+    value: string | number
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      nutritionPlan: {
+        ...prev.nutritionPlan,
+        mealPlan: {
+          ...prev.nutritionPlan.mealPlan,
+          [dayNumber]: {
+            ...prev.nutritionPlan.mealPlan[dayNumber],
+            [mealType]: prev.nutritionPlan.mealPlan[dayNumber][mealType].map(
+              (meal, index) =>
+                index === mealIndex ? { ...meal, [field]: value } : meal
+            ),
+          },
+        },
+      },
+    }));
+  };
+
   const addTrainingDay = () => {
     const newDayNumber = formData.trainingPlan.trainingDays.length + 1;
     setFormData((prev) => ({
@@ -385,6 +669,7 @@ export default function EditPlanModal({
             targetWeight: plan.clientProfile?.targetWeight || undefined,
           },
           trainingPlan: formData.trainingPlan,
+          nutritionPlan: formData.nutritionPlan,
         }),
       });
 
@@ -857,6 +1142,332 @@ export default function EditPlanModal({
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Nutrition Plan Section */}
+          {(formData.type === "nutrition" || formData.type === "both") && (
+            <div className="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-lg font-medium text-slate-900 dark:text-white">
+                  🍎 Plan żywieniowy
+                </h4>
+                <button
+                  type="button"
+                  onClick={addNutritionDay}
+                  className="px-3 py-1 text-sm bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                >
+                  + Dodaj dzień diety
+                </button>
+              </div>
+
+              {/* Nutrition Plan Settings */}
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Dziennie kalorie
+                  </label>
+                  <input
+                    type="number"
+                    min="1000"
+                    max="5000"
+                    step="100"
+                    value={formData.nutritionPlan.dailyCalories}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        nutritionPlan: {
+                          ...prev.nutritionPlan,
+                          dailyCalories: parseInt(e.target.value) || 2000,
+                        },
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg dark:bg-slate-700 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Notatki do planu
+                  </label>
+                  <textarea
+                    value={formData.nutritionPlan.notes}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        nutritionPlan: {
+                          ...prev.nutritionPlan,
+                          notes: e.target.value,
+                        },
+                      }))
+                    }
+                    placeholder="Notatki do planu żywieniowego..."
+                    rows={2}
+                    className="w-full px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg dark:bg-slate-700 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              {/* Macros */}
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Białko (g)
+                  </label>
+                  <input
+                    type="number"
+                    min="50"
+                    max="300"
+                    value={formData.nutritionPlan.macros.protein}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        nutritionPlan: {
+                          ...prev.nutritionPlan,
+                          macros: {
+                            ...prev.nutritionPlan.macros,
+                            protein: parseInt(e.target.value) || 150,
+                          },
+                        },
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg dark:bg-slate-700 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Węglowodany (g)
+                  </label>
+                  <input
+                    type="number"
+                    min="100"
+                    max="500"
+                    value={formData.nutritionPlan.macros.carbs}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        nutritionPlan: {
+                          ...prev.nutritionPlan,
+                          macros: {
+                            ...prev.nutritionPlan.macros,
+                            carbs: parseInt(e.target.value) || 150,
+                          },
+                        },
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg dark:bg-slate-700 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Tłuszcze (g)
+                  </label>
+                  <input
+                    type="number"
+                    min="30"
+                    max="150"
+                    value={formData.nutritionPlan.macros.fats}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        nutritionPlan: {
+                          ...prev.nutritionPlan,
+                          macros: {
+                            ...prev.nutritionPlan.macros,
+                            fats: parseInt(e.target.value) || 67,
+                          },
+                        },
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg dark:bg-slate-700 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              {/* Nutrition Days */}
+              <div className="space-y-4">
+                {Object.entries(formData.nutritionPlan.mealPlan).map(
+                  ([dayNumber, dayMeals]) => (
+                    <div
+                      key={dayNumber}
+                      className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-600"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <h5 className="text-lg font-medium text-slate-900 dark:text-white">
+                          Dzień {dayNumber}
+                        </h5>
+                        <div className="flex items-center space-x-2">
+                          {Object.keys(formData.nutritionPlan.mealPlan).length >
+                            1 && (
+                            <button
+                              type="button"
+                              onClick={() => removeNutritionDay(dayNumber)}
+                              className="px-2 py-1 text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                            >
+                              Usuń dzień
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Meal Types */}
+                      {(
+                        ["breakfast", "lunch", "dinner", "snacks"] as const
+                      ).map((mealType) => (
+                        <div key={mealType} className="mb-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <h6 className="text-md font-medium text-slate-700 dark:text-slate-300 capitalize">
+                              {mealType === "breakfast"
+                                ? "Śniadanie"
+                                : mealType === "lunch"
+                                ? "Obiad"
+                                : mealType === "dinner"
+                                ? "Kolacja"
+                                : "Przekąski"}
+                            </h6>
+                            <button
+                              type="button"
+                              onClick={() => addMeal(dayNumber, mealType)}
+                              className="px-2 py-1 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                            >
+                              + Posiłek
+                            </button>
+                          </div>
+
+                          {/* Meals */}
+                          <div className="space-y-2">
+                            {dayMeals[mealType].map((meal, mealIndex) => (
+                              <div
+                                key={mealIndex}
+                                className="grid grid-cols-6 gap-2 items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"
+                              >
+                                <div className="col-span-2">
+                                  <input
+                                    type="text"
+                                    value={meal.name}
+                                    onChange={(e) =>
+                                      updateMeal(
+                                        dayNumber,
+                                        mealType,
+                                        mealIndex,
+                                        "name",
+                                        e.target.value
+                                      )
+                                    }
+                                    placeholder="Nazwa posiłku"
+                                    className="w-full px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded dark:bg-slate-600 dark:text-white"
+                                  />
+                                </div>
+                                <div>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={meal.calories}
+                                    onChange={(e) =>
+                                      updateMeal(
+                                        dayNumber,
+                                        mealType,
+                                        mealIndex,
+                                        "calories",
+                                        parseInt(e.target.value) || 0
+                                      )
+                                    }
+                                    placeholder="Kalorie"
+                                    className="w-full px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded dark:bg-slate-600 dark:text-white"
+                                  />
+                                </div>
+                                <div>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={meal.protein}
+                                    onChange={(e) =>
+                                      updateMeal(
+                                        dayNumber,
+                                        mealType,
+                                        mealIndex,
+                                        "protein",
+                                        parseInt(e.target.value) || 0
+                                      )
+                                    }
+                                    placeholder="Białko (g)"
+                                    className="w-full px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded dark:bg-slate-600 dark:text-white"
+                                  />
+                                </div>
+                                <div>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={meal.carbs}
+                                    onChange={(e) =>
+                                      updateMeal(
+                                        dayNumber,
+                                        mealType,
+                                        mealIndex,
+                                        "carbs",
+                                        parseInt(e.target.value) || 0
+                                      )
+                                    }
+                                    placeholder="Węglowodany (g)"
+                                    className="w-full px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded dark:bg-slate-600 dark:text-white"
+                                  />
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={meal.fats}
+                                    onChange={(e) =>
+                                      updateMeal(
+                                        dayNumber,
+                                        mealType,
+                                        mealIndex,
+                                        "fats",
+                                        parseInt(e.target.value) || 0
+                                      )
+                                    }
+                                    placeholder="Tłuszcze (g)"
+                                    className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded dark:bg-slate-600 dark:text-white"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      removeMeal(dayNumber, mealType, mealIndex)
+                                    }
+                                    className="px-2 py-1 text-sm bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                                  >
+                                    ×
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Meal Notes */}
+                          {dayMeals[mealType].length > 0 && (
+                            <div className="mt-2">
+                              <textarea
+                                value={dayMeals[mealType][0]?.notes || ""}
+                                onChange={(e) =>
+                                  updateMeal(
+                                    dayNumber,
+                                    mealType,
+                                    0,
+                                    "notes",
+                                    e.target.value
+                                  )
+                                }
+                                placeholder="Notatki do posiłków..."
+                                rows={1}
+                                className="w-full px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded dark:bg-slate-600 dark:text-white"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )
+                )}
               </div>
             </div>
           )}

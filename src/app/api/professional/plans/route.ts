@@ -279,6 +279,8 @@ export async function POST(request: NextRequest) {
             startDate: 1,
             endDate: 1,
             goals: 1,
+            trainingPlan: 1,
+            nutritionPlan: 1,
             "client._id": 1,
             "client.name": 1,
             "client.email": 1,
