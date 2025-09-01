@@ -1,8 +1,111 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 import { ClientProgress } from "./types";
 import { getProgressColor, getTypeColor } from "./utils";
+import ClientProgressView from "@/components/dashboard/ClientProgressView";
+import ClientNutritionView from "@/components/dashboard/ClientNutritionView";
+
+// Modal dla postępów klienta - używający komponentu
+function ClientProgressModal({
+  isOpen,
+  onClose,
+  client,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  client: ClientProgress | null;
+}) {
+  if (!isOpen || !client) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-slate-800 rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-2xl font-semibold text-slate-900 dark:text-white">
+            Postęp klienta: {client.name}
+          </h3>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        {/* Użyj komponentu ClientProgressView */}
+        <ClientProgressView
+          clientId={client.id}
+          clientName={client.name}
+          showHeader={false}
+        />
+      </div>
+    </div>
+  );
+}
+
+// Modal dla żywienia klienta - używający komponentu
+function ClientNutritionModal({
+  isOpen,
+  onClose,
+  client,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  client: ClientProgress | null;
+}) {
+  if (!isOpen || !client) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-slate-800 rounded-lg p-6 max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-2xl font-semibold text-slate-900 dark:text-white">
+            Żywienie klienta: {client.name}
+          </h3>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        {/* Użyj komponentu ClientNutritionView */}
+        <ClientNutritionView
+          clientId={client.id}
+          clientName={client.name}
+          showHeader={false}
+        />
+      </div>
+    </div>
+  );
+}
 
 export default function ClientProgressTable({
   rows,
@@ -10,6 +113,31 @@ export default function ClientProgressTable({
   rows: ClientProgress[];
 }) {
   const t = useTranslations("analytics");
+  const [selectedClient, setSelectedClient] = useState<ClientProgress | null>(
+    null
+  );
+  const [showProgressModal, setShowProgressModal] = useState(false);
+  const [showNutritionModal, setShowNutritionModal] = useState(false);
+
+  const handleClientProgressClick = (client: ClientProgress) => {
+    setSelectedClient(client);
+    setShowProgressModal(true);
+  };
+
+  const handleCloseProgressModal = () => {
+    setShowProgressModal(false);
+    setSelectedClient(null);
+  };
+
+  const handleClientNutritionClick = (client: ClientProgress) => {
+    setSelectedClient(client);
+    setShowNutritionModal(true);
+  };
+
+  const handleCloseNutritionModal = () => {
+    setShowNutritionModal(false);
+    setSelectedClient(null);
+  };
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
@@ -117,8 +245,8 @@ export default function ClientProgressTable({
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
-                    <a
-                      href={`/dashboard/progress?clientId=${client.id}`}
+                    <button
+                      onClick={() => handleClientProgressClick(client)}
                       className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
                       title="Zobacz postęp klienta"
                     >
@@ -135,9 +263,9 @@ export default function ClientProgressTable({
                           d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
                         />
                       </svg>
-                    </a>
-                    <a
-                      href={`/dashboard/nutrition?clientId=${client.id}`}
+                    </button>
+                    <button
+                      onClick={() => handleClientNutritionClick(client)}
                       className="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300"
                       title="Zobacz żywienie klienta"
                     >
@@ -154,7 +282,7 @@ export default function ClientProgressTable({
                           d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"
                         />
                       </svg>
-                    </a>
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -162,6 +290,18 @@ export default function ClientProgressTable({
           </tbody>
         </table>
       </div>
+
+      {/* Modale */}
+      <ClientProgressModal
+        isOpen={showProgressModal}
+        onClose={handleCloseProgressModal}
+        client={selectedClient}
+      />
+      <ClientNutritionModal
+        isOpen={showNutritionModal}
+        onClose={handleCloseNutritionModal}
+        client={selectedClient}
+      />
     </div>
   );
 }
