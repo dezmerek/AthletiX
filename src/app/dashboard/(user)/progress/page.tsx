@@ -32,60 +32,10 @@ interface Goal {
 
 export default function ProgressPage() {
   const t = useTranslations("Progress");
-  // Mock data - w prawdziwej aplikacji to będzie z API
-  const [weightEntries, setWeightEntries] = useState<WeightEntry[]>([
-    { id: "1", date: "2025-06-09", weight: 72.5 },
-    { id: "2", date: "2025-06-07", weight: 73.0 },
-    { id: "3", date: "2025-06-05", weight: 73.2 },
-  ]);
-  const [measurements, setMeasurements] = useState<Measurement[]>([
-    {
-      id: "1",
-      date: "2025-06-08",
-      chest: 96,
-      waist: 79,
-      hips: 99,
-      arms: 36,
-      thighs: 59,
-    },
-    {
-      id: "2",
-      date: "2025-06-01",
-      chest: 95,
-      waist: 80,
-      hips: 98,
-      arms: 35,
-      thighs: 58,
-    },
-    {
-      id: "3",
-      date: "2025-05-25",
-      chest: 94,
-      waist: 81,
-      hips: 97,
-      arms: 34,
-      thighs: 57,
-    },
-    {
-      id: "4",
-      date: "2025-05-18",
-      chest: 93,
-      waist: 82,
-      hips: 96,
-      arms: 34,
-      thighs: 56,
-    },
-    {
-      id: "5",
-      date: "2025-05-10",
-      chest: 92,
-      waist: 83,
-      hips: 95,
-      arms: 33,
-      thighs: 55,
-    },
-  ]);
 
+  // Stan dla danych postępów
+  const [weightEntries, setWeightEntries] = useState<WeightEntry[]>([]);
+  const [measurements, setMeasurements] = useState<Measurement[]>([]);
   const [goals] = useState<Goal[]>([
     {
       id: "1",
@@ -99,9 +49,9 @@ export default function ProgressPage() {
     {
       id: "2",
       type: "calorie",
-      title: "Dzienny cel kaloryczny",
+      title: "Dzienne kalorie",
       target: 2000,
-      current: 1850,
+      current: 1800,
       unit: "kcal",
       status: "inProgress",
     },
@@ -116,8 +66,230 @@ export default function ProgressPage() {
     },
   ]);
 
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  // Pobierz dane postępów z API
+  useEffect(() => {
+    fetchProgressData();
+  }, []);
+
+  // Automatycznie zapisz dane gdy stan się zmieni
+  useEffect(() => {
+    if (!loading) {
+      // Zapisz tylko jeśli nie jest to pierwsze ładowanie
+      const timer = setTimeout(() => {
+        if (weightEntries.length > 0 || measurements.length > 0) {
+          console.log("🔄 Auto-saving due to state change...");
+          saveProgressData();
+        }
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [weightEntries, measurements, loading]);
+
+  const fetchProgressData = async () => {
+    try {
+      setLoading(true);
+      console.log("🔄 Fetching progress data...");
+      const response = await fetch("/api/user/progress");
+      if (response.ok) {
+        const data = await response.json();
+        console.log("📥 Received data:", data);
+
+        // Sprawdź czy dane mają id
+        if (data.weightEntries) {
+          console.log(
+            "🔍 Weight entries IDs:",
+            data.weightEntries.map((entry: any) => entry.id)
+          );
+        }
+        if (data.measurements) {
+          console.log(
+            "🔍 Measurements IDs:",
+            data.measurements.map((measurement: any) => measurement.id)
+          );
+        }
+
+        // Upewnij się, że dane są tablicami i mają id
+        const validWeightEntries = Array.isArray(data.weightEntries)
+          ? data.weightEntries.filter((entry) => entry && entry.id)
+          : [];
+        const validMeasurements = Array.isArray(data.measurements)
+          ? data.measurements.filter(
+              (measurement) => measurement && measurement.id
+            )
+          : [];
+
+        setWeightEntries(validWeightEntries);
+        setMeasurements(validMeasurements);
+        console.log("✅ Set weightEntries:", validWeightEntries.length);
+        console.log("✅ Set measurements:", validMeasurements.length);
+      } else {
+        console.error("❌ Response not ok:", response.status);
+      }
+    } catch (error) {
+      console.error("❌ Error fetching progress data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Zapisz dane postępów do bazy
+  const saveProgressData = async () => {
+    try {
+      setSaving(true);
+
+      // Upewnij się, że wszystkie dane mają id
+      const cleanWeightEntries = weightEntries.filter(
+        (entry) => entry && entry.id
+      );
+      const cleanMeasurements = measurements.filter(
+        (measurement) => measurement && measurement.id
+      );
+      const cleanGoals = goals.filter((goal) => goal && goal.id);
+
+      const dataToSend = {
+        weightEntries: cleanWeightEntries,
+        measurements: cleanMeasurements,
+        goals: cleanGoals,
+      };
+
+      console.log("🚀 Sending data to API:", {
+        originalWeightEntriesCount: weightEntries.length,
+        originalMeasurementsCount: measurements.length,
+        originalGoalsCount: goals.length,
+        cleanWeightEntriesCount: cleanWeightEntries.length,
+        cleanMeasurementsCount: cleanMeasurements.length,
+        cleanGoalsCount: cleanGoals.length,
+        weightEntries: cleanWeightEntries,
+        measurements: cleanMeasurements,
+      });
+
+      const response = await fetch("/api/user/progress", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToSend),
+      });
+
+      if (response.ok) {
+        console.log("Progress data saved successfully");
+      } else {
+        console.error("Error saving progress data");
+      }
+    } catch (error) {
+      console.error("Error saving progress data:", error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Dodaj nowy wpis wagi
+  const addWeightEntry = (entry: WeightEntry) => {
+    const newEntry = {
+      ...entry,
+      id: Date.now().toString(),
+    };
+    const newWeightEntries = [newEntry, ...weightEntries];
+    setWeightEntries(newWeightEntries);
+
+    // Aktualizuj profil z nową wagą
+    updateProfileWeight(entry.weight);
+
+    // Stan zostanie automatycznie zapisany przez useEffect
+  };
+
+  // Aktualizuj wagę w profilu
+  const updateProfileWeight = async (newWeight: number) => {
+    try {
+      const response = await fetch("/api/user/profile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          weight: newWeight,
+        }),
+      });
+
+      if (response.ok) {
+        // Aktualizuj lokalny stan profilu
+        setProfileData((prev) => ({
+          ...prev,
+          currentWeight: newWeight,
+        }));
+        console.log("✅ Profile weight updated successfully");
+      }
+    } catch (error) {
+      console.error("Error updating profile weight:", error);
+    }
+  };
+
+  // Aktualizuj docelową wagę w profilu
+  const updateTargetWeight = async (newTargetWeight: number) => {
+    try {
+      const response = await fetch("/api/user/profile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          targetWeight: newTargetWeight,
+        }),
+      });
+
+      if (response.ok) {
+        // Aktualizuj lokalny stan profilu
+        setProfileData((prev) => ({
+          ...prev,
+          targetWeight: newTargetWeight,
+        }));
+        console.log("✅ Target weight updated successfully");
+        setShowTargetWeightModal(false);
+      }
+    } catch (error) {
+      console.error("Error updating target weight:", error);
+    }
+  };
+
+  // Usuń wpis wagi
+  const removeWeightEntry = (id: string) => {
+    const newWeightEntries = weightEntries.filter((entry) => entry.id !== id);
+    setWeightEntries(newWeightEntries);
+    // Stan zostanie automatycznie zapisany przez useEffect
+  };
+
+  // Dodaj nowy pomiar
+  const addMeasurement = (measurement: Measurement) => {
+    const newMeasurement = {
+      ...measurement,
+      id: Date.now().toString(),
+    };
+    console.log("➕ Adding new measurement:", newMeasurement);
+
+    const newMeasurements = [newMeasurement, ...measurements];
+    console.log("📏 New measurements array:", newMeasurements);
+
+    setMeasurements(newMeasurements);
+    // Stan zostanie automatycznie zapisany przez useEffect
+  };
+
+  // Usuń pomiar
+  const removeMeasurement = (id: string) => {
+    const newMeasurements = measurements.filter(
+      (measurement) => measurement.id !== id
+    );
+    setMeasurements(newMeasurements);
+    // Stan zostanie automatycznie zapisany przez useEffect
+  };
+
   const [showWeightModal, setShowWeightModal] = useState(false);
   const [showMeasurementModal, setShowMeasurementModal] = useState(false);
+  const [showTargetWeightModal, setShowTargetWeightModal] = useState(false);
+  const [newTargetWeight, setNewTargetWeight] = useState("");
   const [newWeightEntry, setNewWeightEntry] = useState({
     date: "",
     weight: "",
@@ -131,13 +303,48 @@ export default function ProgressPage() {
     thighs: "",
   });
 
+  // Stan dla danych profilu
+  const [profileData, setProfileData] = useState({
+    currentWeight: 0,
+    targetWeight: 0,
+  });
+
+  // Pobierz dane profilu
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const response = await fetch("/api/user/profile");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.profile) {
+            setProfileData({
+              currentWeight: data.profile.weight || 0,
+              targetWeight: data.profile.targetWeight || 0,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      }
+    };
+    fetchProfileData();
+  }, []);
+
   // Obliczenia statystyk
-  const currentWeight = weightEntries[0]?.weight || 0;
+  const currentWeight =
+    weightEntries[0]?.weight || profileData.currentWeight || 0;
   const previousWeight = weightEntries[1]?.weight || currentWeight;
   const weightChange = currentWeight - previousWeight;
-  const targetWeight = goals.find((g) => g.type === "weight")?.target || 70;
+  const targetWeight =
+    profileData.targetWeight ||
+    goals.find((g) => g.type === "weight")?.target ||
+    70;
   const totalProgress =
-    (Math.abs(75 - currentWeight) / Math.abs(75 - targetWeight)) * 100; // assuming starting weight was 75kg
+    profileData.targetWeight && profileData.currentWeight
+      ? (Math.abs(profileData.currentWeight - currentWeight) /
+          Math.abs(profileData.currentWeight - targetWeight)) *
+        100
+      : 0;
 
   useEffect(() => {
     // Set today's date as default
@@ -152,7 +359,7 @@ export default function ProgressPage() {
         date: newWeightEntry.date,
         weight: parseFloat(newWeightEntry.weight),
       };
-      setWeightEntries((prev) => [newEntry, ...prev]);
+      addWeightEntry(newEntry);
       setNewWeightEntry({ date: "", weight: "" });
       setShowWeightModal(false);
     }
@@ -175,7 +382,7 @@ export default function ProgressPage() {
           ? parseFloat(newMeasurement.thighs)
           : undefined,
       };
-      setMeasurements((prev) => [newMeas, ...prev]);
+      addMeasurement(newMeas);
       setNewMeasurement({
         date: "",
         chest: "",
@@ -188,17 +395,41 @@ export default function ProgressPage() {
     }
   };
 
+  const handleUpdateTargetWeight = () => {
+    if (newTargetWeight) {
+      updateTargetWeight(parseFloat(newTargetWeight));
+      setNewTargetWeight("");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white">
             {t("title")}
           </h1>
           <p className="text-slate-600 dark:text-slate-400 mt-2">
             {t("subtitle")}
           </p>
+          {saving && (
+            <div className="mt-2 text-sm text-blue-600 dark:text-blue-400">
+              💾 Zapisywanie danych...
+            </div>
+          )}
         </div>
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -241,7 +472,11 @@ export default function ProgressPage() {
               <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400">
                 {t("overview.targetWeight")}
               </h3>
-              <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+              <button
+                onClick={() => setShowTargetWeightModal(true)}
+                className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors"
+                title="Edytuj docelową wagę"
+              >
                 <svg
                   className="w-4 h-4 text-green-600 dark:text-green-400"
                   fill="none"
@@ -252,10 +487,10 @@ export default function ProgressPage() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.586a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                   />
                 </svg>
-              </div>
+              </button>
             </div>
             <div className="text-2xl font-bold text-slate-900 dark:text-white">
               {targetWeight} kg
@@ -358,26 +593,48 @@ export default function ProgressPage() {
 
             <div className="space-y-3">
               {weightEntries.length > 0 ? (
-                weightEntries.slice(0, 5).map((entry) => (
-                  <div
-                    key={entry.id}
-                    className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"
-                  >
-                    <div>
-                      <div className="font-medium text-slate-900 dark:text-white">
-                        {entry.weight} kg
+                weightEntries
+                  .filter((entry) => entry && entry.id) // Filtruj tylko elementy z id
+                  .slice(0, 5)
+                  .map((entry, index) => (
+                    <div
+                      key={entry.id || `weight-${index}`}
+                      className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"
+                    >
+                      <div>
+                        <div className="font-medium text-slate-900 dark:text-white">
+                          {entry.weight} kg
+                        </div>
+                        <div className="text-sm text-slate-500 dark:text-slate-400">
+                          {new Date(entry.date).toLocaleDateString("pl-PL")}
+                        </div>
                       </div>
-                      <div className="text-sm text-slate-500 dark:text-slate-400">
-                        {new Date(entry.date).toLocaleDateString("pl-PL")}
-                      </div>
+                      {entry.notes && (
+                        <div className="text-sm text-slate-600 dark:text-slate-300 italic">
+                          {entry.notes}
+                        </div>
+                      )}
+                      <button
+                        onClick={() => removeWeightEntry(entry.id)}
+                        className="text-red-500 hover:text-red-600 text-sm p-1"
+                        title="Usuń wpis"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      </button>
                     </div>
-                    {entry.notes && (
-                      <div className="text-sm text-slate-600 dark:text-slate-300 italic">
-                        {entry.notes}
-                      </div>
-                    )}
-                  </div>
-                ))
+                  ))
               ) : (
                 <div className="text-center py-8">
                   <div className="text-slate-400 dark:text-slate-500 mb-2">
@@ -425,68 +682,92 @@ export default function ProgressPage() {
 
             <div className="space-y-4">
               {measurements.length > 0 ? (
-                measurements.slice(0, 3).map((measurement) => (
-                  <div
-                    key={measurement.id}
-                    className="p-4 bg-slate-50 dark:bg-slate-700 rounded-lg"
-                  >
-                    <div className="text-sm text-slate-500 dark:text-slate-400 mb-3">
-                      {new Date(measurement.date).toLocaleDateString("pl-PL")}
+                measurements
+                  .filter((measurement) => measurement && measurement.id) // Filtruj tylko elementy z id
+                  .slice(0, 3)
+                  .map((measurement, index) => (
+                    <div
+                      key={measurement.id || `measurement-${index}`}
+                      className="p-4 bg-slate-50 dark:bg-slate-700 rounded-lg"
+                    >
+                      <div className="text-sm text-slate-500 dark:text-slate-400 mb-3">
+                        {new Date(measurement.date).toLocaleDateString("pl-PL")}
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+                        {measurement.chest && (
+                          <div>
+                            <span className="text-slate-600 dark:text-slate-400">
+                              {t("measurements.chest")}:
+                            </span>
+                            <span className="font-medium text-slate-900 dark:text-white ml-2">
+                              {measurement.chest} cm
+                            </span>
+                          </div>
+                        )}
+                        {measurement.waist && (
+                          <div>
+                            <span className="text-slate-600 dark:text-slate-400">
+                              {t("measurements.waist")}:
+                            </span>
+                            <span className="font-medium text-slate-900 dark:text-white ml-2">
+                              {measurement.waist} cm
+                            </span>
+                          </div>
+                        )}
+                        {measurement.hips && (
+                          <div>
+                            <span className="text-slate-600 dark:text-slate-400">
+                              {t("measurements.hips")}:
+                            </span>
+                            <span className="font-medium text-slate-900 dark:text-white ml-2">
+                              {measurement.hips} cm
+                            </span>
+                          </div>
+                        )}{" "}
+                        {measurement.arms && (
+                          <div>
+                            <span className="text-slate-600 dark:text-slate-400">
+                              {t("measurements.arms")}:
+                            </span>
+                            <span className="font-medium text-slate-900 dark:text-white ml-2">
+                              {measurement.arms} cm
+                            </span>
+                          </div>
+                        )}
+                        {measurement.thighs && (
+                          <div>
+                            <span className="text-slate-600 dark:text-slate-400">
+                              {t("measurements.thighs")}:
+                            </span>
+                            <span className="font-medium text-slate-900 dark:text-white ml-2">
+                              {measurement.thighs} cm
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex justify-end mt-3">
+                        <button
+                          onClick={() => removeMeasurement(measurement.id)}
+                          className="text-red-500 hover:text-red-600 text-sm p-1"
+                          title="Usuń pomiar"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
-                      {measurement.chest && (
-                        <div>
-                          <span className="text-slate-600 dark:text-slate-400">
-                            {t("measurements.chest")}:
-                          </span>
-                          <span className="font-medium text-slate-900 dark:text-white ml-2">
-                            {measurement.chest} cm
-                          </span>
-                        </div>
-                      )}
-                      {measurement.waist && (
-                        <div>
-                          <span className="text-slate-600 dark:text-slate-400">
-                            {t("measurements.waist")}:
-                          </span>
-                          <span className="font-medium text-slate-900 dark:text-white ml-2">
-                            {measurement.waist} cm
-                          </span>
-                        </div>
-                      )}
-                      {measurement.hips && (
-                        <div>
-                          <span className="text-slate-600 dark:text-slate-400">
-                            {t("measurements.hips")}:
-                          </span>
-                          <span className="font-medium text-slate-900 dark:text-white ml-2">
-                            {measurement.hips} cm
-                          </span>
-                        </div>
-                      )}{" "}
-                      {measurement.arms && (
-                        <div>
-                          <span className="text-slate-600 dark:text-slate-400">
-                            {t("measurements.arms")}:
-                          </span>
-                          <span className="font-medium text-slate-900 dark:text-white ml-2">
-                            {measurement.arms} cm
-                          </span>
-                        </div>
-                      )}
-                      {measurement.thighs && (
-                        <div>
-                          <span className="text-slate-600 dark:text-slate-400">
-                            {t("measurements.thighs")}:
-                          </span>
-                          <span className="font-medium text-slate-900 dark:text-white ml-2">
-                            {measurement.thighs} cm
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))
+                  ))
               ) : (
                 <div className="text-center py-8">
                   <div className="text-slate-400 dark:text-slate-500 mb-2">
@@ -525,52 +806,54 @@ export default function ProgressPage() {
               {t("goals.title")}
             </h2>
             <div className="space-y-4">
-              {goals.map((goal) => (
-                <div
-                  key={goal.id}
-                  className="p-4 bg-slate-50 dark:bg-slate-700 rounded-lg"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-medium text-slate-900 dark:text-white">
-                      {goal.title}
-                    </h3>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        goal.status === "achieved"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                          : goal.status === "inProgress"
-                          ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
-                          : "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400"
-                      }`}
-                    >
-                      {t(`goals.${goal.status}`)}
-                    </span>
+              {goals
+                .filter((goal) => goal && goal.id) // Filtruj tylko elementy z id
+                .map((goal, index) => (
+                  <div
+                    key={goal.id || `goal-${index}`}
+                    className="p-4 bg-slate-50 dark:bg-slate-700 rounded-lg"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-medium text-slate-900 dark:text-white">
+                        {goal.title}
+                      </h3>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          goal.status === "achieved"
+                            ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                            : goal.status === "inProgress"
+                            ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+                            : "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400"
+                        }`}
+                      >
+                        {t(`goals.${goal.status}`)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-slate-600 dark:text-slate-400">
+                        {goal.current} / {goal.target} {goal.unit}
+                      </span>
+                      <span className="font-medium text-slate-900 dark:text-white">
+                        {Math.round((goal.current / goal.target) * 100)}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-200 dark:bg-slate-600 rounded-full h-2 mt-2">
+                      <div
+                        className={`h-2 rounded-full transition-all duration-500 ${
+                          goal.status === "achieved"
+                            ? "bg-green-500"
+                            : "bg-blue-500"
+                        }`}
+                        style={{
+                          width: `${Math.min(
+                            (goal.current / goal.target) * 100,
+                            100
+                          )}%`,
+                        }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600 dark:text-slate-400">
-                      {goal.current} / {goal.target} {goal.unit}
-                    </span>
-                    <span className="font-medium text-slate-900 dark:text-white">
-                      {Math.round((goal.current / goal.target) * 100)}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-slate-200 dark:bg-slate-600 rounded-full h-2 mt-2">
-                    <div
-                      className={`h-2 rounded-full transition-all duration-500 ${
-                        goal.status === "achieved"
-                          ? "bg-green-500"
-                          : "bg-blue-500"
-                      }`}
-                      style={{
-                        width: `${Math.min(
-                          (goal.current / goal.target) * 100,
-                          100
-                        )}%`,
-                      }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>{" "}
           </div>
         </div>
@@ -758,6 +1041,45 @@ export default function ProgressPage() {
                 className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
               >
                 {t("weightTracking.save")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Target Weight Modal */}
+      {showTargetWeightModal && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+              Edytuj docelową wagę
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
+                  Docelowa waga (kg)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={newTargetWeight}
+                  onChange={(e) => setNewTargetWeight(e.target.value)}
+                  placeholder={targetWeight.toString()}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                />
+              </div>
+            </div>
+            <div className="flex space-x-3 mt-6">
+              <button
+                onClick={() => setShowTargetWeightModal(false)}
+                className="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+              >
+                Anuluj
+              </button>
+              <button
+                onClick={handleUpdateTargetWeight}
+                className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+              >
+                Zapisz
               </button>
             </div>
           </div>

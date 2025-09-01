@@ -40,6 +40,9 @@ export async function POST(request: NextRequest) {
 
     const profileData = await request.json();
 
+    // Log incoming data for debugging
+    console.log("Incoming profile data:", JSON.stringify(profileData, null, 2));
+
     // Validate data ranges only if fields are provided
     if (profileData.age && (profileData.age < 13 || profileData.age > 120)) {
       return NextResponse.json(
@@ -81,24 +84,41 @@ export async function POST(request: NextRequest) {
     const client = await clientPromise;
     const db = client.db();
 
-    // Upsert profile (update if exists, create if not)
-    const profile = await db.collection("userprofiles").findOneAndUpdate(
-      { userId: new ObjectId(session.user.id) },
-      {
-        $set: {
-          userId: new ObjectId(session.user.id),
-          ...profileData,
-          updatedAt: new Date(),
+    // Check if profile exists first
+    const existingProfile = await db.collection("userprofiles").findOne({
+      userId: new ObjectId(session.user.id),
+    });
+
+    let profile;
+
+    if (existingProfile) {
+      // Update existing profile - remove _id and other protected fields
+      const { _id, userId, createdAt, ...safeProfileData } = profileData;
+
+      profile = await db.collection("userprofiles").findOneAndUpdate(
+        { userId: new ObjectId(session.user.id) },
+        {
+          $set: {
+            ...safeProfileData,
+            updatedAt: new Date(),
+          },
         },
-        $setOnInsert: {
-          createdAt: new Date(),
-        },
-      },
-      {
-        upsert: true,
-        returnDocument: "after",
-      }
-    );
+        {
+          returnDocument: "after",
+        }
+      );
+    } else {
+      // Create new profile
+      const newProfile = {
+        userId: new ObjectId(session.user.id),
+        ...profileData,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      const result = await db.collection("userprofiles").insertOne(newProfile);
+      profile = { value: newProfile };
+    }
 
     return NextResponse.json({
       message: "Profile updated successfully",

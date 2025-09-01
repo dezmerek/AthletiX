@@ -33,29 +33,35 @@ export async function GET(
     }
 
     // Pobierz dane postępów klienta
-    const [workouts, weightHistory, measurements] = await Promise.all([
-      // Treningi
-      db
-        .collection("workouts")
-        .find({ userId: new ObjectId(clientId) })
-        .sort({ date: -1 })
-        .limit(10)
-        .toArray(),
+    const [workouts, weightHistory, measurements, currentProfile] =
+      await Promise.all([
+        // Treningi
+        db
+          .collection("workouts")
+          .find({ userId: new ObjectId(clientId) })
+          .sort({ date: -1 })
+          .limit(10)
+          .toArray(),
 
-      // Historia wag
-      db
-        .collection("userprofiles")
-        .find({ userId: new ObjectId(clientId) })
-        .project({ weightHistory: 1 })
-        .toArray(),
+        // Historia wag z userprogresses
+        db
+          .collection("userprogresses")
+          .find({ userId: new ObjectId(clientId) })
+          .project({ weightEntries: 1 })
+          .toArray(),
 
-      // Pomiary
-      db
-        .collection("userprofiles")
-        .find({ userId: new ObjectId(clientId) })
-        .project({ measurements: 1 })
-        .toArray(),
-    ]);
+        // Pomiary z userprogresses
+        db
+          .collection("userprogresses")
+          .find({ userId: new ObjectId(clientId) })
+          .project({ measurements: 1 })
+          .toArray(),
+
+        // Aktualny profil (waga, cel wagi)
+        db
+          .collection("userprofiles")
+          .findOne({ userId: new ObjectId(clientId) }),
+      ]);
 
     // Przetwórz dane treningów
     const processedWorkouts = workouts.map((workout) => ({
@@ -73,14 +79,24 @@ export async function GET(
       weight: number;
       notes?: string;
     }> = [];
-    if (weightHistory.length > 0 && weightHistory[0].weightHistory) {
-      processedWeightHistory = weightHistory[0].weightHistory
+
+    if (weightHistory.length > 0 && weightHistory[0].weightEntries) {
+      processedWeightHistory = weightHistory[0].weightEntries
         .slice(-10)
         .map((entry: any) => ({
           date: entry.date,
           weight: entry.weight,
           notes: entry.notes,
         }));
+    }
+
+    // Dodaj aktualną wagę z profilu jeśli nie ma w historii
+    if (currentProfile?.weight && processedWeightHistory.length === 0) {
+      processedWeightHistory.push({
+        date: new Date().toISOString().split("T")[0],
+        weight: currentProfile.weight,
+        notes: "Aktualna waga",
+      });
     }
 
     // Przetwórz pomiary
@@ -110,6 +126,8 @@ export async function GET(
       workouts: processedWorkouts,
       weightHistory: processedWeightHistory,
       measurements: processedMeasurements,
+      currentWeight: currentProfile?.weight || null,
+      targetWeight: currentProfile?.targetWeight || null,
     });
   } catch (error) {
     console.error("Error fetching client progress:", error);

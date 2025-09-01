@@ -196,6 +196,80 @@ export default function ProfilePage() {
     }
   };
 
+  // Funkcja do synchronizacji wagi z progress
+  const syncWeightToProgress = async (newWeight: number) => {
+    try {
+      console.log("🔄 Rozpoczynam synchronizację wagi z progress:", newWeight);
+
+      // Pobierz aktualne dane progress
+      const response = await fetch("/api/user/progress");
+      if (response.ok) {
+        const data = await response.json();
+        const currentWeightEntries = data.weightEntries || [];
+
+        console.log("📥 Pobrane dane progress:", {
+          weightEntriesCount: currentWeightEntries.length,
+          lastWeight: currentWeightEntries[0]?.weight,
+          newWeight: newWeight,
+        });
+
+        // Sprawdź czy waga się zmieniła
+        const lastWeight = currentWeightEntries[0]?.weight;
+        console.log("🔍 Porównanie wag:", {
+          lastWeight,
+          newWeight,
+          isDifferent: lastWeight !== newWeight,
+        });
+
+        if (lastWeight !== newWeight && newWeight > 0) {
+          // Dodaj nowy wpis wagi do progress
+          const newWeightEntry = {
+            id: Date.now().toString(),
+            weight: newWeight,
+            date: new Date().toISOString().split("T")[0],
+            notes: "Zaktualizowano z profilu",
+          };
+
+          console.log("📤 Wysyłam zaktualizowane dane do progress:", {
+            newWeightEntry,
+            totalWeightEntries: [newWeightEntry, ...currentWeightEntries]
+              .length,
+            measurementsCount: data.measurements?.length || 0,
+            goalsCount: data.goals?.length || 0,
+          });
+
+          // Wyślij zaktualizowane dane do progress
+          const updateResponse = await fetch("/api/user/progress", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              weightEntries: [newWeightEntry, ...currentWeightEntries],
+              measurements: data.measurements || [],
+              goals: data.goals || [],
+            }),
+          });
+
+          if (updateResponse.ok) {
+            console.log("✅ Waga zsynchronizowana z progress:", newWeight);
+          } else {
+            console.error("❌ Błąd synchronizacji wagi z progress");
+            const errorData = await updateResponse.json();
+            console.error("❌ Szczegóły błędu:", errorData);
+          }
+        } else {
+          console.log("ℹ️ Waga się nie zmieniła lub jest nieprawidłowa:", {
+            lastWeight,
+            newWeight,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error syncing weight to progress:", error);
+    }
+  };
+
   // Add useEffect that reacts to weight change and calorie goal changes
   useEffect(() => {
     if (profile.weight > 0) {
@@ -348,12 +422,20 @@ export default function ProfilePage() {
                       max="300"
                       step="0.1"
                       value={profile.weight}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const newWeight = parseFloat(e.target.value) || 0;
                         setProfile((prev) => ({
                           ...prev,
-                          weight: parseFloat(e.target.value) || 0,
-                        }))
-                      }
+                          weight: newWeight,
+                        }));
+                      }}
+                      onBlur={(e) => {
+                        const newWeight = parseFloat(e.target.value) || 0;
+                        // Synchronizuj z progress gdy użytkownik skończy wpisywać
+                        if (newWeight > 0) {
+                          syncWeightToProgress(newWeight);
+                        }
+                      }}
                       className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     />
                   </div>
