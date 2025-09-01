@@ -2,6 +2,23 @@
 
 import { useTranslations } from "next-intl";
 
+interface Exercise {
+  name: string;
+  sets: number;
+  reps: number;
+  weight?: number;
+  duration?: number;
+  restTime?: number;
+  notes?: string;
+}
+
+interface TrainingDay {
+  day: number;
+  name: string;
+  exercises: Exercise[];
+  notes?: string;
+}
+
 interface Plan {
   _id: string;
   name: string;
@@ -13,12 +30,62 @@ interface Plan {
   goals: {
     weight?: number;
     targetWeight?: number;
+    trainerTargetWeight?: string;
     strength?: string[];
     endurance?: string[];
     flexibility?: string[];
     nutrition?: string[];
   };
-  client: {
+  // Pola dla treningów - kompatybilne z ProfessionalPlan
+  trainingPlan?: {
+    duration?: number;
+    frequency?: number;
+    trainingDays?: TrainingDay[];
+    workouts?: {
+      day: number;
+      name: string;
+      exercises: {
+        name: string;
+        sets: number;
+        reps: number;
+        weight?: number;
+        duration?: number;
+        rest: number;
+        notes?: string;
+      }[];
+      notes?: string;
+    }[];
+  };
+  // Pola dla żywienia - kompatybilne z ProfessionalPlan
+  nutritionPlan?: {
+    dailyCalories: number;
+    macronutrients: {
+      protein: number;
+      carbs: number;
+      fats: number;
+    };
+    meals: {
+      day: number;
+      meals: {
+        type: "breakfast" | "lunch" | "dinner" | "snack";
+        name: string;
+        calories: number;
+        protein: number;
+        carbs: number;
+        fats: number;
+        ingredients?: string[];
+        notes?: string;
+      }[];
+    }[];
+  };
+  // Może być client lub professional
+  client?: {
+    _id: string;
+    name: string;
+    email: string;
+    image?: string;
+  };
+  professional?: {
     _id: string;
     name: string;
     email: string;
@@ -133,26 +200,26 @@ export default function PlanDetailsModal({
             </div>
           </div>
 
-          {/* Client Information */}
+          {/* Client/Professional Information */}
           <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-6">
             <h4 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
-              {t("clientInfo")}
+              {plan.client ? t("clientInfo") : "Informacje o trenerze"}
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h5 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
-                  {t("clientName")}
+                  {plan.client ? t("clientName") : "Nazwa trenera"}
                 </h5>
                 <p className="text-lg font-medium text-slate-900 dark:text-white">
-                  {plan.client.name}
+                  {plan.client?.name || plan.professional?.name}
                 </p>
                 <p className="text-slate-600 dark:text-slate-400">
-                  {plan.client.email}
+                  {plan.client?.email || plan.professional?.email}
                 </p>
               </div>
               <div>
                 <h5 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
-                  {t("clientType")}
+                  {plan.client ? t("clientType") : "Typ planu"}
                 </h5>
                 <p className="text-lg font-medium text-slate-900 dark:text-white">
                   {t(`types.${plan.type}`)}
@@ -258,6 +325,262 @@ export default function PlanDetailsModal({
             )}
           </div>
 
+          {/* Training Plan */}
+          {plan.trainingPlan &&
+            (plan.type === "training" || plan.type === "both") && (
+              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-6">
+                <h4 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+                  🏋️‍♂️ Plan treningowy
+                </h4>
+
+                {/* Training Plan Info */}
+                {(plan.trainingPlan.duration ||
+                  plan.trainingPlan.frequency) && (
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    {plan.trainingPlan.duration && (
+                      <div>
+                        <h5 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
+                          Czas trwania
+                        </h5>
+                        <p className="text-lg font-medium text-slate-900 dark:text-white">
+                          {plan.trainingPlan.duration} tygodni
+                        </p>
+                      </div>
+                    )}
+                    {plan.trainingPlan.frequency && (
+                      <div>
+                        <h5 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
+                          Treningi na tydzień
+                        </h5>
+                        <p className="text-lg font-medium text-slate-900 dark:text-white">
+                          {plan.trainingPlan.frequency} treningów
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Training Days/Workouts */}
+                <div className="space-y-4">
+                  {/* Nowa struktura workouts */}
+                  {plan.trainingPlan.workouts &&
+                    plan.trainingPlan.workouts.map((workout, workoutIndex) => (
+                      <div
+                        key={workoutIndex}
+                        className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-600"
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <h5 className="text-lg font-medium text-slate-900 dark:text-white">
+                            {workout.name}
+                          </h5>
+                          <span className="text-sm text-slate-500 dark:text-slate-400">
+                            Dzień {workout.day}
+                          </span>
+                        </div>
+
+                        {/* Exercises */}
+                        <div className="space-y-3">
+                          {workout.exercises.map((exercise, exerciseIndex) => (
+                            <div
+                              key={exerciseIndex}
+                              className="grid grid-cols-5 gap-3 p-3 bg-slate-50 dark:bg-slate-700 rounded-lg text-sm"
+                            >
+                              <div className="col-span-2">
+                                <span className="font-medium text-slate-900 dark:text-white">
+                                  {exercise.name}
+                                </span>
+                              </div>
+                              <div className="text-center">
+                                <span className="text-slate-600 dark:text-slate-400">
+                                  {exercise.sets} serii
+                                </span>
+                              </div>
+                              <div className="text-center">
+                                <span className="text-slate-600 dark:text-slate-400">
+                                  {exercise.reps} powtórzeń
+                                </span>
+                              </div>
+                              <div className="text-center">
+                                <span className="text-slate-600 dark:text-slate-400">
+                                  {exercise.weight
+                                    ? `${exercise.weight}kg`
+                                    : "—"}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Workout Notes */}
+                        {workout.notes && (
+                          <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                            <p className="text-sm text-blue-700 dark:text-blue-300">
+                              <strong>Notatki:</strong> {workout.notes}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+
+                  {/* Stara struktura trainingDays */}
+                  {plan.trainingPlan.trainingDays &&
+                    plan.trainingPlan.trainingDays.map((day, dayIndex) => (
+                      <div
+                        key={dayIndex}
+                        className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-600"
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <h5 className="text-lg font-medium text-slate-900 dark:text-white">
+                            {day.name}
+                          </h5>
+                          <span className="text-sm text-slate-500 dark:text-slate-400">
+                            Dzień {day.day}
+                          </span>
+                        </div>
+
+                        {/* Exercises */}
+                        <div className="space-y-3">
+                          {day.exercises.map((exercise, exerciseIndex) => (
+                            <div
+                              key={exerciseIndex}
+                              className="grid grid-cols-5 gap-3 p-3 bg-slate-50 dark:bg-slate-700 rounded-lg text-sm"
+                            >
+                              <div className="col-span-2">
+                                <span className="font-medium text-slate-900 dark:text-white">
+                                  {exercise.name}
+                                </span>
+                              </div>
+                              <div className="text-center">
+                                <span className="text-slate-600 dark:text-slate-400">
+                                  {exercise.sets} serii
+                                </span>
+                              </div>
+                              <div className="text-center">
+                                <span className="text-slate-600 dark:text-slate-400">
+                                  {exercise.reps} powtórzeń
+                                </span>
+                              </div>
+                              <div className="text-center">
+                                <span className="text-slate-600 dark:text-slate-400">
+                                  {exercise.weight
+                                    ? `${exercise.weight}kg`
+                                    : "—"}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Day Notes */}
+                        {day.notes && (
+                          <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                            <p className="text-sm text-blue-700 dark:text-blue-300">
+                              <strong>Notatki:</strong> {day.notes}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+
+          {/* Nutrition Plan */}
+          {plan.nutritionPlan &&
+            (plan.type === "nutrition" || plan.type === "both") && (
+              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-6">
+                <h4 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+                  🍎 Plan żywieniowy
+                </h4>
+
+                {/* Daily Calories */}
+                <div className="mb-6">
+                  <h5 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">
+                    Dzienne zapotrzebowanie kaloryczne
+                  </h5>
+                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                    {plan.nutritionPlan.dailyCalories} kcal/dzień
+                  </p>
+                </div>
+
+                {/* Macronutrients */}
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                  <div className="text-center">
+                    <h6 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
+                      Białko
+                    </h6>
+                    <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                      {plan.nutritionPlan.macronutrients.protein}g
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <h6 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
+                      Węglowodany
+                    </h6>
+                    <p className="text-lg font-semibold text-orange-600 dark:text-orange-400">
+                      {plan.nutritionPlan.macronutrients.carbs}g
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <h6 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
+                      Tłuszcze
+                    </h6>
+                    <p className="text-lg font-semibold text-yellow-600 dark:text-yellow-400">
+                      {plan.nutritionPlan.macronutrients.fats}g
+                    </p>
+                  </div>
+                </div>
+
+                {/* Daily Meals */}
+                {plan.nutritionPlan.meals &&
+                  plan.nutritionPlan.meals.length > 0 && (
+                    <div>
+                      <h5 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
+                        Plan posiłków
+                      </h5>
+                      <div className="space-y-3">
+                        {plan.nutritionPlan.meals.map((dayMeals, dayIndex) => (
+                          <div
+                            key={dayIndex}
+                            className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-600"
+                          >
+                            <h6 className="font-medium text-slate-900 dark:text-white mb-2">
+                              Dzień {dayMeals.day}
+                            </h6>
+                            <div className="space-y-2">
+                              {dayMeals.meals.map((meal, mealIndex) => (
+                                <div
+                                  key={mealIndex}
+                                  className="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-700 rounded"
+                                >
+                                  <div className="flex items-center space-x-2">
+                                    <span className="text-xs px-2 py-1 rounded-full bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300">
+                                      {meal.type === "breakfast"
+                                        ? "Śniadanie"
+                                        : meal.type === "lunch"
+                                        ? "Obiad"
+                                        : meal.type === "dinner"
+                                        ? "Kolacja"
+                                        : "Przekąska"}
+                                    </span>
+                                    <span className="text-sm font-medium text-slate-900 dark:text-white">
+                                      {meal.name}
+                                    </span>
+                                  </div>
+                                  <span className="text-sm text-slate-600 dark:text-slate-400">
+                                    {meal.calories} kcal
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+              </div>
+            )}
+
           {/* Current Progress */}
           {plan.clientProfile && (
             <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-6">
@@ -328,4 +651,3 @@ export default function PlanDetailsModal({
     </div>
   );
 }
-

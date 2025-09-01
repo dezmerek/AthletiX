@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import EditWorkoutModal from "./EditWorkoutModal";
 import PlanWorkoutModal from "./PlanWorkoutModal";
+import PlanDetailsModal from "@/components/modals/PlanDetailsModal";
 
 interface Exercise {
   id: string;
@@ -119,8 +120,12 @@ export default function WorkoutsPage() {
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showPlanDetailsModal, setShowPlanDetailsModal] = useState(false);
 
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<ProfessionalPlan | null>(
+    null
+  );
   const [activeTab, setActiveTab] = useState<
     "recent" | "planned" | "templates" | "plans"
   >("recent");
@@ -304,6 +309,11 @@ export default function WorkoutsPage() {
       // eslint-disable-next-line no-console
       console.error(e);
     }
+  };
+
+  const handleViewPlan = (plan: ProfessionalPlan) => {
+    setSelectedPlan(plan);
+    setShowPlanDetailsModal(true);
   };
 
   const handleConvertPlanToWorkouts = async (plan: ProfessionalPlan) => {
@@ -1354,31 +1364,62 @@ export default function WorkoutsPage() {
                       )}
                     </div>
 
-                    {plan.trainingPlan && plan.trainingPlan.workouts && (
-                      <div className="mb-4">
-                        <div className="text-sm text-slate-600 dark:text-slate-400 mb-2">
-                          Treningi ({plan.trainingPlan.workouts.length}):
-                        </div>
-                        <div className="space-y-1">
-                          {plan.trainingPlan.workouts
-                            .slice(0, 3)
-                            .map((workout, index) => (
-                              <div
-                                key={index}
-                                className="text-sm text-slate-700 dark:text-slate-300"
-                              >
-                                • {workout.name} ({workout.exercises.length}{" "}
-                                ćwiczeń)
+                    {plan.trainingPlan &&
+                      (plan.trainingPlan.workouts ||
+                        plan.trainingPlan.trainingDays) && (
+                        <div className="mb-4">
+                          <div className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                            Treningi (
+                            {(
+                              plan.trainingPlan.workouts ||
+                              plan.trainingPlan.trainingDays
+                            )?.length || 0}
+                            ):
+                          </div>
+                          <div className="space-y-1">
+                            {/* Show workouts if they exist */}
+                            {plan.trainingPlan.workouts &&
+                              plan.trainingPlan.workouts
+                                .slice(0, 3)
+                                .map((workout, index) => (
+                                  <div
+                                    key={index}
+                                    className="text-sm text-slate-700 dark:text-slate-300"
+                                  >
+                                    • {workout.name} ({workout.exercises.length}{" "}
+                                    ćwiczeń)
+                                  </div>
+                                ))}
+                            {/* Show trainingDays if they exist */}
+                            {plan.trainingPlan.trainingDays &&
+                              plan.trainingPlan.trainingDays
+                                .slice(0, 3)
+                                .map((day, index) => (
+                                  <div
+                                    key={index}
+                                    className="text-sm text-slate-700 dark:text-slate-300"
+                                  >
+                                    • {day.name} ({day.exercises.length}{" "}
+                                    ćwiczeń)
+                                  </div>
+                                ))}
+                            {((plan.trainingPlan.workouts &&
+                              plan.trainingPlan.workouts.length > 3) ||
+                              (plan.trainingPlan.trainingDays &&
+                                plan.trainingPlan.trainingDays.length > 3)) && (
+                              <div className="text-sm text-slate-500 dark:text-slate-400">
+                                +
+                                {Math.max(
+                                  (plan.trainingPlan.workouts?.length || 0) - 3,
+                                  (plan.trainingPlan.trainingDays?.length ||
+                                    0) - 3
+                                )}{" "}
+                                więcej...
                               </div>
-                            ))}
-                          {plan.trainingPlan.workouts.length > 3 && (
-                            <div className="text-sm text-slate-500 dark:text-slate-400">
-                              +{plan.trainingPlan.workouts.length - 3} więcej...
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
 
                     {plan.nutritionPlan && (
                       <div className="mb-4">
@@ -1392,21 +1433,18 @@ export default function WorkoutsPage() {
                     )}
 
                     <div className="flex space-x-2">
-                      {plan.trainingPlan && plan.trainingPlan.workouts && (
-                        <button
-                          onClick={() => handleConvertPlanToWorkouts(plan)}
-                          className="flex-1 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors font-medium text-sm"
-                        >
-                          Konwertuj na treningi
-                        </button>
-                      )}
+                      {plan.trainingPlan &&
+                        (plan.trainingPlan.workouts ||
+                          plan.trainingPlan.trainingDays) && (
+                          <button
+                            onClick={() => handleConvertPlanToWorkouts(plan)}
+                            className="flex-1 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors font-medium text-sm"
+                          >
+                            Konwertuj na treningi
+                          </button>
+                        )}
                       <button
-                        onClick={() => {
-                          // TODO: Implement plan details view
-                          alert(
-                            "Funkcja podglądu planu będzie dostępna wkrótce"
-                          );
-                        }}
+                        onClick={() => handleViewPlan(plan)}
                         className="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg transition-colors font-medium text-sm"
                       >
                         Zobacz
@@ -1480,6 +1518,15 @@ export default function WorkoutsPage() {
           }}
           workout={editingWorkout}
           onUpdate={handleUpdateWorkout}
+        />
+        {/* Plan Details Modal */}
+        <PlanDetailsModal
+          isOpen={showPlanDetailsModal}
+          onClose={() => {
+            setShowPlanDetailsModal(false);
+            setSelectedPlan(null);
+          }}
+          plan={selectedPlan}
         />
       </div>
     </div>

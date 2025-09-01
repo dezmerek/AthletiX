@@ -3,6 +3,23 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 
+interface Exercise {
+  name: string;
+  sets: number;
+  reps: number;
+  weight?: number;
+  duration?: number;
+  restTime?: number;
+  notes?: string;
+}
+
+interface TrainingDay {
+  day: number;
+  name: string;
+  exercises: Exercise[];
+  notes?: string;
+}
+
 interface Plan {
   _id: string;
   name: string;
@@ -18,6 +35,12 @@ interface Plan {
     endurance?: string[];
     flexibility?: string[];
     nutrition?: string[];
+  };
+  // Nowe pola dla treningów
+  trainingPlan?: {
+    duration: number;
+    frequency: number;
+    trainingDays: TrainingDay[];
   };
   client: {
     _id: string;
@@ -61,6 +84,60 @@ export default function EditPlanModal({
       flexibility: [""],
       nutrition: [""],
     },
+    trainingPlan: {
+      duration: 4,
+      frequency: 3,
+      trainingDays: [
+        {
+          day: 1,
+          name: "Trening A",
+          exercises: [
+            { name: "Przysiady", sets: 3, reps: 10, weight: 0, restTime: 90 },
+            {
+              name: "Wyciskanie na ławce",
+              sets: 3,
+              reps: 10,
+              weight: 0,
+              restTime: 90,
+            },
+            { name: "Martwy ciąg", sets: 3, reps: 8, weight: 0, restTime: 120 },
+          ],
+          notes: "",
+        },
+        {
+          day: 2,
+          name: "Trening B",
+          exercises: [
+            { name: "Wiosłowanie", sets: 3, reps: 12, weight: 0, restTime: 90 },
+            {
+              name: "Przysiady bułgarskie",
+              sets: 3,
+              reps: 10,
+              weight: 0,
+              restTime: 90,
+            },
+            { name: "Pompki", sets: 3, reps: 15, weight: 0, restTime: 60 },
+          ],
+          notes: "",
+        },
+        {
+          day: 3,
+          name: "Trening C",
+          exercises: [
+            { name: "Przysiady", sets: 3, reps: 8, weight: 0, restTime: 90 },
+            {
+              name: "Wyciskanie żołnierskie",
+              sets: 3,
+              reps: 10,
+              weight: 0,
+              restTime: 90,
+            },
+            { name: "Podciąganie", sets: 3, reps: 8, weight: 0, restTime: 90 },
+          ],
+          notes: "",
+        },
+      ],
+    },
   });
 
   // Aktualizuj formularz gdy plan się zmienia
@@ -81,9 +158,208 @@ export default function EditPlanModal({
             : [""],
           nutrition: plan.goals.nutrition?.length ? plan.goals.nutrition : [""],
         },
+        trainingPlan: plan.trainingPlan || {
+          duration: 4,
+          frequency: 3,
+          trainingDays: [
+            {
+              day: 1,
+              name: "Trening A",
+              exercises: [
+                {
+                  name: "Przysiady",
+                  sets: 3,
+                  reps: 10,
+                  weight: 0,
+                  restTime: 90,
+                },
+                {
+                  name: "Wyciskanie na ławce",
+                  sets: 3,
+                  reps: 10,
+                  weight: 0,
+                  restTime: 90,
+                },
+                {
+                  name: "Martwy ciąg",
+                  sets: 3,
+                  reps: 8,
+                  weight: 0,
+                  restTime: 120,
+                },
+              ],
+              notes: "",
+            },
+            {
+              day: 2,
+              name: "Trening B",
+              exercises: [
+                {
+                  name: "Wiosłowanie",
+                  sets: 3,
+                  reps: 12,
+                  weight: 0,
+                  restTime: 90,
+                },
+                {
+                  name: "Przysiady bułgarskie",
+                  sets: 3,
+                  reps: 10,
+                  weight: 0,
+                  restTime: 90,
+                },
+                { name: "Pompki", sets: 3, reps: 15, weight: 0, restTime: 60 },
+              ],
+              notes: "",
+            },
+            {
+              day: 3,
+              name: "Trening C",
+              exercises: [
+                {
+                  name: "Przysiady",
+                  sets: 3,
+                  reps: 8,
+                  weight: 0,
+                  restTime: 90,
+                },
+                {
+                  name: "Wyciskanie żołnierskie",
+                  sets: 3,
+                  reps: 10,
+                  weight: 0,
+                  restTime: 90,
+                },
+                {
+                  name: "Podciąganie",
+                  sets: 3,
+                  reps: 8,
+                  weight: 0,
+                  restTime: 90,
+                },
+              ],
+              notes: "",
+            },
+          ],
+        },
       });
     }
   }, [plan]);
+
+  // Funkcje do zarządzania ćwiczeniami
+  const addExercise = (dayIndex: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      trainingPlan: {
+        ...prev.trainingPlan,
+        trainingDays: prev.trainingPlan.trainingDays.map((day, index) =>
+          index === dayIndex
+            ? {
+                ...day,
+                exercises: [
+                  ...day.exercises,
+                  {
+                    name: "",
+                    sets: 3,
+                    reps: 10,
+                    weight: 0,
+                    restTime: 60,
+                    notes: "",
+                  },
+                ],
+              }
+            : day
+        ),
+      },
+    }));
+  };
+
+  const removeExercise = (dayIndex: number, exerciseIndex: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      trainingPlan: {
+        ...prev.trainingPlan,
+        trainingDays: prev.trainingPlan.trainingDays.map((day, index) =>
+          index === dayIndex
+            ? {
+                ...day,
+                exercises: day.exercises.filter(
+                  (_, exIndex) => exIndex !== exerciseIndex
+                ),
+              }
+            : day
+        ),
+      },
+    }));
+  };
+
+  const updateExercise = (
+    dayIndex: number,
+    exerciseIndex: number,
+    field: keyof Exercise,
+    value: any
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      trainingPlan: {
+        ...prev.trainingPlan,
+        trainingDays: prev.trainingPlan.trainingDays.map((day, index) =>
+          index === dayIndex
+            ? {
+                ...day,
+                exercises: day.exercises.map((exercise, exIndex) =>
+                  exIndex === exerciseIndex
+                    ? { ...exercise, [field]: value }
+                    : exercise
+                ),
+              }
+            : day
+        ),
+      },
+    }));
+  };
+
+  const addTrainingDay = () => {
+    const newDayNumber = formData.trainingPlan.trainingDays.length + 1;
+    setFormData((prev) => ({
+      ...prev,
+      trainingPlan: {
+        ...prev.trainingPlan,
+        trainingDays: [
+          ...prev.trainingPlan.trainingDays,
+          {
+            day: newDayNumber,
+            name: `Trening ${String.fromCharCode(64 + newDayNumber)}`,
+            exercises: [
+              {
+                name: "",
+                sets: 3,
+                reps: 10,
+                weight: 0,
+                restTime: 60,
+                notes: "",
+              },
+            ],
+            notes: "",
+          },
+        ],
+      },
+    }));
+  };
+
+  const removeTrainingDay = (dayIndex: number) => {
+    if (formData.trainingPlan.trainingDays.length > 1) {
+      setFormData((prev) => ({
+        ...prev,
+        trainingPlan: {
+          ...prev.trainingPlan,
+          trainingDays: prev.trainingPlan.trainingDays.filter(
+            (_, index) => index !== dayIndex
+          ),
+        },
+      }));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,6 +384,7 @@ export default function EditPlanModal({
             weight: plan.clientProfile?.weight || undefined,
             targetWeight: plan.clientProfile?.targetWeight || undefined,
           },
+          trainingPlan: formData.trainingPlan,
         }),
       });
 
@@ -334,6 +611,255 @@ export default function EditPlanModal({
               className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg dark:bg-slate-700 dark:text-white"
             />
           </div>
+
+          {/* Training Plan Section */}
+          {(formData.type === "training" || formData.type === "both") && (
+            <div className="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-lg font-medium text-slate-900 dark:text-white">
+                  🏋️‍♂️ Plan treningowy
+                </h4>
+                <button
+                  type="button"
+                  onClick={addTrainingDay}
+                  className="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                >
+                  + Dodaj dzień treningowy
+                </button>
+              </div>
+
+              {/* Training Plan Settings */}
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Czas trwania (tygodnie)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="12"
+                    value={formData.trainingPlan.duration}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        trainingPlan: {
+                          ...prev.trainingPlan,
+                          duration: parseInt(e.target.value) || 4,
+                        },
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg dark:bg-slate-700 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Treningi na tydzień
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="7"
+                    value={formData.trainingPlan.frequency}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        trainingPlan: {
+                          ...prev.trainingPlan,
+                          frequency: parseInt(e.target.value) || 3,
+                        },
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg dark:bg-slate-700 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              {/* Training Days */}
+              <div className="space-y-4">
+                {formData.trainingPlan.trainingDays.map((day, dayIndex) => (
+                  <div
+                    key={dayIndex}
+                    className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-600"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="text"
+                          value={day.name}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              trainingPlan: {
+                                ...prev.trainingPlan,
+                                trainingDays:
+                                  prev.trainingPlan.trainingDays.map(
+                                    (d, index) =>
+                                      index === dayIndex
+                                        ? { ...d, name: e.target.value }
+                                        : d
+                                  ),
+                              },
+                            }))
+                          }
+                          className="text-lg font-medium text-slate-900 dark:text-white bg-transparent border-b border-transparent hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 focus:outline-none px-2 py-1"
+                        />
+                        <span className="text-sm text-slate-500 dark:text-slate-400">
+                          Dzień {day.day}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          type="button"
+                          onClick={() => addExercise(dayIndex)}
+                          className="px-2 py-1 text-sm bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                        >
+                          + Ćwiczenie
+                        </button>
+                        {formData.trainingPlan.trainingDays.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeTrainingDay(dayIndex)}
+                            className="px-2 py-1 text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                          >
+                            Usuń dzień
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Exercises */}
+                    <div className="space-y-3">
+                      {day.exercises.map((exercise, exerciseIndex) => (
+                        <div
+                          key={exerciseIndex}
+                          className="grid grid-cols-6 gap-2 items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"
+                        >
+                          <div className="col-span-2">
+                            <input
+                              type="text"
+                              value={exercise.name}
+                              onChange={(e) =>
+                                updateExercise(
+                                  dayIndex,
+                                  exerciseIndex,
+                                  "name",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Nazwa ćwiczenia"
+                              className="w-full px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded dark:bg-slate-600 dark:text-white"
+                            />
+                          </div>
+                          <div>
+                            <input
+                              type="number"
+                              min="1"
+                              value={exercise.sets}
+                              onChange={(e) =>
+                                updateExercise(
+                                  dayIndex,
+                                  exerciseIndex,
+                                  "sets",
+                                  parseInt(e.target.value) || 1
+                                )
+                              }
+                              placeholder="Seria"
+                              className="w-full px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded dark:bg-slate-600 dark:text-white"
+                            />
+                          </div>
+                          <div>
+                            <input
+                              type="number"
+                              min="1"
+                              value={exercise.reps}
+                              onChange={(e) =>
+                                updateExercise(
+                                  dayIndex,
+                                  exerciseIndex,
+                                  "reps",
+                                  parseInt(e.target.value) || 1
+                                )
+                              }
+                              placeholder="Powtórzenia"
+                              className="w-full px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded dark:bg-slate-600 dark:text-white"
+                            />
+                          </div>
+                          <div>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.5"
+                              value={exercise.weight}
+                              onChange={(e) =>
+                                updateExercise(
+                                  dayIndex,
+                                  exerciseIndex,
+                                  "weight",
+                                  parseFloat(e.target.value) || 0
+                                )
+                              }
+                              placeholder="Waga (kg)"
+                              className="w-full px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded dark:bg-slate-600 dark:text-white"
+                            />
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="number"
+                              min="0"
+                              value={exercise.restTime}
+                              onChange={(e) =>
+                                updateExercise(
+                                  dayIndex,
+                                  exerciseIndex,
+                                  "restTime",
+                                  parseInt(e.target.value) || 0
+                                )
+                              }
+                              placeholder="Odpoczynek (s)"
+                              className="w-20 px-2 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded dark:bg-slate-600 dark:text-white"
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                removeExercise(dayIndex, exerciseIndex)
+                              }
+                              className="px-2 py-1 text-sm bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Day Notes */}
+                    <div className="mt-3">
+                      <textarea
+                        value={day.notes}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            trainingPlan: {
+                              ...prev.trainingPlan,
+                              trainingDays: prev.trainingPlan.trainingDays.map(
+                                (d, index) =>
+                                  index === dayIndex
+                                    ? { ...d, notes: e.target.value }
+                                    : d
+                              ),
+                            },
+                          }))
+                        }
+                        placeholder="Notatki do tego dnia treningowego..."
+                        rows={2}
+                        className="w-full px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg dark:bg-slate-700 dark:text-white"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Other Goals */}
           {["strength", "endurance", "flexibility", "nutrition"].map(

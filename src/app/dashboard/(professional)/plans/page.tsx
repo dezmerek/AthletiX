@@ -7,6 +7,23 @@ import EditPlanModal from "@/components/modals/EditPlanModal";
 import PlanDetailsModal from "@/components/modals/PlanDetailsModal";
 import DeletePlanModal from "@/components/modals/DeletePlanModal";
 
+interface Exercise {
+  name: string;
+  sets: number;
+  reps: number;
+  weight?: number;
+  duration?: number;
+  restTime?: number;
+  notes?: string;
+}
+
+interface TrainingDay {
+  day: number;
+  name: string;
+  exercises: Exercise[];
+  notes?: string;
+}
+
 interface Plan {
   _id: string;
   name: string;
@@ -23,6 +40,12 @@ interface Plan {
     endurance?: string[];
     flexibility?: string[];
     nutrition?: string[];
+  };
+  // Nowe pola dla treningów
+  trainingPlan?: {
+    duration: number; // liczba tygodni
+    frequency: number; // treningi na tydzień
+    trainingDays: TrainingDay[];
   };
   client: {
     _id: string;

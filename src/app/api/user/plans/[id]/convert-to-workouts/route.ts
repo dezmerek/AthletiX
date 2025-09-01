@@ -40,9 +40,23 @@ export async function POST(request: NextRequest, { params }: Params) {
       );
     }
 
-    if (!plan.trainingPlan || !plan.trainingPlan.workouts) {
+    if (!plan.trainingPlan) {
       return NextResponse.json(
-        { error: "Plan has no training workouts" },
+        { error: "Plan has no training plan" },
+        { status: 400 }
+      );
+    }
+
+    // Check if plan has workouts (old structure) or trainingDays (new structure)
+    const hasWorkouts =
+      plan.trainingPlan.workouts && plan.trainingPlan.workouts.length > 0;
+    const hasTrainingDays =
+      plan.trainingPlan.trainingDays &&
+      plan.trainingPlan.trainingDays.length > 0;
+
+    if (!hasWorkouts && !hasTrainingDays) {
+      return NextResponse.json(
+        { error: "Plan has no training workouts or training days" },
         { status: 400 }
       );
     }
@@ -51,48 +65,98 @@ export async function POST(request: NextRequest, { params }: Params) {
     const workouts = [];
     const startDate = new Date(plan.startDate);
 
-    for (const planWorkout of plan.trainingPlan.workouts) {
-      // Calculate the date for this workout (day of week)
-      const workoutDate = new Date(startDate);
-      const dayOffset = planWorkout.day - 1; // Convert 1-7 to 0-6
-      workoutDate.setDate(startDate.getDate() + dayOffset);
+    // Handle new structure (trainingDays)
+    if (hasTrainingDays) {
+      for (const trainingDay of plan.trainingPlan.trainingDays) {
+        // Calculate the date for this workout (day of week)
+        const workoutDate = new Date(startDate);
+        const dayOffset = trainingDay.day - 1; // Convert 1-7 to 0-6
+        workoutDate.setDate(startDate.getDate() + dayOffset);
 
-      // Convert exercises
-      const exercises = planWorkout.exercises.map((exercise: any) => ({
-        name: exercise.name,
-        sets: exercise.sets,
-        reps: exercise.reps,
-        weight: exercise.weight || 0,
-        duration: exercise.duration || 0,
-        restTime: exercise.rest * 60, // Convert minutes to seconds
-        notes: exercise.notes || "",
-      }));
+        // Convert exercises
+        const exercises = trainingDay.exercises.map((exercise: any) => ({
+          name: exercise.name,
+          sets: exercise.sets,
+          reps: exercise.reps,
+          weight: exercise.weight || 0,
+          duration: exercise.duration || 0,
+          restTime: exercise.restTime || 60, // Use restTime in seconds
+          notes: exercise.notes || "",
+        }));
 
-      // Calculate estimated duration
-      const estimatedDuration = exercises.reduce(
-        (total: number, exercise: any) => {
-          const exerciseTime =
-            exercise.sets * exercise.reps * 3 +
-            (exercise.sets * exercise.restTime) / 60;
-          return total + exerciseTime;
-        },
-        0
-      );
+        // Calculate estimated duration
+        const estimatedDuration = exercises.reduce(
+          (total: number, exercise: any) => {
+            const exerciseTime =
+              exercise.sets * exercise.reps * 3 +
+              (exercise.sets * exercise.restTime) / 60;
+            return total + exerciseTime;
+          },
+          0
+        );
 
-      const workout = {
-        userId: new ObjectId(session.user.id),
-        name: `${plan.name} - ${planWorkout.name}`,
-        date: workoutDate,
-        type: "strength", // Default to strength, could be determined by exercise types
-        duration: Math.round(estimatedDuration),
-        status: "planned",
-        exercises: exercises,
-        notes: planWorkout.notes || `Plan: ${plan.name}`,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+        const workout = {
+          userId: new ObjectId(session.user.id),
+          name: `${plan.name} - ${trainingDay.name}`,
+          date: workoutDate,
+          type: "strength", // Default to strength, could be determined by exercise types
+          duration: Math.round(estimatedDuration),
+          status: "planned",
+          exercises: exercises,
+          notes: trainingDay.notes || `Plan: ${plan.name}`,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
 
-      workouts.push(workout);
+        workouts.push(workout);
+      }
+    }
+
+    // Handle old structure (workouts) - for backward compatibility
+    if (hasWorkouts) {
+      for (const planWorkout of plan.trainingPlan.workouts) {
+        // Calculate the date for this workout (day of week)
+        const workoutDate = new Date(startDate);
+        const dayOffset = planWorkout.day - 1; // Convert 1-7 to 0-6
+        workoutDate.setDate(startDate.getDate() + dayOffset);
+
+        // Convert exercises
+        const exercises = planWorkout.exercises.map((exercise: any) => ({
+          name: exercise.name,
+          sets: exercise.sets,
+          reps: exercise.reps,
+          weight: exercise.weight || 0,
+          duration: exercise.duration || 0,
+          restTime: exercise.rest * 60, // Convert minutes to seconds
+          notes: exercise.notes || "",
+        }));
+
+        // Calculate estimated duration
+        const estimatedDuration = exercises.reduce(
+          (total: number, exercise: any) => {
+            const exerciseTime =
+              exercise.sets * exercise.reps * 3 +
+              (exercise.sets * exercise.restTime) / 60;
+            return total + exerciseTime;
+          },
+          0
+        );
+
+        const workout = {
+          userId: new ObjectId(session.user.id),
+          name: `${plan.name} - ${planWorkout.name}`,
+          date: workoutDate,
+          type: "strength", // Default to strength, could be determined by exercise types
+          duration: Math.round(estimatedDuration),
+          status: "planned",
+          exercises: exercises,
+          notes: planWorkout.notes || `Plan: ${plan.name}`,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        workouts.push(workout);
+      }
     }
 
     // Insert workouts into the database
