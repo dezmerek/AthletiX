@@ -444,7 +444,9 @@ export default function DashboardSidebar() {
 
       // Business items are only visible for business_owner
       if (item.context === "business") {
-        return hasRole(user, "business_owner");
+        return (
+          hasRole(user, "business_owner") && user.activeContext === "business"
+        );
       }
 
       // Check if item is available for current context
