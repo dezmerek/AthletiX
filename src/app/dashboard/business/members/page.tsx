@@ -7,6 +7,7 @@ import {
   MagnifyingGlassIcon,
   FunnelIcon,
 } from "@heroicons/react/24/outline";
+import AddMemberModal from "@/components/dashboard/business/AddMemberModal";
 
 interface Member {
   id: string;
@@ -33,6 +34,7 @@ export default function BusinessMembersPage() {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showAddMemberModal, setShowAddMemberModal] = useState(false);
 
   const fetchMembers = async () => {
     try {
@@ -61,6 +63,10 @@ export default function BusinessMembersPage() {
       fetchMembers();
     }
   }, [session]);
+
+  const handleAddMemberSuccess = () => {
+    fetchMembers(); // Odśwież listę członków
+  };
 
   const filteredMembers = members.filter((member) => {
     const matchesSearch =
@@ -275,7 +281,10 @@ export default function BusinessMembersPage() {
               </svg>
               <span>Odśwież</span>
             </button>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium flex items-center space-x-2 transition-colors">
+            <button
+              onClick={() => setShowAddMemberModal(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium flex items-center space-x-2 transition-colors"
+            >
               <PlusIcon className="w-5 h-5" />
               <span>Dodaj członka</span>
             </button>
@@ -560,6 +569,13 @@ export default function BusinessMembersPage() {
           </p>
         </div>
       )}
+
+      {/* Add Member Modal */}
+      <AddMemberModal
+        isOpen={showAddMemberModal}
+        onClose={() => setShowAddMemberModal(false)}
+        onSuccess={handleAddMemberSuccess}
+      />
     </div>
   );
 }
