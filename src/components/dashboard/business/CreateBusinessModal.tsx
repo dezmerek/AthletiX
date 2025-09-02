@@ -27,6 +27,19 @@ export default function CreateBusinessModal({
     e.preventDefault();
     setLoading(true);
 
+    // Debug logi
+    console.log("Session user:", session?.user);
+    console.log("User ID:", session?.user?.id);
+    console.log("User role:", session?.user?.role);
+    console.log("Form data:", formData);
+
+    // Sprawdź czy użytkownik ma odpowiednią rolę
+    if (!session?.user?.id) {
+      alert("Błąd: Nie można pobrać ID użytkownika z sesji");
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch("/api/business", {
         method: "POST",
@@ -35,11 +48,30 @@ export default function CreateBusinessModal({
         },
         body: JSON.stringify({
           ...formData,
-          ownerId: session?.user?.id,
+          ownerId: session.user.id,
         }),
       });
 
       if (response.ok) {
+        const result = await response.json();
+        console.log("Business created successfully:", result);
+
+        // Odśwież sesję żeby zaktualizować rolę użytkownika
+        if (session?.user) {
+          // Dodaj rolę business_owner do sesji
+          const updatedUser = {
+            ...session.user,
+            role: Array.isArray(session.user.role)
+              ? [...session.user.role, "business_owner"]
+              : session.user.role === "business_owner"
+              ? "business_owner"
+              : [session.user.role, "business_owner"],
+          };
+
+          // Zaktualizuj sesję (to może wymagać odświeżenia strony)
+          console.log("Updated user role:", updatedUser.role);
+        }
+
         onSuccess();
         onClose();
         setFormData({

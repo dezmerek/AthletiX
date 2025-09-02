@@ -429,6 +429,10 @@ export default function DashboardSidebar() {
     if (href === "/dashboard") {
       return pathname === href;
     }
+    // Use exact matching for business routes to avoid double highlighting
+    if (href.startsWith("/dashboard/business")) {
+      return pathname === href;
+    }
     return pathname.startsWith(href);
   };
 
