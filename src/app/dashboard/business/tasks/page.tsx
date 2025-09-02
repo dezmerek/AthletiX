@@ -57,7 +57,19 @@ export default function BusinessTasksPage() {
   const [showAddModal, setShowAddModal] = useState(false);
 
   const filteredTasks = useMemo(() => {
-    return tasks.filter((t) => {
+    const priorityRank: Record<Task["priority"], number> = {
+      high: 0,
+      medium: 1,
+      low: 2,
+    };
+
+    const statusRank: Record<Task["status"], number> = {
+      in_progress: 0,
+      todo: 1,
+      done: 2,
+    };
+
+    const filtered = tasks.filter((t) => {
       const matchesSearch =
         !search ||
         t.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -68,6 +80,25 @@ export default function BusinessTasksPage() {
       const matchesPriority =
         priorityFilter === "all" ? true : t.priority === priorityFilter;
       return matchesSearch && matchesStatus && matchesPriority;
+    });
+
+    return [...filtered].sort((a, b) => {
+      // 1) Group by status: in_progress, todo, done
+      const sr = statusRank[a.status] - statusRank[b.status];
+      if (sr !== 0) return sr;
+      // 2) For non-done: nearest due date first (undefined at the end)
+      const ad = a.dueDate
+        ? new Date(a.dueDate).getTime()
+        : Number.POSITIVE_INFINITY;
+      const bd = b.dueDate
+        ? new Date(b.dueDate).getTime()
+        : Number.POSITIVE_INFINITY;
+      if (ad !== bd) return ad - bd;
+      // 3) Then by priority: high > medium > low
+      const pr = priorityRank[a.priority] - priorityRank[b.priority];
+      if (pr !== 0) return pr;
+      // 4) Fallback: title
+      return a.title.localeCompare(b.title);
     });
   }, [tasks, search, statusFilter, priorityFilter]);
 
@@ -151,6 +182,11 @@ export default function BusinessTasksPage() {
       ...payload,
     };
     setTasks((prev) => [newTask, ...prev]);
+  };
+
+  const [editing, setEditing] = useState<Task | null>(null);
+  const updateTask = (id: string, patch: Partial<Task>) => {
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
   };
 
   return (
@@ -282,7 +318,10 @@ export default function BusinessTasksPage() {
                         >
                           Zmień status
                         </button>
-                        <button className="px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700">
+                        <button
+                          onClick={() => setEditing(t)}
+                          className="px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+                        >
                           Edytuj
                         </button>
                       </div>
@@ -375,6 +414,104 @@ function AddTaskModal({
               value={assignee}
               onChange={(e) => setAssignee(e.target.value)}
               placeholder="Osoba (opcjonalnie)"
+              className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+            />
+          </div>
+        </div>
+
+        <div className="mt-5 flex justify-end space-x-2">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600"
+          >
+            Anuluj
+          </button>
+          <button
+            onClick={() =>
+              onSubmit({
+                title,
+                description,
+                status,
+                priority,
+                dueDate,
+                assignee,
+              })
+            }
+            className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            Zapisz
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EditTaskModal({
+  task,
+  onClose,
+  onSubmit,
+}: {
+  task: Task;
+  onClose: () => void;
+  onSubmit: (patch: Partial<Task>) => void;
+}) {
+  const [title, setTitle] = useState(task.title);
+  const [description, setDescription] = useState(task.description || "");
+  const [status, setStatus] = useState<Task["status"]>(task.status);
+  const [priority, setPriority] = useState<Task["priority"]>(task.priority);
+  const [dueDate, setDueDate] = useState<string>(task.dueDate || "");
+  const [assignee, setAssignee] = useState<string>(task.assignee || "");
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-lg p-6">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+          Edytuj zadanie
+        </h3>
+
+        <div className="space-y-3">
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+          />
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={3}
+            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value as Task["status"])}
+              className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+            >
+              <option value="todo">Do zrobienia</option>
+              <option value="in_progress">W toku</option>
+              <option value="done">Zrobione</option>
+            </select>
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value as Task["priority"])}
+              className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+            >
+              <option value="high">Wysoki</option>
+              <option value="medium">Średni</option>
+              <option value="low">Niski</option>
+            </select>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+            />
+            <input
+              value={assignee}
+              onChange={(e) => setAssignee(e.target.value)}
               className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
             />
           </div>
