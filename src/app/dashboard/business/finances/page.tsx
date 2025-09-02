@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import {
   CurrencyDollarIcon,
   CreditCardIcon,
@@ -51,6 +52,7 @@ interface FinancialStats {
 
 export default function BusinessFinancesPage() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -588,7 +590,27 @@ export default function BusinessFinancesPage() {
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
               Wygeneruj szczegółowy raport finansowy
             </p>
-            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+            <button
+              onClick={async () => {
+                try {
+                  const url = `/api/business/finances/export/pdf?period=${selectedPeriod}`;
+                  const res = await fetch(url);
+                  if (!res.ok) throw new Error("Export failed");
+                  const blob = await res.blob();
+                  const dlUrl = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = dlUrl;
+                  a.download = "raport-finansowy.pdf";
+                  document.body.appendChild(a);
+                  a.click();
+                  a.remove();
+                  URL.revokeObjectURL(dlUrl);
+                } catch (e) {
+                  console.error(e);
+                }
+              }}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
               Generuj raport
             </button>
           </div>
@@ -605,7 +627,10 @@ export default function BusinessFinancesPage() {
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
               Szczegółowe analizy i prognozy
             </p>
-            <button className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+            <button
+              onClick={() => router.push("/dashboard/business/analytics")}
+              className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
               Zobacz analitykę
             </button>
           </div>
@@ -641,11 +666,23 @@ export default function BusinessFinancesPage() {
             </p>
           </div>
           <div className="flex space-x-2">
-            <button className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 flex items-center space-x-2">
+            <button
+              onClick={() => {
+                const url = `/api/business/finances/export/csv?period=${selectedPeriod}`;
+                window.open(url, "_blank");
+              }}
+              className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 flex items-center space-x-2"
+            >
               <DocumentTextIcon className="w-5 h-5" />
               <span>Eksport CSV</span>
             </button>
-            <button className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 flex items-center space-x-2">
+            <button
+              onClick={() => {
+                const url = `/api/business/finances/export/pdf?period=${selectedPeriod}`;
+                window.open(url, "_blank");
+              }}
+              className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 flex items-center space-x-2"
+            >
               <DocumentTextIcon className="w-5 h-5" />
               <span>Eksport PDF</span>
             </button>
@@ -656,27 +693,142 @@ export default function BusinessFinancesPage() {
         </div>
       </div>
 
-      {/* Add Transaction Modal - Placeholder */}
+      {/* Add Transaction Modal */}
       {showAddTransactionModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md p-6">
-            <div className="text-center">
-              <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">
-                Dodaj transakcję
-              </h3>
-              <p className="text-slate-500 dark:text-slate-400 mb-4">
-                Funkcja będzie dostępna wkrótce
-              </p>
-              <button
-                onClick={() => setShowAddTransactionModal(false)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium"
-              >
-                Zamknij
-              </button>
-            </div>
-          </div>
-        </div>
+        <AddTransactionModal
+          onClose={() => setShowAddTransactionModal(false)}
+          onSuccess={async () => {
+            setShowAddTransactionModal(false);
+            await fetchFinancialData();
+          }}
+        />
       )}
+    </div>
+  );
+}
+
+function AddTransactionModal({
+  onClose,
+  onSuccess,
+}: {
+  onClose: () => void;
+  onSuccess: () => Promise<void> | void;
+}) {
+  const [type, setType] = useState<
+    "income" | "expense" | "subscription" | "refund"
+  >("income");
+  const [amount, setAmount] = useState<string>("");
+  const [currency, setCurrency] = useState<string>("PLN");
+  const [description, setDescription] = useState<string>("");
+  const [date, setDate] = useState<string>(
+    new Date().toISOString().slice(0, 10)
+  );
+  const [category, setCategory] = useState<string>("");
+  const [memberName, setMemberName] = useState<string>("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const submit = async () => {
+    try {
+      setSubmitting(true);
+      const body = {
+        type,
+        amount: parseFloat(amount),
+        currency,
+        description,
+        date: new Date(date).toISOString(),
+        status: "completed",
+        category,
+        memberName: memberName || undefined,
+      };
+      const res = await fetch("/api/business/finances/transactions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error("Failed to create");
+      await onSuccess();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-lg p-6">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+          Dodaj transakcję
+        </h3>
+        <div className="grid grid-cols-1 gap-3">
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value as any)}
+            className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+          >
+            <option value="income">Przychód</option>
+            <option value="expense">Wydatek</option>
+            <option value="subscription">Subskrypcja</option>
+            <option value="refund">Zwrot</option>
+          </select>
+          <div className="grid grid-cols-2 gap-3">
+            <input
+              type="number"
+              step="0.01"
+              placeholder="Kwota"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+            />
+            <input
+              placeholder="Waluta"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+            />
+          </div>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+          />
+          <input
+            placeholder="Kategoria (opcjonalnie)"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+          />
+          <input
+            placeholder="Nazwa członka (opcjonalnie)"
+            value={memberName}
+            onChange={(e) => setMemberName(e.target.value)}
+            className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+          />
+          <textarea
+            placeholder="Opis"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={3}
+            className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+          />
+        </div>
+        <div className="mt-5 flex justify-end space-x-2">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600"
+          >
+            Anuluj
+          </button>
+          <button
+            disabled={submitting || !amount || !description}
+            onClick={submit}
+            className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white"
+          >
+            {submitting ? "Zapisywanie…" : "Zapisz"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
