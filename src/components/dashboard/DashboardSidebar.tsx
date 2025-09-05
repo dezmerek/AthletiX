@@ -326,6 +326,12 @@ export default function DashboardSidebar() {
       label: t("analytics"),
       context: "professional", // Analytics tylko dla profesjonalistów
     },
+    {
+      href: "/dashboard/invoices",
+      icon: <DocumentTextIcon className="w-5 h-5" />,
+      label: "Faktury",
+      context: "professional", // Faktury dla profesjonalistów
+    },
 
     // ===== KONIEC SEKCJI DLA PROFESJONALISTÓW =====
 
