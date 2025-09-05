@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 
 type UserType = "client" | "professional" | "business";
 const PRICES = {
@@ -11,7 +12,47 @@ const PRICES = {
 
 export default function PricingSection() {
   const t = useTranslations("PricingSection");
+  const { data: session } = useSession();
   const [activePlanType, setActivePlanType] = useState<UserType>("client");
+  const [loading, setLoading] = useState(false);
+
+  const handleChoosePro = async () => {
+    if (!session) {
+      // Redirect to login if not authenticated
+      window.location.href = "/auth/login";
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          planType: activePlanType,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
+      } else {
+        console.error("Error creating checkout session:", data.error);
+        alert(
+          "Wystąpił błąd podczas tworzenia sesji płatności. Spróbuj ponownie."
+        );
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Wystąpił błąd. Spróbuj ponownie.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section
@@ -159,9 +200,11 @@ export default function PricingSection() {
             </ul>
             <button
               type="button"
-              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium hover:from-emerald-600 hover:to-teal-600 transition-all mt-auto cursor-pointer"
+              onClick={handleChoosePro}
+              disabled={loading}
+              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium hover:from-emerald-600 hover:to-teal-600 transition-all mt-auto cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {t("choosePro")}
+              {loading ? "Przekierowywanie..." : t("choosePro")}
             </button>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 
 interface QuickStat {
   id: string;
@@ -28,6 +29,7 @@ interface UserDashboardProps {
 
 export default function UserDashboard({ userName }: UserDashboardProps) {
   const t = useTranslations("dashboard");
+  const { data: session } = useSession();
 
   // Statystyki dla użytkowników
   const quickStats: QuickStat[] = [
@@ -308,6 +310,49 @@ export default function UserDashboard({ userName }: UserDashboardProps) {
             </Link>
           ))}
         </div>
+
+        {/* Premium Status Banner */}
+        {session?.user && (
+          <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl p-6 text-white shadow-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="p-3 bg-white/20 rounded-lg">
+                  <svg
+                    className="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">
+                    {session.user.isPremiumPersonal
+                      ? "AthletiX Pro"
+                      : "AthletiX Darmowy"}
+                  </h3>
+                  <p className="text-emerald-100">
+                    {session.user.isPremiumPersonal
+                      ? "Ciesz się wszystkimi funkcjami premium!"
+                      : "Odblokuj pełny potencjał z planem Pro"}
+                  </p>
+                </div>
+              </div>
+              {!session.user.isPremiumPersonal && (
+                <Link
+                  href="/#pricing"
+                  className="px-6 py-2 bg-white text-emerald-600 rounded-lg font-medium hover:bg-emerald-50 transition-colors"
+                >
+                  Upgrade do Pro
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

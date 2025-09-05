@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import UserDashboard from "@/components/dashboard/UserDashboard";
 import ProfessionalDashboard from "@/components/dashboard/ProfessionalDashboard";
 import AdminDashboard from "@/components/dashboard/AdminDashboard";
+import DashboardWrapper from "@/components/dashboard/DashboardWrapper";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -24,11 +25,23 @@ export default async function DashboardPage() {
 
   // Render appropriate dashboard based on active context
   if (activeContext === "admin") {
-    return <AdminDashboard userName={userName} />;
+    return (
+      <DashboardWrapper>
+        <AdminDashboard userName={userName} />
+      </DashboardWrapper>
+    );
   } else if (activeContext === "professional") {
-    return <ProfessionalDashboard userName={userName} />;
+    return (
+      <DashboardWrapper>
+        <ProfessionalDashboard userName={userName} />
+      </DashboardWrapper>
+    );
   } else {
     // Default to user dashboard (includes users and fallback for other roles)
-    return <UserDashboard userName={userName} />;
+    return (
+      <DashboardWrapper>
+        <UserDashboard userName={userName} />
+      </DashboardWrapper>
+    );
   }
 }
