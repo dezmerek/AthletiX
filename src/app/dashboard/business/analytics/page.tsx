@@ -19,13 +19,13 @@ import {
 
 interface BusinessMetrics {
   totalRevenue: number;
-  monthlyGrowth: number;
+  monthlyGrowth?: number;
   activeMembers: number;
-  memberGrowth: number;
+  memberGrowth?: number;
   averageRevenuePerMember: number;
   retentionRate: number;
-  conversionRate: number;
-  churnRate: number;
+  conversionRate?: number;
+  churnRate?: number;
 }
 
 interface ChartData {
@@ -43,9 +43,9 @@ interface TopPerformer {
   id: string;
   name: string;
   revenue: number;
-  members: number;
-  growth: number;
-  status: "growing" | "stable" | "declining";
+  members?: number;
+  growth?: number;
+  status?: "growing" | "stable" | "declining";
 }
 
 interface BusinessInsight {
@@ -68,6 +68,12 @@ export default function BusinessAnalyticsPage() {
   const [insights, setInsights] = useState<BusinessInsight[]>([]);
   const [selectedPeriod, setSelectedPeriod] = useState("30d");
   const [selectedMetric, setSelectedMetric] = useState("revenue");
+  const [finStats, setFinStats] = useState<{
+    netProfit: number;
+    monthlyRecurringRevenue: number;
+  } | null>(null);
+  const [revShowGrid, setRevShowGrid] = useState(true);
+  const [memShowGrid, setMemShowGrid] = useState(true);
 
   const fetchAnalyticsData = async () => {
     try {
@@ -75,17 +81,29 @@ export default function BusinessAnalyticsPage() {
       setError(null);
 
       // Pobierz dane analityczne
-      const [metricsRes, chartsRes, performersRes, insightsRes] =
+      const [metricsRes, chartsRes, performersRes, insightsRes, finStatsRes] =
         await Promise.all([
           fetch(`/api/business/analytics/metrics?period=${selectedPeriod}`),
           fetch(`/api/business/analytics/charts?period=${selectedPeriod}`),
           fetch(`/api/business/analytics/performers`),
           fetch(`/api/business/analytics/insights`),
+          fetch(`/api/business/finances/stats?period=${selectedPeriod}`),
         ]);
 
       if (metricsRes.ok) {
         const metricsData = await metricsRes.json();
-        setMetrics(metricsData.metrics);
+        const m = metricsData.metrics || {};
+        const mapped: BusinessMetrics = {
+          totalRevenue: m.totalRevenue || 0,
+          monthlyGrowth: 0,
+          activeMembers: m.activeMembers || 0,
+          memberGrowth: 0,
+          averageRevenuePerMember: m.averageRevenuePerMember || 0,
+          retentionRate: m.retentionRate || 0,
+          conversionRate: 0,
+          churnRate: 0,
+        };
+        setMetrics(mapped);
       }
 
       if (chartsRes.ok) {
@@ -96,12 +114,28 @@ export default function BusinessAnalyticsPage() {
 
       if (performersRes.ok) {
         const performersData = await performersRes.json();
-        setTopPerformers(performersData.topPerformers);
+        const arr: TopPerformer[] = (performersData.topPerformers || []).map(
+          (p: any) => ({
+            id: String(p.id),
+            name: p.name || "Członek",
+            revenue: p.revenue || 0,
+          })
+        );
+        setTopPerformers(arr);
       }
 
       if (insightsRes.ok) {
         const insightsData = await insightsRes.json();
         setInsights(insightsData.insights);
+      }
+
+      if (finStatsRes.ok) {
+        const s = await finStatsRes.json();
+        const st = s.stats || {};
+        setFinStats({
+          netProfit: st.netProfit || 0,
+          monthlyRecurringRevenue: st.monthlyRecurringRevenue || 0,
+        });
       }
     } catch (error) {
       console.error("Error fetching analytics data:", error);
@@ -404,6 +438,48 @@ export default function BusinessAnalyticsPage() {
         </div>
       )}
 
+      {/* Finance KPIs (MRR, Zysk netto) */}
+      {finStats && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
+                <CurrencyDollarIcon className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  MRR
+                </p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                  {formatCurrency(finStats.monthlyRecurringRevenue)}
+                </p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                  miesięczne przychody powtarzalne
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-teal-100 dark:bg-teal-900/30 rounded-lg flex items-center justify-center">
+                <ArrowTrendingUpIcon className="w-6 h-6 text-teal-600 dark:text-teal-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  Zysk netto
+                </p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                  {formatCurrency(finStats.netProfit)}
+                </p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                  przychody - koszty
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Additional Metrics */}
       {metrics && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -460,24 +536,58 @@ export default function BusinessAnalyticsPage() {
               Trend przychodów
             </h2>
             <div className="flex space-x-2">
-              <button className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+              <button
+                onClick={() => setRevShowGrid((v) => !v)}
+                className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                title={revShowGrid ? "Ukryj siatkę" : "Pokaż siatkę"}
+              >
                 <EyeIcon className="w-5 h-5" />
               </button>
-              <button className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+              <button
+                onClick={() => {
+                  if (!revenueChart) return;
+                  const rows = [
+                    ["Okres", "Przychody"],
+                    ...revenueChart.labels.map((l, i) => [
+                      l,
+                      String(revenueChart.datasets[0]?.data?.[i] ?? 0),
+                    ]),
+                  ];
+                  const csv = rows
+                    .map((r) =>
+                      r
+                        .map((c) => `"${String(c).replace(/"/g, '""')}"`)
+                        .join(",")
+                    )
+                    .join("\n");
+                  const blob = new Blob(["\ufeff" + csv], {
+                    type: "text/csv;charset=utf-8;",
+                  });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = "trend_przychodow.csv";
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                title="Pobierz CSV"
+              >
                 <DocumentTextIcon className="w-5 h-5" />
               </button>
             </div>
           </div>
 
           {revenueChart ? (
-            <div className="h-64 bg-slate-50 dark:bg-slate-700/50 rounded-lg flex items-center justify-center">
-              <div className="text-center">
-                <ChartBarIcon className="w-16 h-16 text-slate-400 mx-auto mb-2" />
-                <p className="text-slate-500 dark:text-slate-400">
-                  Wykres przychodów będzie dostępny wkrótce
-                </p>
-              </div>
-            </div>
+            <MiniLineChart
+              labels={revenueChart.labels}
+              data={revenueChart.datasets[0]?.data || []}
+              color="#10b981"
+              label="Przychody [PLN]"
+              yUnit="PLN"
+              formatValue={(v) => formatCurrency(v)}
+              showGrid={revShowGrid}
+            />
           ) : (
             <div className="h-64 bg-slate-50 dark:bg-slate-700/50 rounded-lg flex items-center justify-center">
               <div className="text-center">
@@ -497,24 +607,58 @@ export default function BusinessAnalyticsPage() {
               Wzrost członków
             </h2>
             <div className="flex space-x-2">
-              <button className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+              <button
+                onClick={() => setMemShowGrid((v) => !v)}
+                className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                title={memShowGrid ? "Ukryj siatkę" : "Pokaż siatkę"}
+              >
                 <EyeIcon className="w-5 h-5" />
               </button>
-              <button className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+              <button
+                onClick={() => {
+                  if (!membersChart) return;
+                  const rows = [
+                    ["Okres", "Nowi członkowie"],
+                    ...membersChart.labels.map((l, i) => [
+                      l,
+                      String(membersChart.datasets[0]?.data?.[i] ?? 0),
+                    ]),
+                  ];
+                  const csv = rows
+                    .map((r) =>
+                      r
+                        .map((c) => `"${String(c).replace(/"/g, '""')}"`)
+                        .join(",")
+                    )
+                    .join("\n");
+                  const blob = new Blob(["\ufeff" + csv], {
+                    type: "text/csv;charset=utf-8;",
+                  });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = "wzrost_czlonkow.csv";
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                title="Pobierz CSV"
+              >
                 <DocumentTextIcon className="w-5 h-5" />
               </button>
             </div>
           </div>
 
           {membersChart ? (
-            <div className="h-64 bg-slate-50 dark:bg-slate-700/50 rounded-lg flex items-center justify-center">
-              <div className="text-center">
-                <UsersIcon className="w-16 h-16 text-slate-400 mx-auto mb-2" />
-                <p className="text-slate-500 dark:text-slate-400">
-                  Wykres członków będzie dostępny wkrótce
-                </p>
-              </div>
-            </div>
+            <MiniLineChart
+              labels={membersChart.labels}
+              data={membersChart.datasets[0]?.data || []}
+              color="#3b82f6"
+              label="Nowi członkowie [miesięcznie]"
+              yUnit="os."
+              formatValue={(v) => String(Math.round(v))}
+              showGrid={memShowGrid}
+            />
           ) : (
             <div className="h-64 bg-slate-50 dark:bg-slate-700/50 rounded-lg flex items-center justify-center">
               <div className="text-center">
@@ -708,5 +852,244 @@ export default function BusinessAnalyticsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function MiniLineChart({
+  labels,
+  data,
+  color = "#10b981",
+  label,
+  yUnit,
+  formatValue,
+  showGrid = true,
+}: {
+  labels: string[];
+  data: number[];
+  color?: string;
+  label?: string;
+  yUnit?: string;
+  formatValue?: (v: number) => string;
+  showGrid?: boolean;
+}) {
+  const width = 700;
+  const height = 256;
+  const padding = 32;
+  const innerW = width - padding * 2;
+  const innerH = height - padding * 2;
+  const max = Math.max(1, ...data);
+  const min = Math.min(0, ...data);
+  const range = Math.max(1, max - min);
+
+  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
+
+  const getXY = (v: number, i: number) => {
+    const x = padding + (i / Math.max(1, data.length - 1)) * innerW;
+    const y = padding + innerH - ((v - min) / range) * innerH;
+    return { x, y };
+  };
+
+  const handleMove = (e: any) => {
+    const rect = (e.target as SVGRectElement).getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const rel = Math.min(Math.max(x - padding, 0), innerW) / innerW;
+    const idx = Math.round(rel * Math.max(1, data.length - 1));
+    setHoverIdx(idx);
+  };
+
+  const handleLeave = () => setHoverIdx(null);
+
+  const points = data.map((v, i) => {
+    const { x, y } = getXY(v, i);
+    return `${x},${y}`;
+  });
+
+  const hover =
+    hoverIdx != null
+      ? {
+          idx: hoverIdx,
+          label: labels[hoverIdx] ?? "",
+          value: data[hoverIdx] ?? 0,
+          ...getXY(data[hoverIdx] ?? 0, hoverIdx),
+        }
+      : null;
+
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-64">
+      <rect
+        x={0}
+        y={0}
+        width={width}
+        height={height}
+        className="fill-slate-50 dark:fill-slate-700/50 rounded-lg"
+        rx={12}
+      />
+      {label && (
+        <text
+          x={padding}
+          y={22}
+          className="fill-slate-700 dark:fill-slate-200"
+          fontSize="12"
+          fontWeight="600"
+        >
+          {label}
+        </text>
+      )}
+      {/* Axis */}
+      <line
+        x1={padding}
+        y1={height - padding}
+        x2={width - padding}
+        y2={height - padding}
+        stroke="#94a3b8"
+        strokeOpacity={0.4}
+      />
+      <line
+        x1={padding}
+        y1={padding}
+        x2={padding}
+        y2={height - padding}
+        stroke="#94a3b8"
+        strokeOpacity={0.4}
+      />
+      {/* Y ticks and grid */}
+      {showGrid &&
+        Array.from({ length: 5 }).map((_, i) => {
+          const t = i / 4;
+          const y = padding + t * innerH;
+          const value = max - t * range;
+          const label = Math.round(value).toLocaleString("pl-PL");
+          return (
+            <g key={`y-${i}`}>
+              {/* grid line */}
+              <line
+                x1={padding}
+                y1={y}
+                x2={width - padding}
+                y2={y}
+                stroke="#cbd5e1"
+                strokeOpacity={0.25}
+              />
+              {/* tick and label */}
+              <line
+                x1={padding - 4}
+                y1={y}
+                x2={padding}
+                y2={y}
+                stroke="#94a3b8"
+                strokeOpacity={0.6}
+              />
+              <text
+                x={padding - 8}
+                y={y + 3}
+                textAnchor="end"
+                fontSize="10"
+                className="fill-slate-500"
+              >
+                {label}
+              </text>
+            </g>
+          );
+        })}
+      {/* Y unit label */}
+      {yUnit && (
+        <text
+          x={padding - 24}
+          y={padding - 8}
+          className="fill-slate-500"
+          fontSize="10"
+          textAnchor="start"
+        >
+          {yUnit}
+        </text>
+      )}
+      {/* X labels */}
+      {labels.map((l, i) => {
+        const x = padding + (i / Math.max(1, labels.length - 1)) * innerW;
+        const show =
+          labels.length <= 12 || i % Math.ceil(labels.length / 12) === 0;
+        return show ? (
+          <text
+            key={i}
+            x={x}
+            y={height - padding + 16}
+            textAnchor="middle"
+            fontSize="10"
+            className="fill-slate-500"
+          >
+            {l}
+          </text>
+        ) : null;
+      })}
+      {/* Path */}
+      {points.length > 1 && (
+        <polyline
+          fill="none"
+          stroke={color}
+          strokeWidth={3}
+          points={points.join(" ")}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
+      )}
+
+      {/* Hover capture */}
+      <rect
+        x={padding}
+        y={padding}
+        width={innerW}
+        height={innerH}
+        fill="transparent"
+        onMouseMove={handleMove}
+        onMouseLeave={handleLeave}
+      />
+
+      {/* Hover visuals */}
+      {hover && (
+        <g>
+          {/* guideline */}
+          <line
+            x1={hover.x}
+            y1={padding}
+            x2={hover.x}
+            y2={height - padding}
+            stroke={color}
+            strokeOpacity={0.4}
+          />
+          {/* point */}
+          <circle cx={hover.x} cy={hover.y} r={4} fill={color} />
+          {/* tooltip */}
+          <g>
+            <rect
+              x={Math.min(hover.x + 8, width - 140)}
+              y={Math.max(hover.y - 30, padding)}
+              width={132}
+              height={36}
+              rx={6}
+              className="fill-white dark:fill-slate-800"
+              stroke="#94a3b8"
+              strokeOpacity={0.4}
+            />
+            <text
+              x={Math.min(hover.x + 16, width - 132)}
+              y={Math.max(hover.y - 16, padding + 12)}
+              className="fill-slate-500"
+              fontSize="10"
+            >
+              {hover.label}
+            </text>
+            <text
+              x={Math.min(hover.x + 16, width - 132)}
+              y={Math.max(hover.y, padding + 24)}
+              className="fill-slate-900 dark:fill-slate-100"
+              fontSize="12"
+              fontWeight="600"
+            >
+              {formatValue ? formatValue(hover.value) : hover.value}
+            </text>
+          </g>
+        </g>
+      )}
+    </svg>
   );
 }
