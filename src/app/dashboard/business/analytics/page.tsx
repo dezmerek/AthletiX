@@ -81,6 +81,7 @@ export default function BusinessAnalyticsPage() {
   const [memShowGrid, setMemShowGrid] = useState(true);
   const [showSegments, setShowSegments] = useState(false);
   const [showForecast, setShowForecast] = useState(false);
+  const [seededAttempted, setSeededAttempted] = useState(false);
 
   const fetchAnalyticsData = async () => {
     try {
@@ -96,6 +97,10 @@ export default function BusinessAnalyticsPage() {
           fetch(`/api/business/analytics/insights`),
           fetch(`/api/business/finances/stats?period=${selectedPeriod}`),
         ]);
+
+      let chartsData: any = null;
+      let performersData: any = null;
+      let st: any = null;
 
       if (metricsRes.ok) {
         const metricsData = await metricsRes.json();
@@ -114,18 +119,134 @@ export default function BusinessAnalyticsPage() {
       }
 
       if (chartsRes.ok) {
-        const chartsData = await chartsRes.json();
+        chartsData = await chartsRes.json();
         setRevenueChart(chartsData.revenueChart);
         setMembersChart(chartsData.membersChart);
       }
 
+      // Fallback: build members chart from subscriptions if missing/empty
+      const needMembersFallback = !chartsData?.membersChart?.labels?.length;
+      if (needMembersFallback) {
+        try {
+          const subsRes = await fetch("/api/business/finances/subscriptions");
+          if (subsRes.ok) {
+            const subsJson = await subsRes.json();
+            const subs = Array.isArray(subsJson?.subscriptions)
+              ? subsJson.subscriptions
+              : [];
+            if (subs.length) {
+              const end = new Date();
+              const start = new Date(end.getFullYear(), end.getMonth() - 11, 1);
+              const monthKey = (dt: Date) =>
+                `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(
+                  2,
+                  "0"
+                )}`;
+              const keys: string[] = [];
+              for (let i = 0; i < 12; i++) {
+                const d = new Date(
+                  start.getFullYear(),
+                  start.getMonth() + i,
+                  1
+                );
+                keys.push(monthKey(d));
+              }
+              const counts: Record<string, number> = Object.fromEntries(
+                keys.map((k) => [k, 0])
+              );
+              subs.forEach((s: any) => {
+                const dStr =
+                  s?.startDate || s?.createdAt || s?.start || s?.date;
+                if (!dStr) return;
+                const dt = new Date(dStr);
+                const k = monthKey(
+                  new Date(dt.getFullYear(), dt.getMonth(), 1)
+                );
+                if (k in counts) counts[k] += 1;
+              });
+              setMembersChart({
+                labels: keys,
+                datasets: [
+                  {
+                    label: "Nowi członkowie [miesięcznie]",
+                    data: keys.map((k) => counts[k] || 0),
+                    borderColor: "#3b82f6",
+                    backgroundColor: "rgba(59,130,246,0.15)",
+                    tension: 0.3,
+                  },
+                ],
+              });
+            }
+          }
+          // second fallback: derive from transactions if subscriptions absent
+          if (!membersChart || !membersChart.labels?.length) {
+            const trxRes = await fetch("/api/business/finances/transactions");
+            if (trxRes.ok) {
+              const tj = await trxRes.json();
+              const tx = Array.isArray(tj?.transactions) ? tj.transactions : [];
+              if (tx.length) {
+                const end = new Date();
+                const start = new Date(
+                  end.getFullYear(),
+                  end.getMonth() - 11,
+                  1
+                );
+                const monthKey = (dt: Date) =>
+                  `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(
+                    2,
+                    "0"
+                  )}`;
+                const keys: string[] = [];
+                for (let i = 0; i < 12; i++)
+                  keys.push(
+                    monthKey(
+                      new Date(start.getFullYear(), start.getMonth() + i, 1)
+                    )
+                  );
+                const counts: Record<string, number> = Object.fromEntries(
+                  keys.map((k) => [k, 0])
+                );
+                tx.forEach((t: any) => {
+                  const dStr = t?.date || t?.createdAt;
+                  const cat = (t?.category || "").toLowerCase();
+                  if (!dStr) return;
+                  // heurystyka: liczymy transakcje subskrypcyjne jako przyrost członków
+                  if (cat.includes("subscription") || cat.includes("member")) {
+                    const dt = new Date(dStr);
+                    const k = monthKey(
+                      new Date(dt.getFullYear(), dt.getMonth(), 1)
+                    );
+                    if (k in counts) counts[k] += 1;
+                  }
+                });
+                setMembersChart({
+                  labels: keys,
+                  datasets: [
+                    {
+                      label: "Nowi członkowie [miesięcznie]",
+                      data: keys.map((k) => counts[k] || 0),
+                      borderColor: "#3b82f6",
+                      backgroundColor: "rgba(59,130,246,0.15)",
+                      tension: 0.3,
+                    },
+                  ],
+                });
+              }
+            }
+          }
+        } catch (e) {
+          // ignore fallback errors
+        }
+      }
+
       if (performersRes.ok) {
-        const performersData = await performersRes.json();
+        performersData = await performersRes.json();
         const arr: TopPerformer[] = (performersData.topPerformers || []).map(
           (p: any) => ({
             id: String(p.id),
             name: p.name || "Członek",
             revenue: p.revenue || 0,
+            members: p.members ?? p.memberCount ?? p.membersCount ?? 0,
           })
         );
         setTopPerformers(arr);
@@ -138,11 +259,32 @@ export default function BusinessAnalyticsPage() {
 
       if (finStatsRes.ok) {
         const s = await finStatsRes.json();
-        const st = s.stats || {};
+        st = s.stats || {};
         setFinStats({
           netProfit: st.netProfit || 0,
           monthlyRecurringRevenue: st.monthlyRecurringRevenue || 0,
         });
+      }
+
+      // Auto-seed once if analytics appear empty
+      const chartsEmpty =
+        (!chartsRes.ok || !chartsData?.revenueChart?.labels?.length) &&
+        (!chartsRes.ok || !chartsData?.membersChart?.labels?.length);
+      const performersEmpty = !(performersData?.topPerformers || []).length;
+      const statsEmpty = !(
+        finStatsRes.ok &&
+        (st?.netProfit || st?.monthlyRecurringRevenue)
+      );
+      if (!seededAttempted && (chartsEmpty || performersEmpty || statsEmpty)) {
+        try {
+          setSeededAttempted(true);
+          await fetch("/api/business/finances/seed", { method: "POST" });
+          await new Promise((r) => setTimeout(r, 200));
+          await fetchAnalyticsData();
+          return;
+        } catch (e) {
+          // ignore
+        }
       }
     } catch (error) {
       console.error("Error fetching analytics data:", error);

@@ -67,6 +67,8 @@ export async function GET(request: NextRequest) {
       revenue: a.revenue || 0,
     }));
 
+    // Usuń fallback - teraz dane będą pochodzić z bazy
+
     return NextResponse.json({ topPerformers });
   } catch (err) {
     console.error("Error fetching top performers:", err);

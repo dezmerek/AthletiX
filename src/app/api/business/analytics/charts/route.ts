@@ -74,6 +74,8 @@ export async function GET(request: NextRequest) {
       return rec?.count || 0;
     });
 
+    // Usuń fallback - teraz dane będą pochodzić z bazy
+
     const revenueChart = {
       labels,
       datasets: [

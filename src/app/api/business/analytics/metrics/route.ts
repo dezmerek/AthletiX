@@ -98,6 +98,8 @@ export async function GET(request: NextRequest) {
         retentionRate,
         avgVisitPerMember,
         totalExpenses,
+        averageRevenuePerMember:
+          activeMembers > 0 ? Math.round(totalRevenue / activeMembers) : 0,
       },
     });
   } catch (err) {

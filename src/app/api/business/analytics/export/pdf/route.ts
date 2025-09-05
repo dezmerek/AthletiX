@@ -93,10 +93,8 @@ export async function POST(req: Request) {
       `0.09 0.3 0.85 rg 0 ${pageHeight - headerH} ${pageWidth} ${headerH} re f`
     );
     // tytuł
-    contentOps.push("0 0 0 rg BT /F1 18 Tf");
-    const title = escapePdfText(
-      transliteratePolish("Raport wniosków biznesowych")
-    );
+    contentOps.push("1 1 1 rg BT /F1 18 Tf");
+    const title = escapePdfText(transliteratePolish("Raport analityczny"));
     contentOps.push(`1 0 0 1 ${margin} ${pageHeight - 30} Tm (${title}) Tj ET`);
 
     y = pageHeight - headerH - 20;
@@ -110,12 +108,12 @@ export async function POST(req: Request) {
       );
       y -= leading + 6;
       const kv: string[] = [
-        `Przychody: ${formatPLN(metrics.totalRevenue)}`,
-        `Aktywni czlonkowie: ${formatInt(metrics.activeMembers)}`,
+        `Przychody: ${formatPLN(metrics.totalRevenue || 0)}`,
+        `Aktywni czlonkowie: ${formatInt(metrics.activeMembers || 0)}`,
         `Sredni przychod na czlonka: ${formatPLN(
-          metrics.averageRevenuePerMember
+          metrics.averageRevenuePerMember || 0
         )}`,
-        `Retencja: ${formatInt(metrics.retentionRate)}%`,
+        `Retencja: ${formatInt(metrics.retentionRate || 0)}%`,
       ];
       contentOps.push("0 0 0 rg BT /F1 12 Tf");
       kv.forEach((raw) => {
@@ -136,8 +134,8 @@ export async function POST(req: Request) {
       );
       y -= leading + 6;
       const kv: string[] = [
-        `MRR: ${formatPLN(finStats.monthlyRecurringRevenue)}`,
-        `Zysk netto: ${formatPLN(finStats.netProfit)}`,
+        `MRR: ${formatPLN(finStats.monthlyRecurringRevenue || 0)}`,
+        `Zysk netto: ${formatPLN(finStats.netProfit || 0)}`,
       ];
       contentOps.push("0 0 0 rg BT /F1 12 Tf");
       kv.forEach((raw) => {
@@ -159,7 +157,7 @@ export async function POST(req: Request) {
       y -= leading + 6;
       contentOps.push("0 0 0 rg BT /F1 12 Tf");
       performers.slice(0, 10).forEach((p, idx) => {
-        const row = `${idx + 1}. ${p.name} — ${p.revenue} PLN${
+        const row = `${idx + 1}. ${p.name} — ${formatPLN(p.revenue || 0)}${
           p.members ? `, czlonkowie: ${p.members}` : ""
         }`;
         contentOps.push(
@@ -174,7 +172,11 @@ export async function POST(req: Request) {
     }
 
     // sekcja PODSUMOWANIE WYKRESÓW (ostatnie / suma)
-    if (charts?.revenue?.labels && charts?.revenue?.data) {
+    if (
+      charts?.revenue?.labels &&
+      charts?.revenue?.data &&
+      charts.revenue.data.length > 0
+    ) {
       const lastIdx = charts.revenue.data.length - 1;
       const lastVal = charts.revenue.data[lastIdx] ?? 0;
       const label = charts.revenue.labels[lastIdx] ?? "";
@@ -189,7 +191,11 @@ export async function POST(req: Request) {
       );
       y -= leading + 8;
     }
-    if (charts?.members?.labels && charts?.members?.data) {
+    if (
+      charts?.members?.labels &&
+      charts?.members?.data &&
+      charts.members.data.length > 0
+    ) {
       const lastIdx = charts.members.data.length - 1;
       const lastVal = charts.members.data[lastIdx] ?? 0;
       const label = charts.members.labels[lastIdx] ?? "";
@@ -215,11 +221,15 @@ export async function POST(req: Request) {
       h: number,
       color: { r: number; g: number; b: number }
     ) => {
-      const max = Math.max(1, ...data);
-      const min = Math.min(0, ...data);
+      if (!data || data.length === 0) return;
+
+      const max = Math.max(...data);
+      const min = Math.min(...data);
       const range = Math.max(1, max - min);
+
       // karta
       contentOps.push(`0.97 0.97 0.99 rg ${x} ${yTop - h} ${w} ${h} re f`);
+
       // tytul
       contentOps.push("0 0 0 rg BT /F1 12 Tf");
       contentOps.push(
@@ -227,13 +237,15 @@ export async function POST(req: Request) {
           transliteratePolish(title)
         )}) Tj ET`
       );
+
       // ramka wykresu
       const gx = x + 10;
       const gy = yTop - h + 14;
       const gw = w - 20;
       const gh = h - 34;
       contentOps.push(`0.85 0.9 0.98 RG ${gx} ${gy} ${gw} ${gh} re S`);
-      // linia
+
+      // linia wykresu
       if (data.length > 1) {
         const pts = data
           .map((v, i) => {
@@ -243,14 +255,35 @@ export async function POST(req: Request) {
           })
           .join(" ");
         contentOps.push(`${color.r} ${color.g} ${color.b} RG ${pts} S`);
+      } else if (data.length === 1) {
+        // Pojedynczy punkt
+        const px = gx + gw / 2;
+        const py = gy + gh - ((data[0] - min) / range) * gh;
+        contentOps.push(
+          `${color.r} ${color.g} ${color.b} RG ${px} ${py} 3 0 360 arc f`
+        );
       }
+
+      // Dodaj wartości na osi Y
+      contentOps.push("0.5 0.5 0.5 rg BT /F1 10 Tf");
+      const yStep = gh / 4;
+      for (let i = 0; i <= 4; i++) {
+        const value = min + (range * i) / 4;
+        const py = gy + gh - i * yStep;
+        const valueText = typeof value === "number" ? value.toFixed(0) : "0";
+        contentOps.push(`1 0 0 1 ${gx - 25} ${py - 3} Tm (${valueText}) Tj`);
+      }
+      contentOps.push("ET");
     };
 
-    if (charts?.revenue?.data || charts?.members?.data) {
+    if (
+      (charts?.revenue?.data && charts.revenue.data.length > 0) ||
+      (charts?.members?.data && charts.members.data.length > 0)
+    ) {
       const cardW = (pageWidth - margin * 2 - 12) / 2;
       const cardH = 100;
       const yTopCards = y;
-      if (charts?.revenue?.data) {
+      if (charts?.revenue?.data && charts.revenue.data.length > 0) {
         drawSpark(
           "Przychody (sparkline)",
           charts.revenue.data,
@@ -261,7 +294,7 @@ export async function POST(req: Request) {
           { r: 0.06, g: 0.72, b: 0.51 }
         );
       }
-      if (charts?.members?.data) {
+      if (charts?.members?.data && charts.members.data.length > 0) {
         drawSpark(
           "Nowi czlonkowie (sparkline)",
           charts.members.data,
@@ -321,7 +354,7 @@ export async function POST(req: Request) {
         );
         contentOps.push(
           `1 0 0 1 ${margin + colName + 6} ${y - 13} Tm (${escapePdfText(
-            formatPLN(p.revenue)
+            formatPLN(p.revenue || 0)
           )}) Tj`
         );
         const m = p.members != null ? String(p.members) : "-";
@@ -443,13 +476,16 @@ export async function POST(req: Request) {
     objects.push(`1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj\n`);
     objects.push(`2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj\n`);
     objects.push(
-      `3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj\n`
+      `3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >> endobj\n`
     );
     objects.push(
       `4 0 obj << /Length ${contentBytes.length} >> stream\n${contentStream}\nendstream endobj\n`
     );
     objects.push(
-      `5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj\n`
+      `5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >> endobj\n`
+    );
+    objects.push(
+      `6 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj\n`
     );
 
     let offset = 0;
@@ -484,7 +520,7 @@ export async function POST(req: Request) {
       status: 200,
       headers: new Headers({
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename=raport_wnioski.pdf`,
+        "Content-Disposition": `attachment; filename=raport_analityczny.pdf`,
         "Cache-Control": "no-store",
       }),
     });
