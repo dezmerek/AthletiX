@@ -15,6 +15,7 @@ export default function PricingSection() {
   const { data: session } = useSession();
   const [activePlanType, setActivePlanType] = useState<UserType>("client");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChoosePro = async () => {
     if (!session) {
@@ -24,6 +25,7 @@ export default function PricingSection() {
     }
 
     setLoading(true);
+    setError(null);
     try {
       const response = await fetch("/api/stripe/checkout", {
         method: "POST",
@@ -42,13 +44,15 @@ export default function PricingSection() {
         window.location.href = data.url;
       } else {
         console.error("Error creating checkout session:", data.error);
-        alert(
-          "Wystąpił błąd podczas tworzenia sesji płatności. Spróbuj ponownie."
+        // Show specific error message from server
+        setError(
+          data.error ||
+            "Wystąpił błąd podczas tworzenia sesji płatności. Spróbuj ponownie."
         );
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Wystąpił błąd. Spróbuj ponownie.");
+      setError("Wystąpił błąd. Spróbuj ponownie.");
     } finally {
       setLoading(false);
     }
@@ -198,6 +202,11 @@ export default function PricingSection() {
                   </li>
                 ))}
             </ul>
+            {error && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                {error}
+              </div>
+            )}
             <button
               type="button"
               onClick={handleChoosePro}

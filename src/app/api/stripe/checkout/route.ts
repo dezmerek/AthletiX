@@ -43,7 +43,8 @@ export async function POST(request: NextRequest) {
     if (planType === "client" && user.isPremiumPersonal) {
       return NextResponse.json(
         {
-          error: "User already has active personal premium subscription",
+          error:
+            "Masz już aktywną subskrypcję Personal Pro. Nie możesz kupić drugi raz.",
         },
         { status: 400 }
       );
@@ -52,19 +53,33 @@ export async function POST(request: NextRequest) {
     if (planType === "professional" && user.isPremiumProfessional) {
       return NextResponse.json(
         {
-          error: "User already has active professional premium subscription",
+          error:
+            "Masz już aktywną subskrypcję Professional Pro. Nie możesz kupić drugi raz.",
         },
         { status: 400 }
       );
     }
 
-    if (planType === "business" && user.isPremiumBusiness) {
-      return NextResponse.json(
-        {
-          error: "User already has active business premium subscription",
-        },
-        { status: 400 }
-      );
+    // For business plans, check if user already has premium business
+    if (planType === "business") {
+      try {
+        const business = await db.collection("businesses").findOne({
+          ownerId: new ObjectId(session.user.id),
+        });
+
+        if (business && business.isPremiumBusiness) {
+          return NextResponse.json(
+            {
+              error:
+                "Masz już aktywną subskrypcję Business Pro. Nie możesz kupić drugi raz.",
+            },
+            { status: 400 }
+          );
+        }
+      } catch (error) {
+        console.error("Error checking business status:", error);
+        // Continue with checkout if there's an error checking business status
+      }
     }
 
     // Get the appropriate price ID based on plan type
