@@ -38,12 +38,29 @@ function escapePdfText(input: string): string {
   return ascii.replace(/[()\\]/g, (m) => `\\${m}`);
 }
 
+function formatInt(n: number | null | undefined): string {
+  const v = typeof n === "number" && isFinite(n) ? Math.round(n) : 0;
+  return v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+
+function formatPLN(n: number | null | undefined): string {
+  return `${formatInt(n)} PLN`;
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
     const insights: Insight[] = Array.isArray(body?.insights)
       ? body.insights
       : [];
+    const metrics = body?.metrics || null;
+    const finStats = body?.finStats || null;
+    const performers: Array<{
+      name: string;
+      revenue: number;
+      members?: number;
+    }> = Array.isArray(body?.performers) ? body.performers : [];
+    const charts = body?.charts || null;
 
     const pageWidth = 612; // A4 US letter
     const pageHeight = 792;
@@ -84,7 +101,253 @@ export async function POST(req: Request) {
 
     y = pageHeight - headerH - 20;
 
-    // sekcja INSIGHTS
+    // sekcja METRYKI
+    if (metrics) {
+      const sectionTitle = transliteratePolish("Kluczowe metryki");
+      contentOps.push("0 0 0 rg BT /F1 14 Tf");
+      contentOps.push(
+        `1 0 0 1 ${margin} ${y} Tm (${escapePdfText(sectionTitle)}) Tj ET`
+      );
+      y -= leading + 6;
+      const kv: string[] = [
+        `Przychody: ${formatPLN(metrics.totalRevenue)}`,
+        `Aktywni czlonkowie: ${formatInt(metrics.activeMembers)}`,
+        `Sredni przychod na czlonka: ${formatPLN(
+          metrics.averageRevenuePerMember
+        )}`,
+        `Retencja: ${formatInt(metrics.retentionRate)}%`,
+      ];
+      contentOps.push("0 0 0 rg BT /F1 12 Tf");
+      kv.forEach((raw) => {
+        const txt = escapePdfText(transliteratePolish(raw));
+        contentOps.push(`1 0 0 1 ${margin} ${y} Tm (${txt}) Tj`);
+        y -= leading;
+      });
+      contentOps.push("ET");
+      y -= 8;
+    }
+
+    // sekcja KPI finansowe
+    if (finStats) {
+      const sectionTitle = transliteratePolish("Finanse (KPI)");
+      contentOps.push("0 0 0 rg BT /F1 14 Tf");
+      contentOps.push(
+        `1 0 0 1 ${margin} ${y} Tm (${escapePdfText(sectionTitle)}) Tj ET`
+      );
+      y -= leading + 6;
+      const kv: string[] = [
+        `MRR: ${formatPLN(finStats.monthlyRecurringRevenue)}`,
+        `Zysk netto: ${formatPLN(finStats.netProfit)}`,
+      ];
+      contentOps.push("0 0 0 rg BT /F1 12 Tf");
+      kv.forEach((raw) => {
+        const txt = escapePdfText(transliteratePolish(raw));
+        contentOps.push(`1 0 0 1 ${margin} ${y} Tm (${txt}) Tj`);
+        y -= leading;
+      });
+      contentOps.push("ET");
+      y -= 8;
+    }
+
+    // sekcja TOP PERFORMERS (zwięzła lista)
+    if (performers.length) {
+      const sectionTitle = transliteratePolish("Najlepsi wykonawcy");
+      contentOps.push("0 0 0 rg BT /F1 14 Tf");
+      contentOps.push(
+        `1 0 0 1 ${margin} ${y} Tm (${escapePdfText(sectionTitle)}) Tj ET`
+      );
+      y -= leading + 6;
+      contentOps.push("0 0 0 rg BT /F1 12 Tf");
+      performers.slice(0, 10).forEach((p, idx) => {
+        const row = `${idx + 1}. ${p.name} — ${p.revenue} PLN${
+          p.members ? `, czlonkowie: ${p.members}` : ""
+        }`;
+        contentOps.push(
+          `1 0 0 1 ${margin} ${y} Tm (${escapePdfText(
+            transliteratePolish(row)
+          )}) Tj`
+        );
+        y -= leading;
+      });
+      contentOps.push("ET");
+      y -= 8;
+    }
+
+    // sekcja PODSUMOWANIE WYKRESÓW (ostatnie / suma)
+    if (charts?.revenue?.labels && charts?.revenue?.data) {
+      const lastIdx = charts.revenue.data.length - 1;
+      const lastVal = charts.revenue.data[lastIdx] ?? 0;
+      const label = charts.revenue.labels[lastIdx] ?? "";
+      const row = `Trend przychodow — ostatni okres (${label}): ${formatPLN(
+        lastVal
+      )}`;
+      contentOps.push("0 0 0 rg BT /F1 12 Tf");
+      contentOps.push(
+        `1 0 0 1 ${margin} ${y} Tm (${escapePdfText(
+          transliteratePolish(row)
+        )}) Tj ET`
+      );
+      y -= leading + 8;
+    }
+    if (charts?.members?.labels && charts?.members?.data) {
+      const lastIdx = charts.members.data.length - 1;
+      const lastVal = charts.members.data[lastIdx] ?? 0;
+      const label = charts.members.labels[lastIdx] ?? "";
+      const row = `Wzrost czlonkow — ostatni okres (${label}): ${formatInt(
+        lastVal
+      )}`;
+      contentOps.push("0 0 0 rg BT /F1 12 Tf");
+      contentOps.push(
+        `1 0 0 1 ${margin} ${y} Tm (${escapePdfText(
+          transliteratePolish(row)
+        )}) Tj ET`
+      );
+      y -= leading + 8;
+    }
+
+    // SPARKLINES (proste mini-wykresy)
+    const drawSpark = (
+      title: string,
+      data: number[],
+      x: number,
+      yTop: number,
+      w: number,
+      h: number,
+      color: { r: number; g: number; b: number }
+    ) => {
+      const max = Math.max(1, ...data);
+      const min = Math.min(0, ...data);
+      const range = Math.max(1, max - min);
+      // karta
+      contentOps.push(`0.97 0.97 0.99 rg ${x} ${yTop - h} ${w} ${h} re f`);
+      // tytul
+      contentOps.push("0 0 0 rg BT /F1 12 Tf");
+      contentOps.push(
+        `1 0 0 1 ${x + 10} ${yTop - 20} Tm (${escapePdfText(
+          transliteratePolish(title)
+        )}) Tj ET`
+      );
+      // ramka wykresu
+      const gx = x + 10;
+      const gy = yTop - h + 14;
+      const gw = w - 20;
+      const gh = h - 34;
+      contentOps.push(`0.85 0.9 0.98 RG ${gx} ${gy} ${gw} ${gh} re S`);
+      // linia
+      if (data.length > 1) {
+        const pts = data
+          .map((v, i) => {
+            const px = gx + (i / (data.length - 1)) * gw;
+            const py = gy + gh - ((v - min) / range) * gh;
+            return `${i === 0 ? "m" : "l"} ${px.toFixed(2)} ${py.toFixed(2)}`;
+          })
+          .join(" ");
+        contentOps.push(`${color.r} ${color.g} ${color.b} RG ${pts} S`);
+      }
+    };
+
+    if (charts?.revenue?.data || charts?.members?.data) {
+      const cardW = (pageWidth - margin * 2 - 12) / 2;
+      const cardH = 100;
+      const yTopCards = y;
+      if (charts?.revenue?.data) {
+        drawSpark(
+          "Przychody (sparkline)",
+          charts.revenue.data,
+          margin,
+          yTopCards,
+          cardW,
+          cardH,
+          { r: 0.06, g: 0.72, b: 0.51 }
+        );
+      }
+      if (charts?.members?.data) {
+        drawSpark(
+          "Nowi czlonkowie (sparkline)",
+          charts.members.data,
+          margin + cardW + 12,
+          yTopCards,
+          cardW,
+          cardH,
+          { r: 0.23, g: 0.51, b: 0.96 }
+        );
+      }
+      y -= cardH + 16;
+    }
+
+    // TABELA TOP PERFORMERS
+    if (performers.length) {
+      const tableW = pageWidth - margin * 2;
+      const colName = Math.floor(tableW * 0.5);
+      const colRevenue = Math.floor(tableW * 0.25);
+      const colMembers = tableW - colName - colRevenue;
+      const rowH = 18;
+
+      // naglowek
+      contentOps.push(
+        `0.93 0.96 1 rg ${margin} ${y - rowH} ${tableW} ${rowH} re f`
+      );
+      contentOps.push("0 0 0 rg BT /F1 12 Tf");
+      contentOps.push(`1 0 0 1 ${margin + 6} ${y - 13} Tm (Nazwa) Tj`);
+      contentOps.push(
+        `1 0 0 1 ${margin + colName + 6} ${y - 13} Tm (Przychody) Tj`
+      );
+      contentOps.push(
+        `1 0 0 1 ${margin + colName + colRevenue + 6} ${
+          y - 13
+        } Tm (Czlonkowie) Tj ET`
+      );
+      // pionowe linie kolumn
+      contentOps.push(`0 0 0 RG ${margin} ${y - rowH} ${tableW} ${rowH} re S`);
+      contentOps.push(
+        `0.85 0.85 0.9 RG ${margin + colName} ${y - rowH} 0 ${rowH} S`
+      );
+      contentOps.push(
+        `0.85 0.85 0.9 RG ${margin + colName + colRevenue} ${
+          y - rowH
+        } 0 ${rowH} S`
+      );
+      y -= rowH;
+
+      performers.slice(0, 8).forEach((p) => {
+        contentOps.push(
+          `0.99 0.99 1 rg ${margin} ${y - rowH} ${tableW} ${rowH} re f`
+        );
+        contentOps.push("0 0 0 rg BT /F1 12 Tf");
+        contentOps.push(
+          `1 0 0 1 ${margin + 6} ${y - 13} Tm (${escapePdfText(
+            transliteratePolish(p.name)
+          )}) Tj`
+        );
+        contentOps.push(
+          `1 0 0 1 ${margin + colName + 6} ${y - 13} Tm (${escapePdfText(
+            formatPLN(p.revenue)
+          )}) Tj`
+        );
+        const m = p.members != null ? String(p.members) : "-";
+        contentOps.push(
+          `1 0 0 1 ${margin + colName + colRevenue + 6} ${
+            y - 13
+          } Tm (${escapePdfText(m)}) Tj ET`
+        );
+        contentOps.push(
+          `0.9 0.9 0.95 RG ${margin} ${y - rowH} ${tableW} ${rowH} re S`
+        );
+        contentOps.push(
+          `0.92 0.92 0.96 RG ${margin + colName} ${y - rowH} 0 ${rowH} S`
+        );
+        contentOps.push(
+          `0.92 0.92 0.96 RG ${margin + colName + colRevenue} ${
+            y - rowH
+          } 0 ${rowH} S`
+        );
+        y -= rowH;
+      });
+
+      y -= 12;
+    }
+
+    // sekcja INSIGHTS (karty jak wcześniej)
     const boxGap = 12;
     const boxPad = 10;
     const boxInnerWidth = pageWidth - margin * 2 - 8; // miejsce na lewy pasek

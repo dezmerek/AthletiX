@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import MiniLineChart from "./MiniLineChart";
 import TopPerformersTable from "./TopPerformersTable";
 import InsightsList from "./InsightsList";
+import ForecastModal from "./ForecastModal";
+import SegmentModal from "./SegmentModal";
 import { useSession } from "next-auth/react";
 import {
   ChartBarIcon,
@@ -77,6 +79,8 @@ export default function BusinessAnalyticsPage() {
   } | null>(null);
   const [revShowGrid, setRevShowGrid] = useState(true);
   const [memShowGrid, setMemShowGrid] = useState(true);
+  const [showSegments, setShowSegments] = useState(false);
+  const [showForecast, setShowForecast] = useState(false);
 
   const fetchAnalyticsData = async () => {
     try {
@@ -701,7 +705,58 @@ export default function BusinessAnalyticsPage() {
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
               Wygeneruj szczegółowy raport PDF
             </p>
-            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+            <button
+              onClick={async () => {
+                try {
+                  const performersPayload = topPerformers.map((p) => ({
+                    name: p.name,
+                    revenue: p.revenue,
+                    members: p.members,
+                  }));
+                  const chartsPayload = {
+                    revenue: revenueChart
+                      ? {
+                          labels: revenueChart.labels,
+                          data: revenueChart.datasets[0]?.data || [],
+                        }
+                      : null,
+                    members: membersChart
+                      ? {
+                          labels: membersChart.labels,
+                          data: membersChart.datasets[0]?.data || [],
+                        }
+                      : null,
+                  };
+
+                  const res = await fetch(
+                    "/api/business/analytics/export/pdf",
+                    {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        metrics,
+                        finStats,
+                        performers: performersPayload,
+                        charts: chartsPayload,
+                        insights,
+                      }),
+                    }
+                  );
+                  if (!res.ok) throw new Error("Błąd generowania PDF");
+                  const blob = await res.blob();
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = "raport_analityczny.pdf";
+                  a.click();
+                  URL.revokeObjectURL(url);
+                } catch (e) {
+                  console.error(e);
+                  alert("Nie udało się wygenerować raportu.");
+                }
+              }}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
               Generuj raport
             </button>
           </div>
@@ -718,7 +773,10 @@ export default function BusinessAnalyticsPage() {
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
               Zobacz prognozy na przyszłość
             </p>
-            <button className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+            <button
+              onClick={() => setShowForecast(true)}
+              className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
               Zobacz prognozy
             </button>
           </div>
@@ -735,12 +793,48 @@ export default function BusinessAnalyticsPage() {
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
               Analiza segmentów klientów
             </p>
-            <button className="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+            <button
+              onClick={() => setShowSegments(true)}
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
               Analizuj segmenty
             </button>
           </div>
         </div>
       </div>
+      <ForecastModal
+        open={showForecast}
+        onClose={() => setShowForecast(false)}
+        revenue={
+          revenueChart
+            ? {
+                labels: revenueChart.labels,
+                data: revenueChart.datasets[0]?.data || [],
+                color: "#10b981",
+                title: "Przychody [PLN]",
+              }
+            : null
+        }
+        members={
+          membersChart
+            ? {
+                labels: membersChart.labels,
+                data: membersChart.datasets[0]?.data || [],
+                color: "#3b82f6",
+                title: "Nowi członkowie",
+              }
+            : null
+        }
+      />
+      <SegmentModal
+        open={showSegments}
+        onClose={() => setShowSegments(false)}
+        performers={topPerformers.map((p) => ({
+          name: p.name,
+          revenue: p.revenue,
+          members: p.members,
+        }))}
+      />
     </div>
   );
 }
