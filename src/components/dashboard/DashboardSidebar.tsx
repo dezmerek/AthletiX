@@ -420,6 +420,12 @@ export default function DashboardSidebar() {
       label: "Analityka Biznesowa",
       context: "business",
     },
+    {
+      href: "/dashboard/business/invoices",
+      icon: <DocumentTextIcon className="w-5 h-5" />,
+      label: "Faktury",
+      context: "business",
+    },
     // ===== KONIEC SEKCJI DLA BUSINESS OWNER =====
   ];
 
