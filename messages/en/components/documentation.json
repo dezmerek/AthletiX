@@ -3,6 +3,73 @@
   "description": "Comprehensive guide to using AthletiX platform",
   "lastUpdated": "Last updated: May 2025",
   "sections": {
+    "thesisIntroduction": {
+      "title": "Master's Thesis Introduction",
+      "content": "AthletiX is an innovative training and nutrition management platform that aims to revolutionize the way fitness professionals collaborate with their clients and how companies manage their sports services.",
+      "subsections": {
+        "problemStatement": {
+          "title": "Problem Identification",
+          "content": "The modern fitness industry faces numerous technological and organizational challenges that hinder effective collaboration between trainers and clients, as well as efficient management of fitness services.",
+          "features": [
+            "Lack of integrated systems for managing training and nutrition plans",
+            "Difficulties in real-time client progress monitoring",
+            "Communication problems between professionals and clients",
+            "Ineffective management of fitness companies and their staff",
+            "Absence of tools for managing multiple user roles in one system"
+          ]
+        },
+        "objectives": {
+          "title": "Project Objectives",
+          "content": "The main goal of this thesis is to create a comprehensive digital platform that integrates all aspects of fitness service management into one intuitive system.",
+          "features": [
+            "Development of multi-role user management system (clients, professionals, administrators)",
+            "Implementation of fitness company management system with permission hierarchy",
+            "Creation of tools for developing and managing training and nutrition plans",
+            "Design of progress monitoring and communication system",
+            "Ensuring international language support (Polish/English)",
+            "Implementation of modern web technologies for optimal performance"
+          ]
+        },
+        "scope": {
+          "title": "Project Scope",
+          "content": "The AthletiX platform encompasses a comprehensive digital ecosystem for the fitness industry, built using modern web technologies and security best practices.",
+          "features": [
+            "Frontend: React 19 with Next.js 15 and TypeScript for type safety",
+            "Backend: Next.js API Routes with MongoDB as database",
+            "Authorization: NextAuth.js v5 with advanced role system",
+            "Styling: Tailwind CSS with dark mode support",
+            "Internationalization: Next-intl for multilingual support",
+            "Testing: Vitest with comprehensive test coverage",
+            "Deployment: Optimized production build with scaling support"
+          ]
+        },
+        "technicalInnovation": {
+          "title": "Technical Innovations",
+          "content": "The platform utilizes cutting-edge technologies and design patterns to ensure high performance, security, and ease of development.",
+          "features": [
+            "Full-stack architecture based on Next.js with App Router",
+            "State management system with React Hooks and Context API",
+            "Responsive design with mobile-first approach",
+            "Advanced authorization system with multiple roles and contexts",
+            "MongoDB with Mongoose ODM for flexible data management",
+            "Stripe integration for payment and subscription system",
+            "Modular component architecture with TypeScript interfaces"
+          ]
+        },
+        "expectedOutcomes": {
+          "title": "Expected Results",
+          "content": "The implementation of the AthletiX project aims to deliver a platform that significantly improves the fitness industry through digitization and automation of key processes.",
+          "features": [
+            "Increase personal trainer efficiency by at least 40%",
+            "Improve client communication and engagement",
+            "Streamline fitness company and resource management",
+            "Reduce time needed for administrative tasks",
+            "Create a scalable platform ready for international expansion",
+            "Establish new standards in fitness industry digitization"
+          ]
+        }
+      }
+    },
     "gettingStarted": {
       "title": "Getting Started",
       "content": "Welcome to AthletiX! This guide will help you understand how to use our platform effectively.",
